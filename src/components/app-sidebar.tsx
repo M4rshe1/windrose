@@ -36,7 +36,6 @@ export function AppSidebar({session, ...props}: React.ComponentProps<typeof Side
                 title: "Dashboard",
                 url: "/",
                 icon: SquareTerminal,
-                isActive: true,
                 items: [
                     {
                         title: "Tours",

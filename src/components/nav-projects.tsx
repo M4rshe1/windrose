@@ -1,6 +1,6 @@
 "use client"
 
-import {Edit, Folder, type LucideIcon, MoreHorizontal, Trash2,} from "lucide-react"
+import {Archive, Edit, Folder, type LucideIcon, MoreHorizontal, Trash2,} from "lucide-react"
 
 import {
     DropdownMenu,
@@ -62,6 +62,10 @@ export function NavProjects({
                                 <DropdownMenuItem className="hover:bg-base-100">
                                     <Edit/>
                                     <span>Edit</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="hover:bg-warning hover:text-warning-content">
+                                    <Archive/>
+                                    <span>Archive</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator/>
                                 <DropdownMenuItem className="hover:bg-error hover:text-error-content">
