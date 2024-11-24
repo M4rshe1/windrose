@@ -107,8 +107,12 @@ export function AppSidebar({session, ...props}: React.ComponentProps<typeof Side
                         url: "/settings/billing",
                     },
                     {
-                        title: "Profile",
-                        url: "/settings/profile",
+                        title: "Account",
+                        url: "/settings/account",
+                    },
+                    {
+                        title: "Security",
+                        url: "/settings/security",
                     },
                 ],
             },

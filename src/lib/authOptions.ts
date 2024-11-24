@@ -3,7 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import db from '@/lib/db';
-import {stringToDashCase} from "@/lib/util";
+import {stringToDashCase} from "@/lib/utils";
 
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
