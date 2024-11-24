@@ -1,10 +1,8 @@
 import ThemeButton from "@/components/themeButton";
-import resolveConfig from 'tailwindcss/resolveConfig';
-import tailwindConfig from '../../tailwind.config';
+import {Theme, themes} from "@/lib/theme";
 
-const fullConfig = resolveConfig(tailwindConfig);
+
 export default function ThemeSwitcher() {
-    const themes: string[] = fullConfig.daisyui.themes
     return (
         <div>
             <div title="Change Theme"
@@ -24,14 +22,12 @@ export default function ThemeSwitcher() {
                     </svg>
                 </div>
                 <div
-                    className="dropdown-content bg-base-200 rounded-box top-px h-32 max-h-[calc(100vh-10rem)] w-56 overflow-y-auto border border-white/5 shadow-2xl outline outline-1 outline-black/5 mt-16">
+                    className="dropdown-content bg-base-100 rounded-box top-px h-32 max-h-[calc(100vh-10rem)] w-56 overflow-y-auto border border-white/5 shadow-2xl outline outline-1 outline-black/5 mt-16">
                     <div className="grid grid-cols-1 gap-3 p-3">
                         {
-                            themes.map((theme: string, index: number) => {
-                                return (
-                                    <ThemeButton key={index} theme={theme}/>
-                                )
-                            })
+                            themes.map((theme: Theme) => (
+                                <ThemeButton key={theme.key} theme={theme}/>
+                            ))
                         }
                     </div>
                 </div>
