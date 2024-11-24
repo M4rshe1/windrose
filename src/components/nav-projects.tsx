@@ -1,26 +1,26 @@
 "use client"
 
-import {Folder, type LucideIcon, MoreHorizontal, Share, Trash2,} from "lucide-react"
+import {Edit, Folder, type LucideIcon, MoreHorizontal, Trash2,} from "lucide-react"
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarMenu,
+    SidebarMenuAction,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    useSidebar,
 } from "@/components/ui/sidebar"
 
 export function NavProjects({
-                                projects,username
+                                projects, username
                             }: {
     projects: {
         name: string
@@ -51,7 +51,7 @@ export function NavProjects({
                                 </SidebarMenuAction>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
-                                className="w-48"
+                                className="w-48 bg-base-200"
                                 side={isMobile ? "bottom" : "right"}
                                 align={isMobile ? "end" : "start"}
                             >
@@ -60,11 +60,11 @@ export function NavProjects({
                                     <span>Go to Tour</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="hover:bg-base-100">
-                                    <Share/>
+                                    <Edit/>
                                     <span>Edit</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator/>
-                                <DropdownMenuItem className="hover:bg-error">
+                                <DropdownMenuItem className="hover:bg-error hover:text-error-content">
                                     <Trash2/>
                                     <span>Delete Tour</span>
                                 </DropdownMenuItem>

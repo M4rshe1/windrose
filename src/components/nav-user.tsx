@@ -16,6 +16,7 @@ import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,} from "@/co
 import Link from "next/link";
 import {signOut} from "next-auth/react";
 import {redirect} from "next/navigation";
+import FancyBorder from "@/components/ui/fancyBorder";
 
 export function NavUser({
                             user,
@@ -71,10 +72,12 @@ export function NavUser({
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
                             <Link href={"/pro"}>
-                                <DropdownMenuItem>
-                                    <Sparkles/>
-                                    Upgrade to Pro
-                                </DropdownMenuItem>
+                                <FancyBorder className={'rounded'}>
+                                    <DropdownMenuItem className="bg-base-200">
+                                        <Sparkles/>
+                                        Upgrade to Pro
+                                    </DropdownMenuItem>
+                                </FancyBorder>
                             </Link>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>

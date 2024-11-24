@@ -2,9 +2,8 @@ import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
+import db from '@/lib/db';
 
-const db = new PrismaClient();
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
     throw new Error("Google client ID or secret is not set.");
@@ -47,7 +46,6 @@ export const authOptions: NextAuthOptions = {
                 if (dbUser) {
                     session.user.role = dbUser.role;
                     session.user.username = dbUser.username;
-                    session.user.id = user.id;
                 }
             } catch (error) {
                 console.error('Error fetching user role:', error);

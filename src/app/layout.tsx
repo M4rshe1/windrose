@@ -39,15 +39,14 @@ export default async function RootLayout({
                 <SidebarInset>
                     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 border-neutral">
                         {
-                            authenticated ?
-                                <SidebarTrigger className="-ml-1"/> :
-                                <Link href={"/"} className="flex items-center gap-2">
-                                    <IconBrandSafari/>
-                                    <span className="text-lg font-semibold">Windrose</span>
-                                </Link>
+                            authenticated &&
+                                <SidebarTrigger className="-ml-1"/>
                         }
                         <Separator orientation="vertical" className="mr-2 h-4"/>
-                        <div id={"breadcrumb"} className="flex-1"/>
+                        <Link href={"/"} className="flex items-center gap-2">
+                            <IconBrandSafari/>
+                        </Link>
+                        <div id={"breadcrumb-bar"} className="flex-1"/>
                     </header>
                     {children}
                 </SidebarInset>

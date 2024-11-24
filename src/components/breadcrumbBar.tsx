@@ -1,3 +1,4 @@
+"use client"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -5,9 +6,9 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import react from "react"
-import {createPortal} from "react-dom";
-
+import react, {useEffect} from "react"
+import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 
 interface BreadcrumbProps {
@@ -17,12 +18,19 @@ interface BreadcrumbProps {
     }[]
 }
 
-export function setBreadcrumbBar(items: { title: string; url: string; }[]) {
-    const breadcrumbContainer = document.getElementById("breadcrumb");
-    if (breadcrumbContainer) {
-        createPortal(<BreadcrumbBar items={items} />, breadcrumbContainer);
-    }
-}
+
+export const BreadcrumbPortal = ({items}: BreadcrumbProps) => {
+    useEffect(() => {
+        const breadcrumbContainer = document.getElementById("breadcrumb-bar");
+        if (breadcrumbContainer) {
+            const breadcrumb = ReactDOM.createPortal(<BreadcrumbBar items={items}/>, breadcrumbContainer);
+            const root = createRoot(breadcrumbContainer);
+            root.render(breadcrumb);
+        }
+    }, [items]);
+
+    return null;
+};
 
 export const BreadcrumbBar = ({items}: BreadcrumbProps) => {
     return (
@@ -31,7 +39,9 @@ export const BreadcrumbBar = ({items}: BreadcrumbProps) => {
                 {
                     items.map((item, index) => (
                         <react.Fragment key={index}>
-                            <BreadcrumbItem className={" hover:bg-base-200 rounded-lg p-2 transition-all duration-200 ease-in-out"} key={index}>
+                            <BreadcrumbItem
+                                className={"hover:bg-base-200 rounded-lg p-2 transition-all duration-200 ease-in-out"}
+                                key={index}>
                                 <BreadcrumbLink href={item.url}>
                                     {item.title}
                                 </BreadcrumbLink>

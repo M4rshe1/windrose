@@ -22,14 +22,14 @@ import {
 import Link from "next/link";
 
 
-
 export function AppSidebar({session, ...props}: React.ComponentProps<typeof Sidebar>) {
+    const username = session.user.username || session.user.id
     const data = {
         user: {
             name: session.user.name,
             email: session.user.email,
             avatar: session.user.image,
-            username: session.user.username || session.user.id,
+            username: username
         },
         navMain: [
             {
@@ -40,80 +40,76 @@ export function AppSidebar({session, ...props}: React.ComponentProps<typeof Side
                 items: [
                     {
                         title: "Tours",
-                        url: "#",
+                        url: `/${username}/tours`,
                     },
                     {
                         title: "Timeline",
-                        url: "#",
+                        url: `/${username}/timeline`,
                     },
                     {
-                        title: "Saved Tours",
-                        url: "#",
+                        title: "Notifications",
+                        url: "/notifications",
                     },
                 ],
             },
             {
                 title: "Tours",
-                url: "#",
+                url: `/${username}/tours`,
                 icon: Map,
                 items: [
                     {
                         title: "New Tour",
-                        url: "#",
+                        url: "/new",
                     },
                     {
                         title: "Explorer",
-                        url: "#",
+                        url: "/explore",
                     },
                     {
-                        title: "Quantum",
-                        url: "#",
+                        title: "Saved",
+                        url: `/${username}/saved`,
                     },
                 ],
             },
-            {
-                title: "Documentation",
-                url: "#",
-                icon: BookOpen,
-                items: [
-                    {
-                        title: "Introduction",
-                        url: "#",
-                    },
-                    {
-                        title: "Get Started",
-                        url: "#",
-                    },
-                    {
-                        title: "Tutorials",
-                        url: "#",
-                    },
-                    {
-                        title: "Changelog",
-                        url: "#",
-                    },
-                ],
-            },
+            // {
+            //     title: "Documentation",
+            //     url: "#",
+            //     icon: BookOpen,
+            //     items: [
+            //         {
+            //             title: "Introduction",
+            //             url: "#",
+            //         },
+            //         {
+            //             title: "Get Started",
+            //             url: "#",
+            //         },
+            //         {
+            //             title: "Tutorials",
+            //             url: "#",
+            //         },
+            //         {
+            //             title: "Changelog",
+            //             url: "#",
+            //         },
+            //     ],
+            // },
             {
                 title: "Settings",
                 url: "/settings",
                 icon: Settings2,
                 items: [
                     {
-                        title: "General",
-                        url: "/settings/general",
-                    },
-                    {
                         title: "Appearance",
-                        url: "#",
+                        url: "/settings/appearance",
                     },
                     {
                         title: "Billing",
-                        url: "#",
+                        url: "/settings/billing",
                     },
                     {
-                        title: "Limits",
-                        url: "#",
+                        title: "Profile",
+                        url: "/settings/profile",
                     },
                 ],
             },

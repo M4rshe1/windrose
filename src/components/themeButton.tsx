@@ -1,7 +1,7 @@
 "use client"
 import {themeChange} from 'theme-change'
 import {useEffect} from 'react'
-import {Theme} from "@/lib/themeProvider";
+import {Theme} from '@/lib/theme'
 
 
 const ThemeButton = ({theme}: { theme: Theme }) => {
