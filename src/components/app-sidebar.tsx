@@ -114,6 +114,10 @@ export function AppSidebar({session, ...props}: React.ComponentProps<typeof Side
                         title: "Security",
                         url: "/settings/security",
                     },
+                    {
+                        title: "Sessions",
+                        url: "/settings/sessions",
+                    },
                 ],
             },
         ],

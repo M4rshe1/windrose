@@ -80,6 +80,97 @@ const config: Config = {
                     "warning": "#ea9d34",
                     "error": "#b4637a",
                 },
+                dracula: {
+                    primary: '#bd93f9',
+                    secondary: '#ff79c6',
+                    accent: '#8be9fd',
+                    neutral: '#44475a',
+                    'base-100': '#282a36',
+                    'base-200': '#3a3c4a',
+                    'base-300': '#1e1f29',
+                    info: '#8be9fd',
+                    success: '#50fa7b',
+                    warning: '#ffb86c',
+                    error: '#ff5555',
+                },
+                peachblossom: {
+                    primary: '#f6adcf', // Soft pink
+                    secondary: '#f7cad0', // Peachy-pink
+                    accent: '#ffd1dc', // Light coral
+                    neutral: '#f9f4ef', // Soft white (paper-like)
+                    'base-100': '#fff9f7', // Light peach background
+                    'base-200': '#ffe4e1', // Slightly deeper peach
+                    'base-300': '#ffe8f0', // Light rose
+                    info: '#a1cfff', // Sky blue
+                    success: '#b9e7c9', // Mint green
+                    warning: '#f7c77c', // Warm yellow
+                    error: '#f28f8f', // Light red
+                },
+                peachblossom2: {
+                    primary: "#292929",
+                    secondary: "#99b898",
+                    accent: "#fecea8",
+                    neutral: "#292929",
+                    "base-100": "#292929",
+                    "base-200": "#2a363b",
+                    "base-300": "#f8c9a4",
+                    info: "#5d5d5d",
+                    success: "#f8c9a4",
+                    warning: "#f8c9a4",
+                    error: "#2a363b",
+                },
+                gruvbox: {
+                    'primary': '#fb4934',
+                    'secondary': '#b8bb26',
+                    'accent': '#fabd2f',
+                    'neutral': '#3c3836',
+                    'base-100': '#282828',
+                    'base-200': '#3c3836',
+                    'base-300': '#504945',
+                    'info': '#83a598',
+                    'success': '#8ec07c',
+                    'warning': '#fabd2f',
+                    'error': '#fb4934',
+                },
+                obsidian: {
+                    primary: "#323437",
+                    secondary: "#8a5dee",
+                    accent: "#6c49bb",
+                    neutral: "#1e1e1e",
+                    "base-100": "#1e1e1e",
+                    "base-200": "#262626",
+                    "base-300": "#323437",
+                    info: "#7f6df2",
+                    success: "#dcddde",
+                    warning: "#dcddde",
+                    error: "#363636",
+                },
+                grayscale_dark: {
+                    primary: "#374151",
+                    secondary: "#fdba74",
+                    accent: "#a78bfa",
+                    neutral: "#111827",
+                    "base-100": "#111827",
+                    "base-200": "#1f2937",
+                    "base-300": "#374151",
+                    info: "#74c2fd",
+                    success: "#8ff494",
+                    warning: "#eadd86",
+                    error: "#bd6969",
+                },
+                grayscale_light: {
+                    primary: "#374151",
+                    secondary: "#a78bfa",
+                    accent: "#fdba74",
+                    neutral: "#ffffff",
+                    "base-100": "#ffffff",
+                    "base-200": "#dfe1e5",
+                    "base-300": "#374151",
+                    info: "#74c2fd",
+                    success: "#8ff494",
+                    warning: "#eadd86",
+                    error: "#bd6969",
+                },
             },
             catppuccin('latte'),
             catppuccin('frappe'),
