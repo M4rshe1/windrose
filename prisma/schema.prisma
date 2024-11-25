@@ -45,7 +45,7 @@ model User {
   username      String?        @unique
   email         String         @unique
   emailVerified DateTime?
-  image         String?
+  image         File?          @relation(fields: [fileId], references: [id])
   role          UserRole       @default(USER)
   accounts      Account[]
   sessions      Session[]
@@ -53,6 +53,7 @@ model User {
   Notification  Notification[]
   Comments      Comments[]
   Social        Social[]
+  fileId        String?
 }
 
 model Social {
@@ -91,7 +92,6 @@ model Session {
 
 model File {
   id                 String        @id @default(cuid())
-  userId             String
   fileName           String
   fileKey            String
   bucket             String
@@ -103,6 +103,7 @@ model File {
   processingMetadata Json?
   tourSection        TourSection[]
   tour               Tour[]
+  User               User[]
 
   @@index([bucket, fileKey])
 }

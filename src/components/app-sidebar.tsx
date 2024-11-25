@@ -3,7 +3,7 @@
 import {IconBrandSafari} from "@tabler/icons-react"
 
 import * as React from "react"
-import {BookOpen, Frame, LifeBuoy, Map, PieChart, Send, Settings2, SquareTerminal} from "lucide-react"
+import {BookOpen, Frame, Info, LifeBuoy, Map, PieChart, Send, Settings2, SquareTerminal} from "lucide-react"
 import {IconBrandGithub} from "@tabler/icons-react"
 
 import {NavMain} from "@/components/nav-main"
@@ -111,6 +111,10 @@ export function AppSidebar({session, ...props}: React.ComponentProps<typeof Side
                         url: "/settings/account",
                     },
                     {
+                        title: "Profile",
+                        url: "/settings/profile",
+                    },
+                    {
                         title: "Security",
                         url: "/settings/security",
                     },
@@ -122,6 +126,11 @@ export function AppSidebar({session, ...props}: React.ComponentProps<typeof Side
             },
         ],
         navSecondary: [
+            {
+                title: "About",
+                url: "/about",
+                icon: Info,
+            },
             {
                 title: "Github",
                 url: "https://github.com/m4rshe1/windrose",

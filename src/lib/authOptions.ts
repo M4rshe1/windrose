@@ -1,9 +1,8 @@
-import { NextAuthOptions } from 'next-auth';
+import {NextAuthOptions} from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import {PrismaAdapter} from '@next-auth/prisma-adapter';
 import db from '@/lib/db';
-import {stringToDashCase} from "@/lib/utils";
 
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
@@ -36,17 +35,26 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async session({ session, user }) {
+        async session({session, user}) {
             session.user.id = user.id;
             try {
                 const dbUser = await db.user.findUnique({
-                    where: { id: user.id },
-                    select: { role: true, username: true },
+                    where: {id: user.id},
+                    select: {
+                        role: true, username: true,
+                        image: {
+                            select: {
+                                fileKey: true,
+                            }
+                        }
+                    },
                 });
 
+                const s3Endpoint = `${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET}/`;
                 if (dbUser) {
                     session.user.role = dbUser.role;
                     session.user.username = dbUser.username;
+                    session.user.image = dbUser.image ? `http://${s3Endpoint}${dbUser.image.fileKey}` : null;
                 }
             } catch (error) {
                 console.error('Error fetching user role:', error);
@@ -54,7 +62,7 @@ export const authOptions: NextAuthOptions = {
             }
             return session;
         },
-        async redirect({ url, baseUrl }) {
+        async redirect({url, baseUrl}) {
             try {
                 if (url.startsWith('/')) return `${baseUrl}${url}`;
                 if (new URL(url).origin === baseUrl) return url;
@@ -63,13 +71,13 @@ export const authOptions: NextAuthOptions = {
             }
             return baseUrl;
         },
-        async signIn({ user, account, profile }) {
+        async signIn({user, account, profile}) {
             if (!account || !user) {
                 return false;
             }
             try {
                 const existingUser = await db.user.findUnique({
-                    where: { email: user.email as string },
+                    where: {email: user.email as string},
                 });
 
                 if (existingUser) {
@@ -98,13 +106,12 @@ export const authOptions: NextAuthOptions = {
                         });
                     }
                 } else {
+
                     // If no existing user, create a new user
                     await db.user.create({
                         data: {
                             name: user.name,
-                            email: user.email,
-                            image: user.image,
-                            username: stringToDashCase(user.name as string),
+                            email: user.email as string,
                             accounts: {
                                 create: {
                                     provider: account.provider,

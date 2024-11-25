@@ -230,6 +230,11 @@ export const themes: Theme[] = [
         name: 'Grayscale Light',
         key: 'grayscale_light',
         dark: false
+    },
+    {
+        name: 'Deep Ocean',
+        key: 'deep_ocean',
+        dark: true
     }
 ]
 

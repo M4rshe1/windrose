@@ -10,6 +10,7 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import {IconBrandSafari} from "@tabler/icons-react";
 import Link from "next/link";
+import {cn} from "@/lib/utils";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -30,6 +31,7 @@ export default async function RootLayout({
             <body
                 className={`${inter.className}`}
             >
+            <div className={cn('fixed top-0 right-0')} id={'alerts'}></div>
             <SidebarProvider>
                 {authenticated ?
                     <AppSidebar session={session}/>
@@ -50,6 +52,7 @@ export default async function RootLayout({
                     </header>
                     {children}
                 </SidebarInset>
+
             </SidebarProvider>
 
             </body>

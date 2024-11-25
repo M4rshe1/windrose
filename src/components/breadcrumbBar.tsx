@@ -6,9 +6,8 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import react, {useEffect} from "react"
+import react, {useEffect, useState} from "react"
 import ReactDOM from "react-dom";
-import {createRoot} from "react-dom/client";
 
 
 interface BreadcrumbProps {
@@ -20,16 +19,20 @@ interface BreadcrumbProps {
 
 
 export const BreadcrumbPortal = ({items}: BreadcrumbProps) => {
-    useEffect(() => {
-        const breadcrumbContainer = document.getElementById("breadcrumb-bar");
-        if (breadcrumbContainer) {
-            const breadcrumb = ReactDOM.createPortal(<BreadcrumbBar items={items}/>, breadcrumbContainer);
-            const root = createRoot(breadcrumbContainer);
-            root.render(breadcrumb);
-        }
-    }, [items]);
+    const [mounted, setMounted] = useState(false)
 
-    return null;
+    useEffect(() => {
+        setMounted(true)
+
+        return () => setMounted(false)
+    }, [])
+
+    return mounted
+        ? ReactDOM.createPortal(
+            <BreadcrumbBar items={items}/>,
+            document.getElementById('breadcrumb-bar') as HTMLElement
+        )
+        : null
 };
 
 export const BreadcrumbBar = ({items}: BreadcrumbProps) => {

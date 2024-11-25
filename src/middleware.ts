@@ -1,8 +1,9 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {UserRole} from "@prisma/client";
 
 const ADMIN_ROUTES = ['/admin'];
-const PRIVATE_ROUTES = ['/settings', '/notifications', '/new'];
-const LOGIN_FORBIDDEN_ROUTES = ['/auth', '/api/auth'];
+const PRIVATE_ROUTES = ['/settings', '/notifications', '/new', '/api/private'];
+const LOGIN_FORBIDDEN_ROUTES = ['/auth'];
 const ROOT = '/';
 
 export async function middleware(request: NextRequest) {
@@ -15,7 +16,7 @@ export async function middleware(request: NextRequest) {
 
     const sessionData = await sessionResponse.json();
     const isAuthenticated = sessionData.authenticated;
-    const isAuthorized = sessionData.user?.role === 'ADMIN';
+    const isAuthorized = sessionData.user?.role === UserRole.ADMIN;
     const nextUrl = request.nextUrl.pathname;
 
     const isPrivateRoute = PRIVATE_ROUTES.some((route) => nextUrl.startsWith(route));
