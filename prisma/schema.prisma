@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  seed     = "ts-node prisma/seed.ts"
 }
 
 datasource db {
@@ -39,6 +40,12 @@ enum TourToUserRole {
   VIEWER
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
 model User {
   id            String         @id @default(cuid())
   name          String?
@@ -47,6 +54,12 @@ model User {
   emailVerified DateTime?
   image         File?          @relation(fields: [fileId], references: [id])
   role          UserRole       @default(USER)
+  bio           String?
+  tz            String?
+  showEmail     Boolean        @default(false)
+  country       Country?       @relation(fields: [countryId], references: [id])
+  location      String?
+  gender        String?        @default("UNKNOWN")
   accounts      Account[]
   sessions      Session[]
   TourToUser    TourToUser[]
@@ -54,14 +67,15 @@ model User {
   Comments      Comments[]
   Social        Social[]
   fileId        String?
+  countryId     String?
 }
 
 model Social {
-  id         String @id @default(cuid())
-  userId     String
-  provider   String
-  providerId String
-  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  url    String
+  name   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 }
 
 model Account {
@@ -202,16 +216,17 @@ model TourToTags {
 model Country {
   id        String   @id @default(cuid())
   name      String
-  code      String
+  code      String   @unique
   color     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  User      User[]
 }
 
 model Setting {
   id        String   @id @default(cuid())
   key       String
-  value     String
+  value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -1,27 +1,55 @@
+import {
+    IconBrandFacebook,
+    IconBrandGithub,
+    IconBrandInstagram,
+    IconBrandLinkedin,
+    IconBrandX,
+    IconBrandYoutube,
+    TablerIcon
+} from "@tabler/icons-react";
+import {Globe, LucideIcon} from "lucide-react";
 
-export const SOCIALS = [
+export interface Social {
+    name: string;
+    url: string;
+    icon: TablerIcon | LucideIcon;
+}
+
+
+export const SOCIALS: Social[] = [
     {
         name: 'X',
-        url: 'https://twitter.com/{{username}}',
-        icon: "IconBrandX",
-        type: "CLASS",
+        url: 'https://x.com/@username',
+        icon: IconBrandX,
     },
     {
         name: 'GitHub',
-        url: 'http://github.com/{{username}}',
-        icon: "IconBrandGithub",
-        type: "CLASS",
+        url: 'https://github.com/@username',
+        icon: IconBrandGithub,
     },
     {
         name: 'LinkedIn',
-        url: 'https://linkedin.com/in/{{username}}',
-        icon: "IconBrandLinkedin",
-        type: "CLASS",
+        url: 'https://linkedin.com/in/@username',
+        icon: IconBrandLinkedin,
     },
     {
         name: 'Instagram',
-        url: 'https://instagram.com/{{username}}',
-        icon: "IconBrandInstagram",
-        type: "CLASS",
-    }
+        url: 'https://instagram.com/@username',
+        icon: IconBrandInstagram,
+    },
+    {
+        name: 'Website',
+        url: 'https://windrose.heggli.dev',
+        icon: Globe
+    },
+    {
+        name: 'Facebook',
+        url: 'https://facebook.com/@username',
+        icon: IconBrandFacebook,
+    },
+    {
+        name: 'YouTube',
+        url: 'https://youtube.com/@username',
+        icon: IconBrandYoutube,
+    },
 ]

@@ -46,7 +46,8 @@ const config: Config = {
             "winter",
             "dim",
             "nord",
-            "sunset", {
+            "sunset",
+            {
                 rosepine: {
                     "primary": "#c4a7e7",
                     "secondary": "#ebbcba",
