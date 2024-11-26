@@ -16,6 +16,8 @@ import {revalidatePath} from "next/cache";
 import TimezoneSelect from "@/components/timezoneSelect";
 import SearchSelect from "@/components/SearchSelect";
 import ReactCountryFlag from "react-country-flag";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
 
 const ProfileSettings = async () => {
     const session: Session | null = await getServerSession(authOptions)
@@ -143,6 +145,14 @@ const ProfileSettings = async () => {
             }/>
             <div className="flex flex-1 flex-col gap-4 p-4">
                 <div className={cn(`mx-auto flex flex-col gap-2`)}>
+                    <div className={cn('flex items-center justify-end')}>
+                        <Link href={`/${session?.user?.username || session?.user?.id as string}`}>
+                            <Button variant={`outline`} size={`sm`}
+                                    className={cn(`bg-base-100 hover:bg-base-200 cursor-pointer`)}
+
+                            >Go to your personal profile</Button>
+                        </Link>
+                    </div>
                     <H1>Public Profile</H1>
                     <div className={cn(`grid lg:grid-cols-[1fr_auto] grid-cols-1 gap-8`)}>
                         <div className={cn('flex flex-col gap-3')}>
@@ -197,7 +207,8 @@ const ProfileSettings = async () => {
                             flag: <ReactCountryFlag countryCode={county.code} svg className={cn('mr-2')}/>,
                             color: county.color
                         }))
-                    } name={`country`} label={`Country`} defaultValue={counties.find(county => county.id === user?.countryId)?.name || ""}
+                    } name={`country`} label={`Country`}
+                                  defaultValue={counties.find(county => county.id === user?.countryId)?.name || ""}
                                   onChangeAction={updateCountry}
                     />
                 </div>
