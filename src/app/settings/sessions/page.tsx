@@ -2,22 +2,18 @@ import {BreadcrumbPortal} from "@/components/breadcrumbBar";
 import React from "react";
 import H1 from "@/components/ui/h1";
 import {cn} from "@/lib/utils";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
-import db from "@/lib/db";
 
 const NewTourPage = async () => {
-    const session = await getServerSession(authOptions);
-    // const [username, setUsername] = useState(session?.user?.name as string);
-    const [user] = await Promise.all([
-        db.user.findUnique({
-            where: {id: session?.user?.id},
-            include: {
-                sessions: true,
-            }
-        }),
-    ])
-
+    // const session = await getServerSession(authOptions);
+    // // const [username, setUsername] = useState(session?.user?.name as string);
+    // const [user] = await Promise.all([
+    //     db.user.findUnique({
+    //         where: {id: session?.user?.id},
+    //         include: {
+    //             sessions: true,
+    //         }
+    //     }),
+    // ])
 
 
     return (

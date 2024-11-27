@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import {useEffect, useState} from "react"
-import {Brush, Command, Plus, Settings, Terminal,} from "lucide-react"
+import {Brush, Command, Plus, Settings,} from "lucide-react"
 
 import {
     CommandDialog,
@@ -18,7 +18,7 @@ import {Session} from "next-auth";
 import {Button} from "@/components/ui/button";
 import {redirect} from "next/navigation";
 import {themes} from "@/lib/theme";
-import {cn, getMinioLinkFromKey} from "@/lib/utils";
+import {cn} from "@/lib/utils";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
 export function HeaderCommand({session}: { session: Session }) {
@@ -101,7 +101,11 @@ export function HeaderCommand({session}: { session: Session }) {
                     </CommandGroup>
                     <CommandSeparator/>
                     <CommandGroup heading="Tours">
-                        {data?.tours?.map((tour: any, index: number) => (
+                        {data?.tours?.map((tour: {
+                            owner: { name: string; image: string };
+                            displayName: string;
+                            name: string
+                        }, index: number) => (
                             <CommandItem
                                 onSelect={() => {
                                     setOpen(false)
@@ -114,7 +118,6 @@ export function HeaderCommand({session}: { session: Session }) {
                                     <AvatarImage src={tour.owner.image}
                                                  alt={tour.owner.name}/>
                                     <AvatarFallback className="rounded-lg">
-                                        {getMinioLinkFromKey(tour.owner.image.fileKey)}
                                     </AvatarFallback>
                                 </Avatar>
                                 <p>

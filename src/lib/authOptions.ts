@@ -71,7 +71,7 @@ export const authOptions: NextAuthOptions = {
             }
             return baseUrl;
         },
-        async signIn({user, account, profile}) {
+        async signIn({user, account}) {
             if (!account || !user) {
                 return false;
             }
