@@ -13,6 +13,7 @@ import {Separator} from "@/components/ui/separator"
 import {Sheet, SheetContent} from "@/components/ui/sheet"
 import {Skeleton} from "@/components/ui/skeleton"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip"
+import {Session} from "next-auth";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -158,7 +159,6 @@ const Sidebar = React.forwardRef<
     side?: "left" | "right"
     variant?: "sidebar" | "floating" | "inset"
     collapsible?: "offcanvas" | "icon" | "none",
-    session?: any
 }
 >(
     (
@@ -168,7 +168,6 @@ const Sidebar = React.forwardRef<
             collapsible = "offcanvas",
             className,
             children,
-            session,
             ...props
         },
         ref
@@ -179,7 +178,7 @@ const Sidebar = React.forwardRef<
             return (
                 <div
                     className={cn(
-                        "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
+                        "flex h-full w-[--sidebar-width] flex-col",
                         className
                     )}
                     ref={ref}
@@ -196,7 +195,7 @@ const Sidebar = React.forwardRef<
                     <SheetContent
                         data-sidebar="sidebar"
                         data-mobile="true"
-                        className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+                        className="w-[--sidebar-width] p-0  [&>button]:hidden"
                         style={
                             {
                                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,

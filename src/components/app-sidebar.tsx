@@ -3,7 +3,7 @@
 import {IconBrandSafari} from "@tabler/icons-react"
 
 import * as React from "react"
-import {BookOpen, Frame, Info, LifeBuoy, Map, PieChart, Send, Settings2, SquareTerminal} from "lucide-react"
+import {Frame, Info, LifeBuoy, Map, PieChart, Send, Settings2, SquareTerminal} from "lucide-react"
 import {IconBrandGithub} from "@tabler/icons-react"
 
 import {NavMain} from "@/components/nav-main"
@@ -20,15 +20,16 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link";
+import {Session} from "next-auth";
 
 
-export function AppSidebar({session, ...props}: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({session, ...props}: { session: Session, [key: string]: unknown }) {
     const username = session.user.username || session.user.id
     const data = {
         user: {
-            name: session.user.name,
-            email: session.user.email,
-            avatar: session.user.image,
+            name: session.user.name as string,
+            email: session.user.email as string,
+            avatar: session.user.image as string,
             username: username
         },
         navMain: [

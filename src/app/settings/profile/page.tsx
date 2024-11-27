@@ -36,7 +36,7 @@ const ProfileSettings = async () => {
         db.country.findMany()
     ])
 
-    async function updateUsername(name: string) {
+    async function updateName(name: string) {
         "use server"
 
         const result = await db.user.update({
@@ -149,7 +149,6 @@ const ProfileSettings = async () => {
                         <Link href={`/${session?.user?.username || session?.user?.id as string}`}>
                             <Button variant={`outline`} size={`sm`}
                                     className={cn(`bg-base-100 hover:bg-base-200 cursor-pointer`)}
-
                             >Go to your personal profile</Button>
                         </Link>
                     </div>
@@ -159,7 +158,7 @@ const ProfileSettings = async () => {
                             <SubtitleInput labelText={`Name`} type={`text`} name={`name`} id={`name`}
                                            defaultValue={session?.user?.name as string}
                                            subText={`This is the name that will be displayed on your profile. You can remove it at any time.`}
-                                           onBlurAction={updateUsername}
+                                           onBlurAction={updateName}
                             />
                             <LimitedTextarea maxLength={200} className={cn('min-h-24')} title={`Bio`}
                                              placeholder={`Tell us about yourself...`} name={`bio`} id={`bio`}

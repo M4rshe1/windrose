@@ -5,12 +5,12 @@ import {PrismaAdapter} from '@next-auth/prisma-adapter';
 import db from '@/lib/db';
 
 
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    throw new Error("Google client ID or secret is not set.");
-}
-
 if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
     throw new Error("Github client ID or secret is not set.");
+}
+
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    throw new Error("Google client ID or secret is not set.");
 }
 
 export const authOptions: NextAuthOptions = {

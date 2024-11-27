@@ -12,9 +12,9 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         error:
-          "bg-error text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-error text-error-content shadow hover:bg-error/90",
         outline:
-          "border input-bordered shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border input-bordered shadow-sm bg-base-100 hover:bg-base-200",
         secondary:
           "bg-secondary shadow-sm hover:bg-secondary/80 btn-secondary",
         ghost: "hover:bg-base-100",

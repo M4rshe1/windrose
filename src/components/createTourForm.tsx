@@ -10,7 +10,6 @@ import {Button} from "@/components/ui/button";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {createTourAction} from "@/actions/createTourAction";
 import {checkTourNameAction} from "@/actions/checkTourNameAction";
-import ReactCountryFlag from "react-country-flag";
 
 const CreateTourForm = ({options}: { options: { label: string, value: string, image?: string }[] }) => {
     const [owner, setOwner] = useState(options[0].value);
@@ -118,10 +117,9 @@ const CreateTourForm = ({options}: { options: { label: string, value: string, im
                 <p className={cn('text-sm opacity-70')}>
                     You are creating a tour as <span className={cn('font-semibold')}>{
                     options.find((option) => option.value === owner)?.label
-                    }</span> that is <span className={cn('font-semibold')}>{visibility}</span>.
+                }</span> that is <span className={cn('font-semibold')}>{visibility}</span>.
                 </p>
             </div>
-
 
 
             <div className={cn('flex items-center justify-end')}>
