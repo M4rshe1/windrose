@@ -1,6 +1,6 @@
 "use client"
 
-import {BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Settings, Sparkles,} from "lucide-react"
+import {Bell, ChevronsUpDown, CreditCard, LogOut, Settings, Sparkles,} from "lucide-react"
 
 import {Avatar, AvatarFallback, AvatarImage,} from "@/components/ui/avatar"
 import {
@@ -17,6 +17,7 @@ import Link from "next/link";
 import {signOut} from "next-auth/react";
 import {redirect} from "next/navigation";
 import FancyBorder from "@/components/ui/fancyBorder";
+import {cn} from "@/lib/utils";
 
 export function NavUser({
                             user,
@@ -37,7 +38,7 @@ export function NavUser({
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="data-[state=open]:bg-base-300 hover:bg-base-100 transition-all duration-200 ease-in-out"
+                            className="data-[state=open]:bg-base-300 hover:bg-base-100 transition-all duration-200 ease-in-out group/username"
                         >
                             <Avatar className="h-8 w-8">
                                 <AvatarImage src={user.avatar} alt={user.name}/>
@@ -46,7 +47,12 @@ export function NavUser({
                                 </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-semibold">{user.name}</span>
+                                <div className={cn('relative h-5')}>
+                                    <span
+                                        className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out', 'group-hover/username:translate-x-[-100%] group-hover/username:opacity-0')}>{user.name}</span>
+                                    <span
+                                        className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out opacity-0', 'translate-x-[100%] group-hover/username:translate-x-0 group-hover/username:opacity-100')}>{user.username}</span>
+                                </div>
                                 <span className="truncate text-xs">{user.email}</span>
                             </div>
                             <ChevronsUpDown className="ml-auto size-4"/>
@@ -60,8 +66,8 @@ export function NavUser({
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <Link href={`/${user.username}`}
-                                  className="flex items-center rounded-md gap-2 px-1 py-1.5 text-left text-sm border-lg hover:bg-base-100 transition-all duration-200 ease-in-out">
-                                <Avatar className="h-8 w-8 rounded-lg">
+                                  className="flex items-center rounded-md gap-2 px-1 py-1.5 text-left text-sm border-lg hover:bg-base-100 transition-all duration-200 ease-in-out group/username">
+                                <Avatar className="h-8 w-8 rounded-full">
                                     <AvatarImage src={user.avatar} alt={user.name}/>
                                     <AvatarFallback className="rounded-lg">
                                         {
@@ -70,7 +76,12 @@ export function NavUser({
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-semibold">{user.name}</span>
+                                    <div className={cn('relative h-5')}>
+                                    <span
+                                        className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out', 'group-hover/username:translate-x-[-100%] group-hover/username:opacity-0')}>{user.name}</span>
+                                        <span
+                                            className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out opacity-0', 'translate-x-[100%] group-hover/username:translate-x-0 group-hover/username:opacity-100')}>{user.username}</span>
+                                    </div>
                                     <span className="truncate text-xs">{user.email}</span>
                                 </div>
                             </Link>

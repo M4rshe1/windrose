@@ -197,11 +197,6 @@ export const themes: Theme[] = [
         dark: true
     },
     {
-        name: 'Dracula',
-        key: 'dracula',
-        dark: true
-    },
-    {
         name: 'Peach Blossom',
         key: 'peachblossom',
         dark: false

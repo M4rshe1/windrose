@@ -71,29 +71,6 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
                     },
                 ],
             },
-            // {
-            //     title: "Documentation",
-            //     url: "#",
-            //     icon: BookOpen,
-            //     items: [
-            //         {
-            //             title: "Introduction",
-            //             url: "#",
-            //         },
-            //         {
-            //             title: "Get Started",
-            //             url: "#",
-            //         },
-            //         {
-            //             title: "Tutorials",
-            //             url: "#",
-            //         },
-            //         {
-            //             title: "Changelog",
-            //             url: "#",
-            //         },
-            //     ],
-            // },
             {
                 title: "Settings",
                 url: "/settings",
@@ -116,12 +93,12 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
                         url: "/settings/profile",
                     },
                     {
-                        title: "Security",
-                        url: "/settings/security",
-                    },
-                    {
                         title: "Sessions",
                         url: "/settings/sessions",
+                    },
+                    {
+                        title: "Notifications",
+                        url: "/settings/notifications",
                     },
                 ],
             },

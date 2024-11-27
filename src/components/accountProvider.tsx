@@ -7,7 +7,9 @@ import {Trash} from "lucide-react";
 import {confirmModal} from "@/components/confirmModal";
 import {removeAccountProvider} from "@/actions/removeAccountProvider";
 
-const AccountProvider = ({item}: { item: { provider: string, type: string, scope: string, expires_at: string, session_state: string } }) => {
+const AccountProvider = ({item}: {
+    item: { provider: string, type: string, scope: string, expires_at: string, session_state: string }
+}) => {
 
     async function handleRemove() {
         if (await confirmModal({
@@ -43,9 +45,9 @@ const AccountProvider = ({item}: { item: { provider: string, type: string, scope
             <div className={cn('grid grid-cols-2 gap-2')}>
                 <div>
                     <p className={cn("text-xs font-semibold")}>Expires at</p>
-                    <p>{
-                        new Date(item.expires_at).toLocaleString()
-                    }</p>
+                    <p>
+                        {new Date(parseInt(item.expires_at) * 1000).toLocaleDateString()}
+                    </p>
                 </div>
                 <div>
                     <p className={cn("text-xs font-semibold")}>Scope</p>
