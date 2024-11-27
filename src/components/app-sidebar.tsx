@@ -57,7 +57,7 @@ export function AppSidebar({session, ...props}: React.ComponentProps<typeof Side
                 icon: Map,
                 items: [
                     {
-                        title: "New Tour",
+                        title: "New",
                         url: "/new",
                     },
                     {

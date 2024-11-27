@@ -1,4 +1,5 @@
 "use client";
+
 import {useEffect, useState} from "react";
 import {Social} from "@prisma/client";
 import IconInput from "@/components/iconInput";

@@ -3,7 +3,7 @@ import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import {useMemo} from "react";
 
-export default function TimezoneSelect({updateTimezoneAction, defaultValue}: { updateTimezoneAction: (timezone: string) => void,defaultValue: string }) {
+export default function TimezoneSelect({updateTimezoneAction, defaultValue, ...props}: { updateTimezoneAction: (timezone: string) => void,defaultValue: string, [key: string]: unknown }) {
     const timezones = Intl.supportedValuesOf("timeZone");
 
     const formattedTimezones = useMemo(() => {
@@ -31,8 +31,9 @@ export default function TimezoneSelect({updateTimezoneAction, defaultValue}: { u
             <Label htmlFor="select-30">Timezone</Label>
             <Select defaultValue={defaultValue} name="timezone"
                 onValueChange={updateTimezoneAction}
+
             >
-                <SelectTrigger id="select-30">
+                <SelectTrigger id="select-30" {...props}>
                     <SelectValue placeholder="Select timezone"/>
                 </SelectTrigger>
                 <SelectContent>

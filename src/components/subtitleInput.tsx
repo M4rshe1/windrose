@@ -2,9 +2,10 @@
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 
-export default function SubtitleInput({labelText, subText, onBlurAction, ...props}: {
-    labelText: string,
-    subText: string,
+export default function SubtitleInput({labelText, subText, onBlurAction, className, ...props}: {
+    labelText?: string,
+    subText?: string,
+    className?: string,
     onBlurAction: (value: string) => void,
     [key: string]: unknown
 }) {
@@ -15,10 +16,14 @@ export default function SubtitleInput({labelText, subText, onBlurAction, ...prop
                 (event) => {
                     onBlurAction(event.target.value);
                 }
-            } {...props}/>
-            <p className="mt-2 text-xs text-muted-foreground" role="region" aria-live="polite">
-                {subText}
-            </p>
+            }
+                   className={className}
+                   {...props}/>
+            {
+                subText && <p className="mt-2 text-xs text-muted-foreground" role="region" aria-live="polite">
+                    {subText}
+                </p>
+            }
         </div>
     );
 }

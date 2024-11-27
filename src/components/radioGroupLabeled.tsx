@@ -5,13 +5,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import React from "react";
 
 interface RadioLabeledProps {
-    lable: string;
-    sublabel: string;
-    description: string;
+    label: string;
+    sublabel?: string;
+    description?: string;
     value: string;
 }
 
-export default function RadioGroupLabeled({items, defaultValue, onClickAction}: { items: RadioLabeledProps[], defaultValue: string, onClickAction: (value: string) => void }) {
+export default function RadioGroupLabeled({items, defaultValue, onClickAction, ...props}: { items: RadioLabeledProps[], defaultValue: string, onClickAction: (value: string) => void, [key: string]: unknown }) {
     return (
         <RadioGroup className="gap-6" defaultValue={defaultValue}>
             {
@@ -23,10 +23,11 @@ export default function RadioGroupLabeled({items, defaultValue, onClickAction}: 
                                 id={'radio-' + item.value}
                                 aria-describedby={item.description}
                                 onClick={() => onClickAction(item.value)}
+                                {...props}
                             />
                             <div className="grid grow gap-2">
                                 <Label htmlFor={'radio-' + item.value}>
-                                    {item.lable}{" "}
+                                    {item.label}{" "}
                                     <span className="text-xs font-normal leading-[inherit] text-muted-foreground">
                                         {item.sublabel}
                                     </span>

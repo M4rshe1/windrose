@@ -143,8 +143,8 @@ const ProfileSettings = async () => {
                     }
                 ]
             }/>
-            <div className="flex flex-1 flex-col gap-4 p-4">
-                <div className={cn(`mx-auto flex flex-col gap-2`)}>
+            <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
+                <div className={cn(`flex flex-col gap-2 w-full`)}>
                     <div className={cn('flex items-center justify-end')}>
                         <Link href={`/${session?.user?.username || session?.user?.id as string}`}>
                             <Button variant={`outline`} size={`sm`}
@@ -169,13 +169,13 @@ const ProfileSettings = async () => {
                                 <Label htmlFor={`visibility`} className={cn('block')}>Email Visibility</Label>
                                 <RadioGroupLabeled items={[
                                     {
-                                        lable: 'Visible',
+                                        label: 'Visible',
                                         sublabel: 'Everyone',
                                         description: 'Your email is visible on your profile to everyone.',
                                         value: 'visible'
                                     },
                                     {
-                                        lable: 'Hidden',
+                                        label: 'Hidden',
                                         sublabel: 'Only you',
                                         description: 'Your email will be hidden from everyone.',
                                         value: 'hidden'
@@ -198,21 +198,27 @@ const ProfileSettings = async () => {
                                    defaultValue={user?.location || ""}
                                    subText={`This can be a city, state, country, or any other location you want to share.`}
                                    onBlurAction={updateLocation}
+                                   className={cn(`lg:max-w-[16rem] w-full`)}
                     />
-                    <TimezoneSelect updateTimezoneAction={updateTimezone} defaultValue={user?.tz || ""}/>
-                    <SearchSelect options={
-                        counties.map(county => ({
-                            label: county.name,
-                            value: county.id,
-                            flag: <ReactCountryFlag countryCode={county.code} svg className={cn('mr-2')}/>,
-                            color: county.color
-                        }))
-                    } name={`country`} label={`Country`}
-                                  defaultValue={counties.find(county => county.id === user?.countryId)?.name || ""}
-                                  onChangeAction={updateCountry}
-                    />
+                    <TimezoneSelect updateTimezoneAction={updateTimezone} defaultValue={user?.tz || ""}
+                                    className={cn(`lg:max-w-[16rem] w-full`)}/>
+                    <div className={'flex w-full gap-2'}>
+                        <SearchSelect name={`country`} label={`Country`} onChangeAction={updateCountry}
+                                      defaultValue={counties.find(county => county.id === user?.countryId)?.name || ""}
+                                      className={cn(`lg:max-w-[16rem] w-full`)}
+                                      options={
+                                          counties.map(county => ({
+                                              label: county.name,
+                                              value: county.id,
+                                              flag: <ReactCountryFlag countryCode={county.code} svg
+                                                                      className={cn('mr-2')}/>,
+                                              color: county.color
+                                          }))
+                                      }
+                        />
+                    </div>
                 </div>
-                <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min"/>
+                <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min"/>
             </div>
         </>
     );

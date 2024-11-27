@@ -1,0 +1,10 @@
+-- DropForeignKey
+ALTER TABLE "Tour" DROP CONSTRAINT "Tour_fileId_fkey";
+
+-- AlterTable
+ALTER TABLE "Tour" ALTER COLUMN "location" DROP NOT NULL,
+ALTER COLUMN "fileId" DROP NOT NULL,
+ALTER COLUMN "description" DROP NOT NULL;
+
+-- AddForeignKey
+ALTER TABLE "Tour" ADD CONSTRAINT "Tour_fileId_fkey" FOREIGN KEY ("fileId") REFERENCES "File"("id") ON DELETE SET NULL ON UPDATE CASCADE;

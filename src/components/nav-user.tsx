@@ -60,7 +60,7 @@ export function NavUser({
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <Link href={`/${user.username}`}
-                                  className="flex items-center gap-2 px-1 py-1.5 text-left text-sm border-lg hover:bg-base-100 transition-all duration-200 ease-in-out">
+                                  className="flex items-center rounded-md gap-2 px-1 py-1.5 text-left text-sm border-lg hover:bg-base-100 transition-all duration-200 ease-in-out">
                                 <Avatar className="h-8 w-8 rounded-lg">
                                     <AvatarImage src={user.avatar} alt={user.name}/>
                                     <AvatarFallback className="rounded-lg">
