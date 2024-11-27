@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link";
 import {Session} from "next-auth";
+import {UserRole} from "@prisma/client";
 
 
 export function AppSidebar({session, ...props}: { session: Session, [key: string]: unknown }) {
@@ -30,7 +31,9 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
             name: session.user.name as string,
             email: session.user.email as string,
             avatar: session.user.image as string,
-            username: username
+            username: username,
+            isAdmin: session.user.role === UserRole.ADMIN,
+            isPremium: session.user.role === UserRole.PREMIUM,
         },
         navMain: [
             {
@@ -99,7 +102,7 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
                     {
                         title: "Notifications",
                         url: "/settings/notifications",
-                    },
+                    }
                 ],
             },
         ],

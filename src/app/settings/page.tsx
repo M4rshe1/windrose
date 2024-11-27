@@ -54,7 +54,8 @@ const SettingsPage = async () => {
                     <div className={'grid lg:grid-cols-2 grid-cols-1 gap-4'}>
                         {
                             settings.map((setting) => (
-                                <Link href={setting.url} key={setting.title} className={cn('border-2 border-neutral rounded-lg hover:shadow-md hover:border-primary transition duration-200 ease-in-out')}>
+                                <Link href={setting.url} key={setting.title}
+                                      className={cn('border-2 border-neutral rounded-lg hover:shadow-md hover:border-primary transition duration-200 ease-in-out')}>
                                     <div className={cn('flex flex-col gap-2 p-4')}>
                                         <setting.icon/>
                                         <p className={cn('text-lg font-semibold')}>{setting.title}</p>

@@ -27,6 +27,8 @@ export function NavUser({
         email: string
         avatar: string
         username: string
+        isPremium: boolean
+        isAdmin: boolean
     }
 }) {
     const {isMobile} = useSidebar()
@@ -48,10 +50,10 @@ export function NavUser({
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <div className={cn('relative h-5')}>
+                                     <span
+                                         className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out', 'group-hover/username:translate-y-[-100%] group-hover/username:opacity-0')}>{user.name}</span>
                                     <span
-                                        className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out', 'group-hover/username:translate-x-[-100%] group-hover/username:opacity-0')}>{user.name}</span>
-                                    <span
-                                        className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out opacity-0', 'translate-x-[100%] group-hover/username:translate-x-0 group-hover/username:opacity-100')}>{user.username}</span>
+                                        className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out opacity-0', 'translate-y-[100%] group-hover/username:translate-y-0 group-hover/username:opacity-100')}>{user.username}</span>
                                 </div>
                                 <span className="truncate text-xs">{user.email}</span>
                             </div>
@@ -78,9 +80,9 @@ export function NavUser({
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <div className={cn('relative h-5')}>
                                     <span
-                                        className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out', 'group-hover/username:translate-x-[-100%] group-hover/username:opacity-0')}>{user.name}</span>
+                                        className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out', 'group-hover/username:translate-y-[-100%] group-hover/username:opacity-0')}>{user.name}</span>
                                         <span
-                                            className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out opacity-0', 'translate-x-[100%] group-hover/username:translate-x-0 group-hover/username:opacity-100')}>{user.username}</span>
+                                            className={cn('truncate font-semibold absolute transition-all duration-300 ease-in-out opacity-0', 'translate-y-[100%] group-hover/username:translate-y-0 group-hover/username:opacity-100')}>{user.username}</span>
                                     </div>
                                     <span className="truncate text-xs">{user.email}</span>
                                 </div>
@@ -88,11 +90,14 @@ export function NavUser({
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
-                            <Link href={"/pro"}>
+                            <Link
+                                href={user.isAdmin ? '/admin' : user.isPremium ? '/settings/subscription' : '/settings/upgrade'}>
                                 <FancyBorder className={'rounded'}>
                                     <DropdownMenuItem className="bg-base-200">
                                         <Sparkles/>
-                                        Upgrade to Pro
+                                        {
+                                            user.isAdmin ? 'Admin Mode: Infinite' : user.isPremium ? 'Manage Subscription' : 'Upgrade to Pro'
+                                        }
                                     </DropdownMenuItem>
                                 </FancyBorder>
                             </Link>

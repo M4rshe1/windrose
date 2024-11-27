@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import react, {useEffect, useState} from "react"
 import ReactDOM from "react-dom";
+import {cn} from "@/lib/utils";
 
 
 interface BreadcrumbProps {
@@ -38,7 +39,7 @@ export const BreadcrumbPortal = ({items}: BreadcrumbProps) => {
 export const BreadcrumbBar = ({items}: BreadcrumbProps) => {
     return (
         <Breadcrumb>
-            <BreadcrumbList>
+            <BreadcrumbList className={cn('sm:flex items-center flex-nowrap hidden')}>
                 {
                     items.map((item, index) => (
                         <react.Fragment key={index}>
