@@ -3,10 +3,11 @@ import {getServerSession, Session} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
 import {checkTourNameAction} from "@/actions/checkTourNameAction";
-import {TourToUserRole} from "@prisma/client";
+import {TourStatus, TourToUserRole, TourVisibility} from "@prisma/client";
 import {redirect} from "next/navigation";
 
-export async function createTourAction(ownerId: string, name: string, description: string, displayName: string, visibility: string): Promise<boolean> {
+export async function createTourAction(ownerId: string, name: string, description: string, displayName: string, visibility: TourVisibility
+, status: TourStatus): Promise<boolean> {
 
     const session: Session | null = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -34,7 +35,8 @@ export async function createTourAction(ownerId: string, name: string, descriptio
             name: name,
             description: description,
             displayName: displayName,
-            private: visibility === 'private',
+            visibility: visibility,
+            status: status,
             TourToUser: {
                 create: {
                     role: TourToUserRole.OWNER,

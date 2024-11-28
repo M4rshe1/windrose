@@ -46,28 +46,35 @@ enum Gender {
   UNKNOWN
 }
 
+enum TourVisibility {
+  PUBLIC
+  FOLLOWERS
+  PRIVATE
+}
+
 model User {
-  id            String         @id @default(cuid())
+  id            String                @id @default(cuid())
   name          String?
-  username      String?        @unique
-  email         String         @unique
+  username      String?               @unique
+  email         String                @unique
   emailVerified DateTime?
-  image         File?          @relation(fields: [fileId], references: [id])
-  role          UserRole       @default(USER)
+  image         File?                 @relation(fields: [fileId], references: [id])
+  role          UserRole              @default(USER)
   bio           String?
   tz            String?
-  showEmail     Boolean        @default(false)
-  country       Country?       @relation(fields: [countryId], references: [id])
+  showEmail     Boolean               @default(false)
+  country       Country?              @relation(fields: [countryId], references: [id])
   location      String?
-  gender        Gender?        @default(UNKNOWN)
+  gender        Gender?               @default(UNKNOWN)
   accounts      Account[]
   sessions      Session[]
   TourToUser    TourToUser[]
   Notification  Notification[]
-  Comments      Comments[]
+  Comments      Comment[]
   Social        Social[]
   fileId        String?
   countryId     String?
+  likes         UserLikeTourSection[]
 }
 
 model Social {
@@ -127,7 +134,7 @@ model Tour {
   name         String
   displayName  String
   description  String?
-  private      Boolean
+  visibility   TourVisibility @default(PUBLIC)
   location     String?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
@@ -136,33 +143,36 @@ model Tour {
   fileId       String?
   status       TourStatus     @default(DRAFT)
   TourToUser   TourToUser[]
-  TourToTags   TourToTags[]
+  Tags         Tag[]
   Notification Notification[]
-  Comments     Comments[]
+}
+
+model UserLikeTourSection {
+  id            String       @id @default(cuid())
+  userId        String
+  tourSectionId String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  user          User         @relation(fields: [userId], references: [id])
+  TourSection   TourSection? @relation(fields: [tourSectionId], references: [id])
 }
 
 model TourSection {
-  id          String   @id @default(cuid())
-  tourId      String
-  name        String
-  description String
-  image       File?    @relation(fields: [fileId], references: [id])
-  loaction    String?
-  lat         Float?
-  lng         Float?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  tour        Tour     @relation(fields: [tourId], references: [id])
-  fileId      String
-  datetime    DateTime
-}
-
-model Tags {
-  id         String       @id @default(cuid())
-  name       String       @unique
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  TourToTags TourToTags[]
+  id                  String                @id @default(cuid())
+  tourId              String
+  name                String
+  description         String
+  image               File?                 @relation(fields: [fileId], references: [id])
+  loaction            String?
+  lat                 Float?
+  lng                 Float?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  tour                Tour                  @relation(fields: [tourId], references: [id])
+  fileId              String
+  datetime            DateTime
+  Comments            Comment[]
+  UserLikeTourSection UserLikeTourSection[]
 }
 
 model TourToUser {
@@ -195,24 +205,22 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-model Comments {
-  id        String   @id @default(cuid())
-  userId    String
-  tourId    String
-  message   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  tour      Tour     @relation(fields: [tourId], references: [id])
+model Comment {
+  id            String       @id @default(cuid())
+  userId        String
+  tourId        String
+  message       String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  user          User         @relation(fields: [userId], references: [id])
+  TourSection   TourSection? @relation(fields: [tourSectionId], references: [id])
+  tourSectionId String?
 }
 
-model TourToTags {
-  tourId String
-  tagId  String
+model Tag {
+  tourId String @id @default(cuid())
   tour   Tour   @relation(fields: [tourId], references: [id])
-  tag    Tags   @relation(fields: [tagId], references: [id])
-
-  @@id([tourId, tagId])
+  tag    String
 }
 
 model Country {

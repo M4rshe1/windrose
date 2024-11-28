@@ -10,16 +10,19 @@ import {Button} from "@/components/ui/button";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {createTourAction} from "@/actions/createTourAction";
 import {checkTourNameAction} from "@/actions/checkTourNameAction";
+import {TourStatus, TourVisibility} from "@prisma/client";
+import RadioGroupBordered from "@/components/radioGroupBordered";
 
 const CreateTourForm = ({options}: { options: { label: string, value: string, image?: string }[] }) => {
     const [owner, setOwner] = useState(options[0].value);
     const [displayName, setDisplayName] = useState<null | string>(null);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [visibility, setVisibility] = useState('public');
+    const [visibility, setVisibility] = useState<TourVisibility | string>(TourVisibility.PUBLIC);
     const [tourNameInvalid, setTourNameInvalid] = useState(false);
     const [displayNameInvalid, setDisplayNameInvalid] = useState(false);
     const [namePlaceholder, setNamePlaceholder] = useState('');
+    const [status, setStatus] = useState<string | TourStatus>(TourStatus.ON_TOUR);
 
 
     useEffect(() => {
@@ -47,11 +50,19 @@ const CreateTourForm = ({options}: { options: { label: string, value: string, im
 
     const submitHandler = async () => {
         if (tourNameInvalid || displayNameInvalid || !displayName) {
+            if (!displayName) {
+                setDisplayNameInvalid(true);
+            }
+            if (name.length === 0) {
+                setTourNameInvalid(true);
+            }
+            if (displayNameInvalid || tourNameInvalid) {
+                return;
+            }
             return;
         }
         const tourName = name || stringToDashCase(displayName);
-        const result = await createTourAction(owner, tourName, description, displayName, visibility);
-        console.log(result);
+        await createTourAction(owner, tourName, description, displayName, visibility as TourVisibility, status as TourStatus);
     }
 
     return <Form serverAction={submitHandler}>
@@ -103,21 +114,58 @@ const CreateTourForm = ({options}: { options: { label: string, value: string, im
                         {
                             label: 'Public',
                             description: 'Anyone can view this tour.',
-                            value: 'public'
+                            value: TourVisibility.PUBLIC
+                        },
+                        {
+                            label: 'Follower',
+                            description: 'Only your followers can view this tour.',
+                            value: TourVisibility.FOLLOWERS
                         },
                         {
                             label: 'Private',
                             description: 'Only you and people you invite can view this tour.',
-                            value: 'private'
+                            value: TourVisibility.PRIVATE
                         }
                     ]
-                } name={`visibility`} label={`Visibility`} defaultValue={`public`} onClickAction={setVisibility}/>
+                } name={`visibility`} label={`Visibility`} defaultValue={TourVisibility.FOLLOWERS} onClickAction={setVisibility}/>
+            </div>
+            <div className={cn('flex flex-col gap-4 mt-2')}>
+                <Label className={cn('block')}>Status</Label>
+                <RadioGroupBordered items={
+                    [
+                        {
+                            label: `Planning`,
+                            value: TourStatus.DRAFT,
+                            description: `I have this idea in my head.`
+                        },
+                        {
+                            label: `On Tour`,
+                            value: TourStatus.ON_TOUR,
+                            description: `I don't want to forget this.`
+                        },
+                        {
+                            label: `Finished`,
+                            value: TourStatus.FINISHED,
+                            description: `I'm done with this.`
+                        }
+                    ]
+                } name={`status`} label={`Status`} defaultValue={TourStatus.ON_TOUR} onClickAction={setStatus}
+                                    classNameWrapper={cn(`grid lg:grid-cols-2 grid-cols-1`)}
+                />
             </div>
             <div className={cn('p-4 border-y-2 border-neutral')}>
                 <p className={cn('text-sm opacity-70')}>
-                    You are creating a tour as <span className={cn('font-semibold')}>{
+                    You are creating a new tour as <span className={cn('font-semibold')}>{
                     options.find((option) => option.value === owner)?.label
-                }</span> that is <span className={cn('font-semibold')}>{visibility}</span>.
+                }</span> that is <span className={cn('font-semibold')}>
+                    {
+                        visibility == TourVisibility.PUBLIC ? 'public' : visibility == TourVisibility.FOLLOWERS ? 'followers only' : 'private'
+                    }
+                </span> and <span className={cn('font-semibold')}>
+                    {
+                        status == TourStatus.DRAFT ? 'is planed' : status == TourStatus.ON_TOUR ? 'on going' : 'finished'
+                    }
+                </span>.
                 </p>
             </div>
 
