@@ -20,7 +20,6 @@ import {themes} from "@/lib/theme";
 import {cn} from "@/lib/utils";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {getUserToursAction, Tour} from "@/actions/getUserToursAction";
-import {IconMoonFilled, IconSunFilled} from "@tabler/icons-react";
 
 export function HeaderCommand() {
     const [open, setOpen] = useState(false)
