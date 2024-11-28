@@ -1,10 +1,10 @@
 "use client"
 
-import {IconBrandSafari} from "@tabler/icons-react"
+import {IconBrandGithub, IconBrandSafari} from "@tabler/icons-react"
 
 import * as React from "react"
-import {Frame, Info, LifeBuoy, Map, PieChart, Send, Settings2, SquareTerminal} from "lucide-react"
-import {IconBrandGithub} from "@tabler/icons-react"
+import {useEffect, useState} from "react"
+import {Info, LifeBuoy, Map, Send, Settings2, SquareTerminal} from "lucide-react"
 
 import {NavMain} from "@/components/nav-main"
 import {NavProjects} from "@/components/nav-projects"
@@ -22,7 +22,6 @@ import {
 import Link from "next/link";
 import {Session} from "next-auth";
 import {UserRole} from "@prisma/client";
-import {useEffect, useState} from "react";
 import {getUserToursAction, Tour} from "@/actions/getUserToursAction";
 
 
@@ -30,10 +29,10 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
     const username = session.user.username || session.user.id
     const [tours, setTours] = useState<Tour[]>([])
     useEffect(() => {
-        if (!tours?.length) {+
-            getUserToursAction(5).then((tours) => {
-                setTours(tours)
-            })
+        if (!tours?.length) {
+                getUserToursAction(5).then((tours) => {
+                    setTours(tours)
+                })
         }
     }, [tours]);
     const data = {

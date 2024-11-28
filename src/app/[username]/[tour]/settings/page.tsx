@@ -4,8 +4,9 @@ import React from "react";
 import H1 from "@/components/ui/h1";
 import H2 from "@/components/ui/h2";
 import db from "@/lib/db";
+import {TourSettingsSecondaryNav} from "@/components/secondaryNavs";
 
-const TourSettings = async (props: {params: Promise<{username: string, tour: string}>}) => {
+const TourSettings = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const params = await props.params;
     const tour = await db.tour.findFirst({
         where: {
@@ -17,7 +18,14 @@ const TourSettings = async (props: {params: Promise<{username: string, tour: str
                     },
                     role: 'OWNER'
                 }
-            }
+            },
+        },
+    });
+
+    const sectionCount = await db.tourSection.aggregate({
+        _count: true,
+        where: {
+            tourId: tour?.id
         }
     });
 
@@ -43,6 +51,7 @@ const TourSettings = async (props: {params: Promise<{username: string, tour: str
                     }
                 ]
             }/>
+            <TourSettingsSecondaryNav activeTab={"Settings"} params={params} sectionCount={sectionCount._count}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
                     <H1>Settings</H1>

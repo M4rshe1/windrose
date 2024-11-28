@@ -1,22 +1,13 @@
-"use client"
+import React from 'react';
+import {cookies} from "next/headers";
 
-import React, { useEffect, useState } from 'react';
 
-
-const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-    const [theme, setTheme] = useState<string>("dark");
-
-    useEffect(() => {
-        const savedTheme = typeof window !== 'undefined'
-            ? localStorage.getItem("theme")
-            : "dark"
-        if (savedTheme) {
-            setTheme(savedTheme);
-        }
-    }, []);
+const ThemeProvider = async ({children}: { children: React.ReactNode }) => {
+    const cookieStore = await cookies()
+    const theme = cookieStore.get('theme')
 
     return (
-        <html lang="en" data-theme={theme}>
+        <html lang="en" data-theme={theme?.value || 'dark'}>
         {children}
         </html>
     );

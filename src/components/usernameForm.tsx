@@ -35,7 +35,7 @@ const UsernameForm = ({user}: { user: User }) => {
 
             <div className={'flex items-start gap-2'}>
                 <SubtitleInput labelText={`Username`} type={`text`} name={`username`} id={`username`}
-                               value={username}
+                               value={username || ''}
                                subText={`This is the name that is in the url of your profile. Max 32 characters`}
                                onBlurAction={async () => setUsernameInvalid(!await checkUsernameAction(username) || username.length === 0)}
                                onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(stringToDashCase(e.target.value))}

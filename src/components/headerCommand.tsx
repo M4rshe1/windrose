@@ -46,8 +46,8 @@ export function HeaderCommand() {
     }, [open, data]);
 
     function changeTheme(key: string) {
-        localStorage.setItem('theme', key)
-        document.location.reload()
+        document.cookie = `theme=${key}; path=/;`;
+        document.location.reload();
     }
 
     const actions = [

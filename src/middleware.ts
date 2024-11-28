@@ -3,6 +3,9 @@ import {UserRole} from "@prisma/client";
 
 const ADMIN_ROUTES = ['/admin'];
 const PRIVATE_ROUTES = ['/settings', '/notifications', '/new', '/api/private'];
+// const PUBLIC_ROUTES = ['/explore', '/auth', '/api', "/tags", "/pro"];
+// const AUTHORIZATION_TOUR_ROUTES = ['/[username]/[tour]/settings', "/[username]/[tour]/steps"];
+// const AUTHORIZATION_USER_ROUTES = ['/[username]'];
 const LOGIN_FORBIDDEN_ROUTES = ['/auth'];
 const ROOT = '/';
 
@@ -22,6 +25,8 @@ export async function middleware(request: NextRequest) {
     const isPrivateRoute = PRIVATE_ROUTES.some((route) => nextUrl.startsWith(route));
     const isAdminRoute = ADMIN_ROUTES.some((route) => nextUrl.startsWith(route));
     const isLoginForbiddenRoute = LOGIN_FORBIDDEN_ROUTES.some((route) => nextUrl.startsWith(route));
+    // const isPublicRoute = PUBLIC_ROUTES.some((route) => nextUrl.startsWith(route));
+    // const slashCount = nextUrl.split('/').length - 1;
 
     if (!isAuthenticated && (isPrivateRoute || nextUrl === ROOT)) {
         return NextResponse.redirect(new URL('/auth/login', request.url));
@@ -34,6 +39,7 @@ export async function middleware(request: NextRequest) {
     if (!isAuthorized && isAdminRoute) {
         return NextResponse.redirect(new URL('/', request.url));
     }
+
 
     return NextResponse.next();
 }

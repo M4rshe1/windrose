@@ -11,6 +11,8 @@ import {redirect} from "next/navigation";
 import {User} from "@prisma/client";
 import DeleteAccountButton from "@/components/deleteAccountButton";
 import AccountProvider from "@/components/accountProvider";
+import {SettingsSecondaryNav} from "@/components/secondaryNavs";
+import GoToPersonalProfileButton from "@/components/goToPersonalProfileButton";
 
 const AccountSettings = async () => {
     const session = await getServerSession(authOptions);
@@ -47,8 +49,10 @@ const AccountSettings = async () => {
                     }
                 ]
             }/>
+            <SettingsSecondaryNav activeTab={'Account'}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
+                    <GoToPersonalProfileButton username={session?.user?.username as string}/>
                     <H1>Account</H1>
                     <UsernameForm user={user as User}/>
                     <H2>OAuth</H2>

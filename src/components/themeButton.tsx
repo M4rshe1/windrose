@@ -10,7 +10,8 @@ const ThemeButton = ({theme}: { theme: Theme }) => {
     }, [])
 
     function changeTheme() {
-        localStorage.setItem('theme', theme.key)
+        document.cookie = `theme=${theme.key}; path=/;`;
+        document.location.reload();
     }
 
     return (

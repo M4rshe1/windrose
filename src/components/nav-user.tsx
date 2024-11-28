@@ -91,7 +91,7 @@ export function NavUser({
                         <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
                             <Link
-                                href={user.isAdmin ? '/admin' : user.isPremium ? '/settings/subscription' : '/settings/upgrade'}>
+                                href={user.isAdmin ? '/admin' : user.isPremium ? '/settings/billing' : '/pro'}>
                                 <FancyBorder className={'rounded'}>
                                     <DropdownMenuItem className="bg-base-200">
                                         <Sparkles/>

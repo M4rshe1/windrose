@@ -43,7 +43,10 @@ export async function getUserToursAction(count?: number, owned?: boolean): Promi
                 displayName: true,
                 description: true,
             },
-            take: count
+            take: count,
+            orderBy: {
+                createdAt: 'desc'
+            }
         })
     ]);
 

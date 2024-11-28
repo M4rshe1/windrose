@@ -3,6 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
 import {PrismaAdapter} from '@next-auth/prisma-adapter';
 import db from '@/lib/db';
+import {stringToDashCase} from "@/lib/utils";
 
 
 if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
@@ -106,12 +107,17 @@ export const authOptions: NextAuthOptions = {
                         });
                     }
                 } else {
+                    const checkUsername = await db.user.findUnique(
+                        {
+                            where: {username: stringToDashCase(user.name as string)},
+                        }
+                    )
 
-                    // If no existing user, create a new user
                     await db.user.create({
                         data: {
                             name: user.name,
                             email: user.email as string,
+                            username: checkUsername ? `${stringToDashCase(user.name as string)}-${new Date().getTime()}` : stringToDashCase(user.name as string),
                             accounts: {
                                 create: {
                                     provider: account.provider,

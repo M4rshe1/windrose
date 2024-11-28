@@ -16,10 +16,10 @@ import {revalidatePath} from "next/cache";
 import TimezoneSelect from "@/components/timezoneSelect";
 import SearchSelect from "@/components/SearchSelect";
 import ReactCountryFlag from "react-country-flag";
-import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import {Gender} from "@prisma/client";
 import RadioGroupBordered from "@/components/radioGroupBordered";
+import GoToPersonalProfileButton from "@/components/goToPersonalProfileButton";
+import {SettingsSecondaryNav} from "@/components/secondaryNavs";
 
 const ProfileSettings = async () => {
     const session: Session | null = await getServerSession(authOptions)
@@ -161,15 +161,10 @@ const ProfileSettings = async () => {
                     }
                 ]
             }/>
+            <SettingsSecondaryNav activeTab={"Profile"}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
-                    <div className={cn('flex items-center justify-end')}>
-                        <Link href={`/${session?.user?.username || session?.user?.id as string}`}>
-                            <Button variant={`outline`} size={`sm`}
-                                    className={cn(`bg-base-100 hover:bg-base-200 cursor-pointer`)}
-                            >Go to your personal profile</Button>
-                        </Link>
-                    </div>
+                    <GoToPersonalProfileButton username={session?.user?.username as string}/>
                     <H1>Public Profile</H1>
                     <div className={cn(`grid lg:grid-cols-[1fr_auto] grid-cols-1 gap-8`)}>
                         <div className={cn('flex flex-col gap-3')}>
@@ -224,7 +219,7 @@ const ProfileSettings = async () => {
                                     }
                                 ]
                             } classNameWrapper={`grid lg:grid-cols-2 grid-cols-1`} onClickAction={updateGender}
-                            defaultValue={user?.gender as string}
+                                                defaultValue={user?.gender as string}
                             />
 
                         </div>

@@ -4,8 +4,13 @@ import H1 from "@/components/ui/h1";
 import {cn} from "@/lib/utils";
 import Link from "next/link";
 import {BellDot, CreditCard, Pen, ShieldPlus, User, UserPen} from "lucide-react";
+import GoToPersonalProfileButton from "@/components/goToPersonalProfileButton";
+import {getServerSession, Session} from "next-auth";
+import {authOptions} from "@/lib/authOptions";
+import {SettingsSecondaryNav} from "@/components/secondaryNavs";
 
 const SettingsPage = async () => {
+    const session: Session|null = await getServerSession(authOptions);
     const settings = [
         {
             title: 'Appearance', url: '/settings/appearance',
@@ -48,8 +53,10 @@ const SettingsPage = async () => {
                     }
                 ]
             }/>
+            <SettingsSecondaryNav activeTab={'Overview'}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
+                    <GoToPersonalProfileButton username={session?.user?.username as string}/>
                     <H1>Settings</H1>
                     <div className={'grid lg:grid-cols-2 grid-cols-1 gap-4'}>
                         {

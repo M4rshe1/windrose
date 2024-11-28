@@ -27,3 +27,11 @@
         --angle: 360deg;
     }
 }
+
+.scroll-hidden::-webkit-scrollbar {
+    display: none;
+}
+.scroll-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

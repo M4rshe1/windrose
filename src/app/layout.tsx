@@ -43,7 +43,7 @@ export default async function RootLayout({
                 }
                 <SidebarInset>
                     <header className={cn('flex flex-col border-b-2 border-neutral')}>
-                        <div className="flex w-full h-16 shrink-0 items-center justify-between gap-2 px-4">
+                        <div className="flex w-full h-16 items-center justify-between gap-2 px-4">
 
                             <div className="flex items-center gap-2">
                                 {
@@ -53,30 +53,40 @@ export default async function RootLayout({
                                 <Separator orientation="vertical" className="mr-2 h-4"/>
                                 <Link href={"/"} className="flex items-center gap-2">
                                     <IconBrandSafari/>
+                                    {
+                                        !authenticated &&
+                                        <span className="text-lg font-bold">Windrose</span>
+                                    }
                                 </Link>
                                 <div id={"breadcrumb-bar"} className="flex-1"/>
                             </div>
-                            <div>
-                                <div className={cn('flex items-center justify-end gap-2')}>
-                                    <HeaderCommand/>
-                                    <Link data-tip={'Notifications'} href={`/notifications`}
-                                          className={cn('tooltip tooltip-bottom')}>
-                                        <Button variant={`outline`} size={`sm`}
-                                        >
-                                            <Newspaper/>
-                                        </Button>
-                                    </Link>
-                                    <Link data-tip={'New Tour'} href={`/new`} className={cn('tooltip tooltip-bottom')}>
+                            {
+                                authenticated &&
+                                <div>
+                                    <div className={cn('flex items-center justify-end gap-2')}>
+                                        <HeaderCommand/>
+                                        <Link data-tip={'Notifications'} href={`/notifications`}
+                                              className={cn('tooltip tooltip-bottom')}>
+                                            <Button variant={`outline`} size={`sm`}
+                                            >
+                                                <Newspaper/>
+                                            </Button>
+                                        </Link>
+                                        <Link data-tip={'New Tour'} href={`/new`}
+                                              className={cn('tooltip tooltip-bottom')}>
 
-                                        <Button variant={`default`} size={`sm`}
-                                        >
-                                            <Map/> New
-                                        </Button>
-                                    </Link>
+                                            <Button variant={`default`} size={`sm`}
+                                            >
+                                                <Map/> New
+                                            </Button>
+                                        </Link>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
-                        <div id={'secondary-header-nav'}></div>
+                        <div id={'secondary-header-nav'}
+                        className={cn('w-full overflow-x-auto')}>
+                        </div>
                     </header>
                     {children}
                 </SidebarInset>
