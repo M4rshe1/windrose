@@ -1,6 +1,6 @@
 "use client"
 
-import {Edit, Folder, MoreHorizontal, Settings, Trash2,} from "lucide-react"
+import {Edit, MoreHorizontal, Settings, SquareArrowOutUpRight, Trash2,} from "lucide-react"
 
 import {
     DropdownMenu,
@@ -66,10 +66,12 @@ export function NavProjects({
                                 side={isMobile ? "bottom" : "right"}
                                 align={isMobile ? "end" : "start"}
                             >
-                                <DropdownMenuItem className="hover:bg-base-100">
-                                    <Folder/>
-                                    <span>Go to Tour</span>
-                                </DropdownMenuItem>
+                                <Link href={`/${tour.owner.username}/${tour.name}`}>
+                                    <DropdownMenuItem className="hover:bg-base-100">
+                                        <SquareArrowOutUpRight/>
+                                        <span>Go to Tour</span>
+                                    </DropdownMenuItem>
+                                </Link>
                                 <Link href={`/${tour.owner.username}/${tour.name}/edit`}>
                                     <DropdownMenuItem className="hover:bg-base-100">
                                         <Edit/>
