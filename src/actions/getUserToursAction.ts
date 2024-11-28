@@ -1,39 +1,38 @@
-import {NextRequest, NextResponse} from "next/server";
+'use server'
+
 import db from "@/lib/db";
 import {TourToUserRole} from "@prisma/client";
 import {getMinioLinkFromKey} from "@/lib/utils";
+import {getServerSession, Session} from "next-auth";
+import {authOptions} from "@/lib/authOptions";
 
-export async function GET(req: NextRequest) {
-    const sessionToken =
-        req.cookies.get('next-auth.session-token') ||
-        req.cookies.get('__Secure-next-auth.session-token');
+export interface Tour {
+    owner: {
+        image: string | null;
+        tourId?: string | undefined;
+        id?: string | undefined;
+        name?: string | null | undefined;
+        username?: string | null | undefined;
+    };
+    id: string;
+    name: string;
+    displayName: string;
+    description: string | null;
+}
 
-    if (!sessionToken?.value) {
-        return NextResponse.json({authenticated: false}, {status: 401});
-    }
 
-    const [session, tours] = await Promise.all([
-        db.session.findUnique({
-            where: {
-                sessionToken: sessionToken.value,
-            },
-            include: {
-                user: true,
-            },
-        }),
+export async function getUserToursAction(count?: number, owned?: boolean): Promise<Tour[]> {
+    const session: Session | null = await getServerSession(authOptions)
+    const [tours] = await Promise.all([
         db.tour.findMany({
             where: {
                 TourToUser: {
                     some: {
                         role: {
-                            in: [TourToUserRole.OWNER, TourToUserRole.EDITOR]
+                            in: owned ? [TourToUserRole.OWNER] : [TourToUserRole.OWNER, TourToUserRole.EDITOR]
                         },
                         user: {
-                            sessions: {
-                                some: {
-                                    sessionToken: sessionToken.value
-                                }
-                            }
+                            id: session?.user?.id
                         }
                     }
                 }
@@ -43,7 +42,8 @@ export async function GET(req: NextRequest) {
                 name: true,
                 displayName: true,
                 description: true,
-            }
+            },
+            take: count
         })
     ]);
 
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
                 }
             },
             tourId: true
-        }
+        },
     })
 
     const owners = images.map(image => {
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
     })
 
 
-    const toursOwners = tours.map(tour => {
+    return tours.map(tour => {
         return {
             id: tour.id,
             name: tour.name,
@@ -99,13 +99,5 @@ export async function GET(req: NextRequest) {
                 image: tour.owner?.image ? getMinioLinkFromKey(tour.owner.image.fileKey) : null
             }
         }
-    })
-
-    if (!session || !session.user) {
-        return NextResponse.json({status: 401});
-    }
-
-    return NextResponse.json({
-        tours: toursOwners
     });
 }

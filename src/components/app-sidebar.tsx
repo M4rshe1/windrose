@@ -22,10 +22,20 @@ import {
 import Link from "next/link";
 import {Session} from "next-auth";
 import {UserRole} from "@prisma/client";
+import {useEffect, useState} from "react";
+import {getUserToursAction, Tour} from "@/actions/getUserToursAction";
 
 
 export function AppSidebar({session, ...props}: { session: Session, [key: string]: unknown }) {
     const username = session.user.username || session.user.id
+    const [tours, setTours] = useState<Tour[]>([])
+    useEffect(() => {
+        if (!tours?.length) {+
+            getUserToursAction(5).then((tours) => {
+                setTours(tours)
+            })
+        }
+    }, [tours]);
     const data = {
         user: {
             name: session.user.name as string,
@@ -131,23 +141,7 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
                 icon: Send,
             },
         ],
-        projects: [
-            {
-                name: "Design Engineering",
-                url: "#",
-                icon: Frame,
-            },
-            {
-                name: "Sales & Marketing",
-                url: "#",
-                icon: PieChart,
-            },
-            {
-                name: "Travel",
-                url: "#",
-                icon: Map,
-            },
-        ],
+        tours
     }
     return (
         <Sidebar variant="inset" {...props}>
@@ -172,7 +166,7 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain}/>
-                <NavProjects projects={data.projects} username={data.user.username}/>
+                <NavProjects tours={data.tours} username={data.user.username}/>
                 <NavSecondary items={data.navSecondary} className="mt-auto"/>
             </SidebarContent>
             <SidebarFooter>

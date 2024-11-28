@@ -1,6 +1,6 @@
 "use client"
 
-import {Archive, Edit, Folder, type LucideIcon, MoreHorizontal, Trash2,} from "lucide-react"
+import {Edit, Folder, MoreHorizontal, Settings, Trash2,} from "lucide-react"
 
 import {
     DropdownMenu,
@@ -18,15 +18,16 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
+import {Tour} from "@/actions/getUserToursAction";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import * as React from "react";
+import Link from "next/link";
+import {cn} from "@/lib/utils";
 
 export function NavProjects({
-                                projects, username
+                                tours, username
                             }: {
-    projects: {
-        name: string
-        url: string
-        icon: LucideIcon
-    }[],
+    tours: Tour[],
     username: string
 }) {
     const {isMobile} = useSidebar()
@@ -35,12 +36,22 @@ export function NavProjects({
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupLabel>Recent Tours</SidebarGroupLabel>
             <SidebarMenu>
-                {projects.map((item) => (
-                    <SidebarMenuItem key={item.name}>
+                {tours.map((tour: Tour) => (
+                    <SidebarMenuItem key={tour.name} className={cn('group/tour')}>
                         <SidebarMenuButton asChild>
-                            <a href={item.url}>
-                                <item.icon/>
-                                <span>{item.name}</span>
+                            <a href={`/${tour.owner.username}/${tour.name}`}>
+                                <Avatar className="h-6 w-6 bg-base-300">
+                                    <AvatarImage src={tour.owner.image as string}
+                                                 alt={tour.owner.name as string}/>
+                                    <AvatarFallback className="rounded-lg">
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className={cn('relative h-5')}>
+                                     <span
+                                         className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out', 'group-hover/tour:translate-y-[-100%] group-hover/tour:opacity-0')}>{tour.owner.name} / {tour.displayName}</span>
+                                    <span
+                                        className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out opacity-0', 'translate-y-[100%] group-hover/tour:translate-y-0 group-hover/tour:opacity-100')}>{tour.owner.username} / {tour.name}</span>
+                                </div>
                             </a>
                         </SidebarMenuButton>
                         <DropdownMenu>
@@ -60,18 +71,24 @@ export function NavProjects({
                                     <span>Go to Tour</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="hover:bg-base-100">
-                                    <Edit/>
-                                    <span>Edit</span>
+                                    <Link href={`/${tour.owner.username}/${tour.name}/edit`}>
+                                        <Edit/>
+                                        <span>Edit</span>
+                                    </Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="hover:bg-warning hover:text-warning-content">
-                                    <Archive/>
-                                    <span>Archive</span>
-                                </DropdownMenuItem>
+                                <Link href={`/${tour.owner.username}/${tour.name}/settings`}>
+                                    <DropdownMenuItem className="hover:bg-base-100">
+                                        <Settings/>
+                                        <span>Settings</span>
+                                    </DropdownMenuItem>
+                                </Link>
                                 <DropdownMenuSeparator/>
-                                <DropdownMenuItem className="hover:bg-error hover:text-error-content">
-                                    <Trash2/>
-                                    <span>Delete Tour</span>
-                                </DropdownMenuItem>
+                                <Link href={`/${tour.owner.username}/${tour.name}/settings/delete`}>
+                                    <DropdownMenuItem className="hover:bg-error hover:text-error-content">
+                                        <Trash2/>
+                                        <span>Delete Tour</span>
+                                    </DropdownMenuItem>
+                                </Link>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </SidebarMenuItem>

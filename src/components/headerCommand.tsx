@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import {useEffect, useState} from "react"
-import {Brush, Command, Plus, Settings,} from "lucide-react"
+import {Brush, Command, Newspaper, Plus, Settings,} from "lucide-react"
 
 import {
     CommandDialog,
@@ -14,16 +14,17 @@ import {
     CommandSeparator,
     CommandShortcut,
 } from "@/components/ui/command"
-import {Session} from "next-auth";
 import {Button} from "@/components/ui/button";
 import {redirect} from "next/navigation";
 import {themes} from "@/lib/theme";
 import {cn} from "@/lib/utils";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {getUserToursAction, Tour} from "@/actions/getUserToursAction";
+import {IconMoonFilled, IconSunFilled} from "@tabler/icons-react";
 
-export function HeaderCommand({session}: { session: Session }) {
+export function HeaderCommand() {
     const [open, setOpen] = useState(false)
-    const [data, setData] = useState({tours: []})
+    const [data, setData] = useState<Tour[] | null>(null)
 
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -38,24 +39,35 @@ export function HeaderCommand({session}: { session: Session }) {
     }, [])
 
     useEffect(() => {
-        if (open && data.tours.length === 0) {
-            fetch(`/api/private/tours?userid=${session.user.id}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+        if (open && !data?.length) {
+            getUserToursAction().then((tours) => {
+                setData(tours)
             })
-                .then((response) => response.json())
-                .then((data) => {
-                    setData(data)
-                })
         }
-    }, [open, session, data]);
+    }, [open, data]);
 
     function changeTheme(key: string) {
         localStorage.setItem('theme', key)
         document.location.reload()
     }
+
+    const actions = [
+        {
+            name: 'New Tour',
+            icon: Plus,
+            action: () => redirect('/new')
+        },
+        {
+            name: 'Settings',
+            icon: Settings,
+            action: () => redirect('/settings')
+        },
+        {
+            name: 'Notifications',
+            icon: Newspaper,
+            action: () => redirect('/notifications')
+        }
+    ]
 
     return (
         <>
@@ -80,33 +92,24 @@ export function HeaderCommand({session}: { session: Session }) {
                 <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
                     <CommandGroup heading="Actions">
-                        <CommandItem
-                            onSelect={() => {
-                                setOpen(false)
-                                redirect('/new')
-                            }}
-                        >
-                            <Plus/>
-                            <span>New Tour</span>
-                        </CommandItem>
-                        <CommandItem
-                            onSelect={() => {
-                                setOpen(false)
-                                redirect('/map')
-                            }}
-                        >
-                            <Settings/>
-                            <span>Settings</span>
-                        </CommandItem>
+                        {actions.map((action, index) => (
+                            <CommandItem
+                                onSelect={() => {
+                                    setOpen(false)
+                                    action.action()
+                                }}
+                                key={index}
+                            >
+                                <action.icon/>
+                                <span>{action.name}</span>
+                            </CommandItem>
+                        ))}
                     </CommandGroup>
                     <CommandSeparator/>
                     <CommandGroup heading="Tours">
-                        {data?.tours?.map((tour: {
-                            owner: { name: string; image: string };
-                            displayName: string;
-                            name: string
-                        }, index: number) => (
+                        {data?.map((tour: Tour, index: number) => (
                             <CommandItem
+                                className={'group/tour'}
                                 onSelect={() => {
                                     setOpen(false)
                                     redirect(`/${tour.owner.name}/${tour.name}`
@@ -115,24 +118,21 @@ export function HeaderCommand({session}: { session: Session }) {
                                 key={index}
                             >
                                 <Avatar className="h-6 w-6 bg-base-300">
-                                    <AvatarImage src={tour.owner.image}
-                                                 alt={tour.owner.name}/>
+                                    <AvatarImage src={tour.owner.image as string}
+                                                 alt={tour.owner.name as string}/>
                                     <AvatarFallback className="rounded-lg">
                                     </AvatarFallback>
                                 </Avatar>
-                                <p>
-
-                                    <span className={'font-semibold'}>{tour.owner.name}</span>
-                                    <span> / </span>
-                                    <span className={'font-semibold'}>{tour.displayName}</span>
-                                    <span className={'text-xs'}>&nbsp;({tour.name})</span>
-
-                                </p>
-
+                                <div className={cn('relative h-5')}>
+                                     <span
+                                         className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out', ' group-data-[selected=true]/tour:translate-y-[-100%] group-data-[selected=true]/tour:opacity-0')}>{tour.owner.name} / {tour.displayName}</span>
+                                    <span
+                                        className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out opacity-0', 'translate-y-[100%]  group-data-[selected=true]/tour:translate-y-0  group-data-[selected=true]/tour:opacity-100')}>{tour.owner.username} / {tour.name}</span>
+                                </div>
                             </CommandItem>
                         ))}
                         {
-                            data.tours.length === 0 && <CommandEmpty>No tours found.</CommandEmpty>
+                            !data?.length || <CommandEmpty>No tours found.</CommandEmpty>
                         }
                     </CommandGroup>
                     <CommandGroup heading="Themes" data-choose-theme>
@@ -145,8 +145,8 @@ export function HeaderCommand({session}: { session: Session }) {
                                                  changeTheme(theme.key)
                                              }}
                                 >
-                                    <Brush/>
-                                    <span>{theme.name}</span>
+                                    <Brush className={theme.dark ? `text-sky-800` : `text-amber-500`}/>
+                                    <span className={`flex items-center`}>{theme.name}</span>
                                     <CommandShortcut>
                                         <div className={'flex items-center gap-1 bg-transparent'}
                                              data-theme={theme.key}>

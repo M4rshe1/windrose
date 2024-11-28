@@ -231,5 +231,5 @@ export const themes: Theme[] = [
         key: 'deep_ocean',
         dark: true
     }
-]
+].sort((a, b) => a.name.localeCompare(b.name))
 

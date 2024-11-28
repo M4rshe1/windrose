@@ -6,7 +6,7 @@ import ThemeProvider from "@/lib/themeProvider";
 import {AppSidebar} from "@/components/app-sidebar";
 import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
 import {Separator} from "@/components/ui/separator";
-import {getServerSession, Session} from "next-auth";
+import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import {IconBrandSafari} from "@tabler/icons-react";
 import Link from "next/link";
@@ -57,7 +57,7 @@ export default async function RootLayout({
                         </div>
                         <div>
                             <div className={cn('flex items-center justify-end gap-2')}>
-                                <HeaderCommand session={session as Session}/>
+                                <HeaderCommand/>
                                 <Link data-tip={'Notifications'} href={`/notifications`}
                                       className={cn('tooltip tooltip-bottom')}>
                                     <Button variant={`outline`} size={`sm`}
