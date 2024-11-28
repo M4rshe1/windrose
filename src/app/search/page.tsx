@@ -1,9 +1,11 @@
 interface SearchPageParams {
-    params: { slug: string };
-    searchParams?: { [key: string]: string | string[] | undefined };
+    params: Promise<{ slug: string }>;
+    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-const SearchPage = async ({params, searchParams}: SearchPageParams) => {
+const SearchPage = async (props: SearchPageParams) => {
+    const searchParams = await props.searchParams;
+    const params = await props.params;
 
 
 

@@ -1,5 +1,6 @@
 
-export default function ProfilePage({params}: {params: {username: string}}) {
+export default async function ProfilePage(props: {params: Promise<{username: string}>}) {
+    const params = await props.params;
     return (
         <div>
             <h1>{params.username}</h1>

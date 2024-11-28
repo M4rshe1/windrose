@@ -5,7 +5,8 @@ import H1 from "@/components/ui/h1";
 import H2 from "@/components/ui/h2";
 import db from "@/lib/db";
 
-const TourSettings = async ({params}: {params: {username: string, tour: string}}) => {
+const TourSettings = async (props: {params: Promise<{username: string, tour: string}>}) => {
+    const params = await props.params;
     const tour = await db.tour.findFirst({
         where: {
             name: params.tour,
