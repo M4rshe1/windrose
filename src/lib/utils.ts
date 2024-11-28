@@ -14,3 +14,7 @@ export function stringToDashCase(str: string | null | undefined | number): strin
 export function getMinioLinkFromKey(key: string): string {
   return `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET}/${key}`;
 }
+
+export function hideFullToken(token: string): string {
+  return token.slice(0, 6) + " *** " + token.slice(-6);
+}

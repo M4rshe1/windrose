@@ -42,38 +42,41 @@ export default async function RootLayout({
 
                 }
                 <SidebarInset>
-                    <header
-                        className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 border-neutral">
-                        <div className="flex items-center gap-2">
-                            {
-                                authenticated &&
-                                <SidebarTrigger className="-ml-1"/>
-                            }
-                            <Separator orientation="vertical" className="mr-2 h-4"/>
-                            <Link href={"/"} className="flex items-center gap-2">
-                                <IconBrandSafari/>
-                            </Link>
-                            <div id={"breadcrumb-bar"} className="flex-1"/>
-                        </div>
-                        <div>
-                            <div className={cn('flex items-center justify-end gap-2')}>
-                                <HeaderCommand/>
-                                <Link data-tip={'Notifications'} href={`/notifications`}
-                                      className={cn('tooltip tooltip-bottom')}>
-                                    <Button variant={`outline`} size={`sm`}
-                                    >
-                                        <Newspaper/>
-                                    </Button>
-                                </Link>
-                                <Link data-tip={'New Tour'} href={`/new`} className={cn('tooltip tooltip-bottom')}>
+                    <header className={cn('flex flex-col border-b-2 border-neutral')}>
+                        <div className="flex w-full h-16 shrink-0 items-center justify-between gap-2 px-4">
 
-                                    <Button variant={`default`} size={`sm`}
-                                    >
-                                        <Map/> New
-                                    </Button>
+                            <div className="flex items-center gap-2">
+                                {
+                                    authenticated &&
+                                    <SidebarTrigger className="-ml-1"/>
+                                }
+                                <Separator orientation="vertical" className="mr-2 h-4"/>
+                                <Link href={"/"} className="flex items-center gap-2">
+                                    <IconBrandSafari/>
                                 </Link>
+                                <div id={"breadcrumb-bar"} className="flex-1"/>
+                            </div>
+                            <div>
+                                <div className={cn('flex items-center justify-end gap-2')}>
+                                    <HeaderCommand/>
+                                    <Link data-tip={'Notifications'} href={`/notifications`}
+                                          className={cn('tooltip tooltip-bottom')}>
+                                        <Button variant={`outline`} size={`sm`}
+                                        >
+                                            <Newspaper/>
+                                        </Button>
+                                    </Link>
+                                    <Link data-tip={'New Tour'} href={`/new`} className={cn('tooltip tooltip-bottom')}>
+
+                                        <Button variant={`default`} size={`sm`}
+                                        >
+                                            <Map/> New
+                                        </Button>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
+                        <div id={'secondary-header-nav'}></div>
                     </header>
                     {children}
                 </SidebarInset>

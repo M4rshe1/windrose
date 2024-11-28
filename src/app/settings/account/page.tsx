@@ -23,7 +23,8 @@ const AccountSettings = async () => {
                     select: {
                         id: true,
                         provider: true,
-                        type: true,
+                        token_type: true,
+                        access_token: true,
                         scope: true,
                         expires_at: true,
                         session_state: true

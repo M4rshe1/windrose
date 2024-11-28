@@ -1,6 +1,6 @@
 'use client'
 
-import {cn} from "@/lib/utils";
+import {cn, hideFullToken} from "@/lib/utils";
 import {IconBrandGithub, IconBrandGoogle} from "@tabler/icons-react";
 import {Button} from "@/components/ui/button";
 import {Trash} from "lucide-react";
@@ -8,7 +8,7 @@ import {confirmModal} from "@/components/confirmModal";
 import {removeAccountProvider} from "@/actions/removeAccountProvider";
 
 const AccountProvider = ({item}: {
-    item: { provider: string, type: string, scope: string, expires_at: string, session_state: string }
+    item: { provider: string, token_type: string, scope: string, expires_at: string, session_state: string, access_token: string }
 }) => {
 
     async function handleRemove() {
@@ -54,12 +54,12 @@ const AccountProvider = ({item}: {
                     <p>{item.scope || 'No scope defined'}</p>
                 </div>
                 <div>
-                    <p className={cn("text-xs font-semibold")}>Type</p>
-                    <p>{item.type || 'No type defined'}</p>
+                    <p className={cn("text-xs font-semibold")}>Token Type</p>
+                    <p>{item.token_type || 'No type defined'}</p>
                 </div>
                 <div>
-                    <p className={cn("text-xs font-semibold")}>Session state</p>
-                    <p>{item.session_state || 'No session state defined'}</p>
+                    <p className={cn("text-xs font-semibold")}>Token ({item.access_token.length})</p>
+                    <p>{hideFullToken(item.access_token)}</p>
                 </div>
             </div>
         </div>
