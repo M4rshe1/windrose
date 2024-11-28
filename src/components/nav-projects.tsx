@@ -70,12 +70,12 @@ export function NavProjects({
                                     <Folder/>
                                     <span>Go to Tour</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="hover:bg-base-100">
-                                    <Link href={`/${tour.owner.username}/${tour.name}/edit`}>
+                                <Link href={`/${tour.owner.username}/${tour.name}/edit`}>
+                                    <DropdownMenuItem className="hover:bg-base-100">
                                         <Edit/>
                                         <span>Edit</span>
-                                    </Link>
-                                </DropdownMenuItem>
+                                    </DropdownMenuItem>
+                                </Link>
                                 <Link href={`/${tour.owner.username}/${tour.name}/settings`}>
                                     <DropdownMenuItem className="hover:bg-base-100">
                                         <Settings/>
