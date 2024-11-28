@@ -59,7 +59,7 @@ model User {
   showEmail     Boolean        @default(false)
   country       Country?       @relation(fields: [countryId], references: [id])
   location      String?
-  gender        String?        @default("UNKNOWN")
+  gender        Gender?        @default(UNKNOWN)
   accounts      Account[]
   sessions      Session[]
   TourToUser    TourToUser[]
@@ -172,6 +172,7 @@ model TourToUser {
   role       TourToUserRole
   isFollow   Boolean        @default(false)
   isFavorite Boolean        @default(false)
+  isPinned   Boolean        @default(false)
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
   user       User           @relation(fields: [userId], references: [id])

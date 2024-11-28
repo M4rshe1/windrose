@@ -48,9 +48,9 @@ export function NavProjects({
                                 </Avatar>
                                 <div className={cn('relative h-5')}>
                                      <span
-                                         className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out', 'group-hover/tour:translate-y-[-100%] group-hover/tour:opacity-0')}>{tour.owner.name} / {tour.displayName}</span>
+                                         className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out', 'group-hover/tour:translate-y-[-100%] group-hover/tour:opacity-0')}>{tour.owner.name}/{tour.displayName}</span>
                                     <span
-                                        className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out opacity-0', 'translate-y-[100%] group-hover/tour:translate-y-0 group-hover/tour:opacity-100')}>{tour.owner.username} / {tour.name}</span>
+                                        className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out opacity-0', 'translate-y-[100%] group-hover/tour:translate-y-0 group-hover/tour:opacity-100')}>{tour.owner.username}/{tour.name}</span>
                                 </div>
                             </a>
                         </SidebarMenuButton>

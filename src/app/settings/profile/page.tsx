@@ -18,6 +18,8 @@ import SearchSelect from "@/components/SearchSelect";
 import ReactCountryFlag from "react-country-flag";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
+import {Gender} from "@prisma/client";
+import RadioGroupBordered from "@/components/radioGroupBordered";
 
 const ProfileSettings = async () => {
     const session: Session | null = await getServerSession(authOptions)
@@ -131,6 +133,22 @@ const ProfileSettings = async () => {
         return revalidatePath('/settings/profile');
     }
 
+    async function updateGender(gender: string) {
+        "use server"
+
+        if (!Object.values(Gender).includes(gender as Gender)) {
+            return;
+        }
+
+        await db.user.update({
+            where: {id: session?.user.id},
+            data: {
+                gender: gender as Gender
+            }
+        })
+        return revalidatePath('/settings/profile');
+    }
+
     return (
         <>
             <BreadcrumbPortal items={
@@ -184,6 +202,31 @@ const ProfileSettings = async () => {
                                                    onClickAction={updateShowEmail}
                                 />
                             </div>
+                            <Label htmlFor={`gender`} className={cn('block')}>Gender</Label>
+                            <RadioGroupBordered items={
+                                [
+                                    {
+                                        label: `Male`,
+                                        subLabel: `He/Him`,
+                                        description: `Just your average dude.`,
+                                        value: Gender.MALE as string
+                                    },
+                                    {
+                                        label: `Female`,
+                                        subLabel: `She/Her`,
+                                        description: `Rocking the queen vibes!`,
+                                        value: Gender.FEMALE as string
+                                    },
+                                    {
+                                        label: `Unknown`,
+                                        description: `Classified information... for now.`,
+                                        value: Gender.UNKNOWN as string
+                                    }
+                                ]
+                            } classNameWrapper={`grid lg:grid-cols-2 grid-cols-1`} onClickAction={updateGender}
+                            defaultValue={user?.gender as string}
+                            />
+
                         </div>
                         <ProfilePictureInput session={session as Session}/>
                     </div>
