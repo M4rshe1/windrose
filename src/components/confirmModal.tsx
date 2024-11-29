@@ -33,7 +33,7 @@ const Modal: FC<ModalProps> = ({
                  onClick={() => onClose(false)}
             >
             </div>
-            <div className="bg-base-100 p-6 rounded-lg relative border-2 border-neutral m-4 z-20">
+            <div className="bg-base-100 p-6 rounded-lg relative border-2 border-neutral m-4 z-20 max-w-lg m-auto">
                 <div className="flex items-center justify-end">
                     <X
                         className="cursor-pointer"

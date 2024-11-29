@@ -3,18 +3,16 @@ import {TablerIcon} from "@tabler/icons-react";
 import {LucideIcon} from "lucide-react";
 import {cn} from "@/lib/utils";
 
-export default function SelectWithIcons({options, label, name, defaultValue, ...props}: {
+export default function SelectWithIcons({options, label, name, ...props}: {
     options: { label: string, value: string, icon: TablerIcon | LucideIcon }[],
     label?: string,
     name: string,
-    defaultValue?: string,
     [key: string]: unknown
 }) {
     return (
         <div className="space-y-2">
             <Select
             name={name}
-            defaultValue={defaultValue}
             {...props}
             >
                 <SelectTrigger

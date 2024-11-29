@@ -14,7 +14,7 @@ import {Label} from "@/components/ui/label";
 import SubtitleInput from "@/components/subtitleInput";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
-import TourDangerSettings from "@/components/TourDangerSettings";
+import TourDangerSettings from "@/components/tourDangerSettings";
 import TourCollaborationTable from "@/components/tourCollaborationTable";
 
 const TourSettings = async (props: { params: Promise<{ username: string, tour: string }> }) => {
@@ -129,8 +129,7 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                             />
                         </div>
                         <div className={cn('flex flex-col gap-3')}>
-                            <Label htmlFor={`status`} className={cn('block')}>Status</Label>
-                            <TourStatusInput tour={tour?.status as string}/>
+                            <TourStatusInput tour={tour}/>
                         </div>
                     </div>
                     <SubtitleInput labelText={`Description`} type={`text`} name={`description`}

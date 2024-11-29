@@ -1,15 +1,13 @@
-"use server"
+'use server'
 
-import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
-import db from "@/lib/db";
+import {getServerSession} from "next-auth";
 import {TourToUserRole, UserRole} from "@prisma/client";
+import db from "@/lib/db";
 
-export async function updateCollaborationAction(tourId: string, useId: string, role: TourToUserRole) {
+export async function updateTourOwner(tourId: string, username: string) {
     const session = await getServerSession(authOptions);
     if (!session) return false;
-    if (Object.keys(TourToUserRole).indexOf(role) === -1) return false;
-
     const isAllowed = await db.tourToUser.findFirst({
         where: {
             userId: session.user.id,
@@ -23,11 +21,24 @@ export async function updateCollaborationAction(tourId: string, useId: string, r
     await db.tourToUser.updateMany({
         where: {
             tourId: tourId,
-            userId: useId
+            role: TourToUserRole.OWNER
         },
         data: {
-            role: role
+            role: TourToUserRole.EDITOR
+        }
+    })
+
+    await db.tourToUser.updateMany({
+        where: {
+            tourId: tourId,
+            user: {
+                username: username
+            }
         },
-    });
+        data: {
+            role: TourToUserRole.OWNER
+        }
+    })
+
     return true;
 }

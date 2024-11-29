@@ -9,16 +9,12 @@ import {confirmModal} from "@/components/confirmModal";
 import Image from "next/image";
 
 const HeroInput = ({tour, image}: { tour: any, image: string }) => {
-    console.log(image)
     const [hero, setHero] = useState<string | null>(image);
-
 
     async function handleEditHeroPicture() {
         const {ok, data} = await uploadPicture("/api/private/upload/hero", { tourId: tour.id });
         if (ok) setHero(data.fileObject.cdn);
     }
-
-
 
     return (
         <div className={cn("")}>
@@ -30,10 +26,10 @@ const HeroInput = ({tour, image}: { tour: any, image: string }) => {
                     </div>
                     {
                         hero &&
-                        <Image src={hero as string} alt={`Hero`} width={1920} height={1080} layout={`responsive`} className={'col-start-1 row-start-1'}/>
+                        <Image src={hero as string} alt={`Hero`} width={1920} height={1080} className={'col-start-1 row-start-1'}/>
                     }
                     <div className={
-                        cn("absolute m-auto text-white font-bold text-4xl bg-black/50 p-2 rounded mr-4")
+                        cn("absolute m-auto text-white font-bold text-4xl bg-black/50 p-2 rounded mx-2")
                     }>
                         {tour.displayName}
                     </div>

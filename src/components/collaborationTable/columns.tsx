@@ -5,18 +5,22 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel, DropdownMenuSeparator,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
 import {MoreHorizontal, Trash, UserPen, UserRoundPlus, UserRoundSearch} from "lucide-react";
 import {TourToUserRole} from "@prisma/client";
+import {updateCollaborationAction} from "@/actions/updateCollaborationAction";
+import {deleteCollaborationAction} from "@/actions/deleteCollaborationAction";
 
 type Collaborator = {
-    id: string
+    userId: string
     name: string
     username: string
     role: TourToUserRole
+    tourId: string
 }
 
 export const columns: ColumnDef<Collaborator>[] = [
@@ -66,13 +70,23 @@ export const columns: ColumnDef<Collaborator>[] = [
                     <DropdownMenuContent align="end" className={"bg-base-200"}>
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         {roles.map((role) => (
-                            <DropdownMenuItem key={role.role}>
+                            <DropdownMenuItem key={role.role} onClick={
+                                async () => {
+                                    await updateCollaborationAction(collaborator.tourId, collaborator.userId, role.role)
+                                    document.location.reload()
+                                }
+                            }>
                                 <role.icon/>
                                 Set role {role.label}
                             </DropdownMenuItem>
                         ))}
                         <DropdownMenuSeparator/>
-                        <DropdownMenuItem className={"hover:bg-error hover:text-error-content"}>
+                        <DropdownMenuItem className={"hover:bg-error hover:text-error-content"} onClick={
+                            async () => {
+                                await deleteCollaborationAction(collaborator.tourId, collaborator.userId)
+                                document.location.reload()
+                            }
+                        }>
                             <Trash/>
                             Remove
                         </DropdownMenuItem>

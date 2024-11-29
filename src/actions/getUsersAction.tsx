@@ -2,7 +2,7 @@
 
 import db from "@/lib/db";
 
-export async function getUsersAction(count: number, skip: number, exclude: string[]) {
+export async function getUsersAction(count: number, exclude: string[], skip: number) {
     return db.user.findMany({
         take: count,
         skip: skip,

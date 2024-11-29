@@ -66,15 +66,18 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                     },
                     {
                         title: tour?.displayName as string, url: `/${params.username}/${params.tour}`
+                    },
+                    {
+                        title: 'Steps', url: `/${params.username}/${params.tour}/steps`
                     }
                 ]
             }/>
 
-            <TourSettingsSecondaryNav activeTab={"Overview"} params={params} sectionCount={sectionCount._count}
+            <TourSettingsSecondaryNav activeTab={"Steps"} params={params} sectionCount={sectionCount._count}
                                       userRole={userRole}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
-                    <H1>Overview</H1>
+                    <H1>Steps</H1>
                 </div>
             </div>
         </>)
