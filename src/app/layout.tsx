@@ -84,10 +84,8 @@ export default async function RootLayout({
                                 </div>
                             }
                         </div>
-                        <div id={'secondary-header-nav'}
-                        className={cn('w-full overflow-x-auto')}>
-                        </div>
-                    </header>
+                        <div id={'secondary-header-nav'} className={cn('w-full max-w-full overflow-x-auto relative has-[*]:h-10')}/>
+                        </header>
                     {children}
                 </SidebarInset>
             </SidebarProvider>

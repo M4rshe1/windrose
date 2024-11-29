@@ -36,8 +36,8 @@ export const SecondaryNavPortal = ({items}: SecondaryHeaderNavProps) => {
 
 export const SecondaryHeaderNav = ({items}: SecondaryHeaderNavProps) => {
     return (
-        <div className={cn('w-full overflow-x-auto')}>
-            <div className={cn('flex items-center gap-4 px-6 max-w-full w-min')}>
+        <div className={cn('w-full overflow-x-auto absolute')}>
+            <div className={cn('flex items-center gap-4 px-6 max-w-full')}>
                 {
                     items.map((item, index) => (
                         <Link href={item.url} key={index} className={cn("flex flex-col items-center shrink-0")}>
