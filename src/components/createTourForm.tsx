@@ -135,7 +135,7 @@ const CreateTourForm = ({options}: { options: { label: string, value: string, im
                     [
                         {
                             label: `Planning`,
-                            value: TourStatus.DRAFT,
+                            value: TourStatus.PLANNING,
                             description: `I have this idea in my head.`
                         },
                         {
@@ -163,7 +163,7 @@ const CreateTourForm = ({options}: { options: { label: string, value: string, im
                     }
                 </span> and <span className={cn('font-semibold')}>
                     {
-                        status == TourStatus.DRAFT ? 'is planed' : status == TourStatus.ON_TOUR ? 'on going' : 'finished'
+                        status == TourStatus.PLANNING ? 'is planed' : status == TourStatus.ON_TOUR ? 'on going' : 'finished'
                     }
                 </span>.
                 </p>

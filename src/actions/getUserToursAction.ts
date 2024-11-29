@@ -102,5 +102,5 @@ export async function getUserToursAction(count?: number, owned?: boolean): Promi
                 image: tour.owner?.image ? getMinioLinkFromKey(tour.owner.image.fileKey) : null
             }
         }
-    });
+    }) || [] as Tour[];
 }

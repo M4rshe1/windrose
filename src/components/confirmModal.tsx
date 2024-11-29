@@ -1,3 +1,5 @@
+'use client'
+
 import React, {FC, useState} from "react";
 import {createRoot} from "react-dom/client";
 import ReactDOM from "react-dom";

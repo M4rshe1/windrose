@@ -1,6 +1,6 @@
 "use client"
 
-import {Edit, MoreHorizontal, Settings, SquareArrowOutUpRight, Trash2,} from "lucide-react"
+import {Edit, MoreHorizontal, Route, Settings, SquareArrowOutUpRight, Trash2,} from "lucide-react"
 
 import {
     DropdownMenu,
@@ -72,10 +72,10 @@ export function NavProjects({
                                         <span>Go to Tour</span>
                                     </DropdownMenuItem>
                                 </Link>
-                                <Link href={`/${tour.owner.username}/${tour.name}/edit`}>
+                                <Link href={`/${tour.owner.username}/${tour.name}/steps`}>
                                     <DropdownMenuItem className="hover:bg-base-100">
-                                        <Edit/>
-                                        <span>Edit</span>
+                                        <Route/>
+                                        <span>Steps</span>
                                     </DropdownMenuItem>
                                 </Link>
                                 <Link href={`/${tour.owner.username}/${tour.name}/settings`}>
@@ -85,7 +85,7 @@ export function NavProjects({
                                     </DropdownMenuItem>
                                 </Link>
                                 <DropdownMenuSeparator/>
-                                <Link href={`/${tour.owner.username}/${tour.name}/settings/delete`}>
+                                <Link href={`/${tour.owner.username}/${tour.name}/settings#delete`}>
                                     <DropdownMenuItem className="hover:bg-error hover:text-error-content">
                                         <Trash2/>
                                         <span>Delete Tour</span>

@@ -27,9 +27,9 @@ import {getUserToursAction, Tour} from "@/actions/getUserToursAction";
 
 export function AppSidebar({session, ...props}: { session: Session, [key: string]: unknown }) {
     const username = session.user.username || session.user.id
-    const [tours, setTours] = useState<Tour[]>([])
+    const [tours, setTours] = useState<Tour[] | null>(null)
     useEffect(() => {
-        if (!tours?.length) {
+        if (tours == null) {
                 getUserToursAction(5).then((tours) => {
                     setTours(tours)
                 })
@@ -165,7 +165,7 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain}/>
-                <NavProjects tours={data.tours} username={data.user.username}/>
+                <NavProjects tours={data?.tours || []} username={data.user.username}/>
                 <NavSecondary items={data.navSecondary} className="mt-auto"/>
             </SidebarContent>
             <SidebarFooter>

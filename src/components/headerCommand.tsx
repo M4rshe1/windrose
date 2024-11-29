@@ -38,7 +38,7 @@ export function HeaderCommand() {
     }, [])
 
     useEffect(() => {
-        if (open && !data?.length) {
+        if (open && data === null) {
             getUserToursAction().then((tours) => {
                 setData(tours)
             })
@@ -131,7 +131,7 @@ export function HeaderCommand() {
                             </CommandItem>
                         ))}
                         {
-                            !data?.length || <CommandEmpty>No tours found.</CommandEmpty>
+                            !data?.length || <CommandItem>No tours found.</CommandItem>
                         }
                     </CommandGroup>
                     <CommandGroup heading="Themes" data-choose-theme>

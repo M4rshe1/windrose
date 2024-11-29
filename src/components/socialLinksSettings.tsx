@@ -61,7 +61,7 @@ const SocialLinksSettings = ({socials, updateSocialsAction}: {
     return (
         <div className="space-y-4">
             <form action={addSocial} className="flex gap-2">
-                <SelectWithIcons options={socialOptions} className={cn('w-48')} name={'social'}/>
+                <SelectWithIcons options={socialOptions} className={cn('w-48')} name={'social'} label={"Social"}/>
                 <Button className={cn('w-24 text-primary-content')}>
                     <IconPlus/>
                 </Button>

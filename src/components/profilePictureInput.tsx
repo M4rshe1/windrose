@@ -6,32 +6,15 @@ import {Label} from "@/components/ui/label";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {Session} from "next-auth";
+import {uploadPicture} from "@/lib/uploadPicture";
 
 const ProfilePictureInput = ({session}: { session: Session }) => {
     const [avatar, setAvatar] = useState<string | null>(session?.user.image as string | null);
 
 
     async function handleEditProfilePicture() {
-
-        const file = await new Promise<File>((resolve) => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/jpeg, image/png, image/gif, image/webp, image/bmp, image/tiff, image/svg+xml';
-                input.onchange = () => {
-                    resolve(input.files![0]);
-                };
-                input.click();
-            }
-        );
-        const formData = new FormData();
-        formData.append('file', file);
-        const response = await fetch('/api/private/upload/pp', {
-            method: 'POST',
-            body: formData
-        });
-        const data = await response.json();
-        if (response.ok) setAvatar(data.fileObject.cdn);
-
+        const {ok, data} = await uploadPicture("/api/private/upload/pp");
+        if (ok) setAvatar(data.fileObject.cdn);
     }
 
     return (

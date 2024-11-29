@@ -1,12 +1,21 @@
 import {BreadcrumbPortal} from "@/components/breadcrumbBar";
-import {cn} from "@/lib/utils";
+import {cn, getMinioLinkFromKey} from "@/lib/utils";
 import React from "react";
 import H1 from "@/components/ui/h1";
 import H2 from "@/components/ui/h2";
 import db from "@/lib/db";
 import {TourSettingsSecondaryNav} from "@/components/secondaryNavs";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/lib/authOptions";
+import {TourToUserRole, UserRole} from "@prisma/client";
+import TourStatusInput from "@/components/tourStatusInput";
+import HeroInput from "@/components/HeroInput";
+import {Label} from "@/components/ui/label";
+import SubtitleInput from "@/components/subtitleInput";
+import {revalidatePath} from "next/cache";
 
 const TourSettings = async (props: { params: Promise<{ username: string, tour: string }> }) => {
+    const session = await getServerSession(authOptions);
     const params = await props.params;
     const tour = await db.tour.findFirst({
         where: {
@@ -20,6 +29,18 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                 }
             },
         },
+        include: {
+            TourToUser: {
+                include: {
+                    user: {
+                        include: {
+                            image: true
+                        }
+                    }
+                }
+            },
+            heroImage: true
+        }
     });
 
     const sectionCount = await db.tourSection.aggregate({
@@ -34,6 +55,39 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
             username: params.username
         }
     });
+
+
+    let userRole: string
+    if (session?.user?.role == UserRole.ADMIN) {
+        userRole = UserRole.ADMIN;
+    } else {
+        userRole = tour?.TourToUser.find(ttu => ttu.user.username === session?.user?.username)?.role as string;
+    }
+
+    const setDescription = async (description: string) => {
+        "use server"
+        await db.tour.update({
+            where: {
+                id: tour?.id as string
+            },
+            data: {
+                description: description
+            }
+        })
+    }
+
+    async function setTourDisplayName(displayName: string) {
+        "use server"
+        await db.tour.update({
+            where: {
+                id: tour?.id as string
+            },
+            data: {
+                displayName: displayName
+            }
+        })
+        return revalidatePath(`/${params.username}/${params.tour}/settings`)
+    }
 
 
     return (
@@ -51,12 +105,40 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                     }
                 ]
             }/>
-            <TourSettingsSecondaryNav activeTab={"Settings"} params={params} sectionCount={sectionCount._count}/>
+
+            <TourSettingsSecondaryNav activeTab={"Settings"} params={params} sectionCount={sectionCount._count}
+                                      userRole={userRole}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
-                    <H1>Settings</H1>
-                    <H2
-                        className={cn(`text-error`)}>Danger Zone</H2>
+                    <H1>General</H1>
+                    <div className={cn(`grid lg:grid-cols-[1fr_auto] grid-cols-1 gap-8`)}>
+                        <div className={cn('flex flex-col gap-3')}>
+                            <HeroInput tour={tour} image={getMinioLinkFromKey(tour?.heroImage?.fileKey as string)}/>
+                            <SubtitleInput labelText={`Name`} type={`text`} name={`displayName`}
+                                           id={`displayName`}
+                                           defaultValue={tour?.displayName as string}
+                                           onBlurAction={setTourDisplayName}
+                                           className={cn(`w-full`)}
+                            />
+                        </div>
+                        <div className={cn('flex flex-col gap-3')}>
+                            <Label htmlFor={`status`} className={cn('block')}>Status</Label>
+                            <TourStatusInput tour={tour?.status as string}/>
+                        </div>
+                    </div>
+                    <SubtitleInput labelText={`Description`} type={`text`} name={`description`}
+                                   id={`description`}
+                                   defaultValue={tour?.description as string}
+                                   onBlurAction={setDescription}
+                                   className={cn(`w-full`)}
+                                   subText={`(Optional) A short description of the tour.`}
+                    />
+                    <H2>Collaboration</H2>
+                    {
+                        (userRole == TourToUserRole.OWNER || userRole == UserRole.ADMIN) && <>
+                            <H2 className={cn(`text-error`)} id={"delete"}>Danger Zone</H2>
+                        </>
+                    }
                 </div>
             </div>
         </>

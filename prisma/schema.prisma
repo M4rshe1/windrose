@@ -22,7 +22,7 @@ enum FileStatus {
 }
 
 enum TourStatus {
-  DRAFT
+  PLANNING
   ON_TOUR
   FINISHED
 }
@@ -75,6 +75,32 @@ model User {
   fileId        String?
   countryId     String?
   likes         UserLikeTourSection[]
+  Pin           Pin[]
+  Saved         Saved[]
+}
+
+model Pin {
+  id        String   @id @default(cuid())
+  userId    String
+  tourId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  tour      Tour     @relation(fields: [tourId], references: [id])
+
+  @@unique([userId, tourId])
+}
+
+model Saved {
+  id        String   @id @default(cuid())
+  userId    String
+  tourId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  tour      Tour     @relation(fields: [tourId], references: [id])
+
+  @@unique([userId, tourId])
 }
 
 model Social {
@@ -141,10 +167,12 @@ model Tour {
   sections     TourSection[]
   heroImage    File?          @relation(fields: [fileId], references: [id])
   fileId       String?
-  status       TourStatus     @default(DRAFT)
+  status       TourStatus     @default(PLANNING)
   TourToUser   TourToUser[]
   Tags         Tag[]
   Notification Notification[]
+  Pin          Pin[]
+  Saved        Saved[]
 }
 
 model UserLikeTourSection {
@@ -176,17 +204,14 @@ model TourSection {
 }
 
 model TourToUser {
-  id         String         @id @default(cuid())
-  tourId     String
-  userId     String
-  role       TourToUserRole
-  isFollow   Boolean        @default(false)
-  isFavorite Boolean        @default(false)
-  isPinned   Boolean        @default(false)
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  user       User           @relation(fields: [userId], references: [id])
-  tour       Tour           @relation(fields: [tourId], references: [id])
+  id        String         @id @default(cuid())
+  tourId    String
+  userId    String
+  role      TourToUserRole
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  user      User           @relation(fields: [userId], references: [id])
+  tour      Tour           @relation(fields: [tourId], references: [id])
 
   @@unique([tourId, userId])
 }
