@@ -15,6 +15,7 @@ import SubtitleInput from "@/components/subtitleInput";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
 import TourDangerSettings from "@/components/TourDangerSettings";
+import TourCollaborationTable from "@/components/tourCollaborationTable";
 
 const TourSettings = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -142,7 +143,7 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                     {
                         (userRole == TourToUserRole.OWNER || userRole == UserRole.ADMIN) && <>
                             <H2>Collaboration</H2>
-
+                            <TourCollaborationTable tour={tour}/>
                             <H2 className={cn(`text-error`)} id={"delete"}>Danger Zone</H2>
                             <TourDangerSettings tour={tour}/>
                         </>

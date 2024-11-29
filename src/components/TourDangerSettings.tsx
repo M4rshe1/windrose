@@ -18,7 +18,7 @@ const TourDangerSettings = ({tour}: { tour: any }) => {
         return {
             value: ttu.user.username,
             label: ttu.user.name,
-            image: getMinioLinkFromKey(ttu.user.image.key)
+            image: ttu.user.image?.key ? getMinioLinkFromKey(ttu.user.image.key) : null
         }
     });
 
