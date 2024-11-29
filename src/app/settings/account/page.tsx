@@ -64,8 +64,20 @@ const AccountSettings = async () => {
                         }
                     </div>
                     <H2 className={'text-error'}>Danger Zone</H2>
-                    <DeleteAccountButton user={user as User}/>
-
+                    <div
+                        className={'border-2 border-error rounded-lg [&>*]:p-4 [&>*]:justify-between [&>*]:flex [&>*]:items-center [&>*]:gap-4'}>
+                        <div>
+                            <div>
+                                <p className={'font-semibold'}>
+                                    Delete your account
+                                </p>
+                                <span className={'text-sm'}>
+                                    This action cannot be undone. Please be certain.
+                                </span>
+                            </div>
+                            <DeleteAccountButton user={user as User}/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

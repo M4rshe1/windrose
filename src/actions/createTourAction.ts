@@ -50,6 +50,15 @@ export async function createTourAction(ownerId: string, name: string, descriptio
         return false;
     }
 
+    await db.tourSection.create({
+        data: {
+            tourId: result.id,
+            name: 'Starting Point',
+            order: 0,
+            description: 'This is the first section of your tour. You can edit this section to add more information about your tour.',
+        }
+    });
+
     if (user.username) {
         return redirect(`/${user.username}/${name}`);
     } else {

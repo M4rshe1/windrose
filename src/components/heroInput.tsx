@@ -32,11 +32,11 @@ const HeroInput = ({tour, image}: { tour: any, image: string }) => {
                         hero &&
                         <Image src={hero as string} alt={`Hero`} width={1920} height={1080} layout={`responsive`} className={'col-start-1 row-start-1'}/>
                     }
-                    {/*<div className={*/}
-                    {/*    cn("absolute top-4 left-4 text-white font-bold text-2xl bg-black bg-opacity-50 p-2 rounded mr-4")*/}
-                    {/*}>*/}
-                    {/*    {tour.displayName}*/}
-                    {/*</div>*/}
+                    <div className={
+                        cn("absolute m-auto text-white font-bold text-4xl bg-black/50 p-2 rounded mr-4")
+                    }>
+                        {tour.displayName}
+                    </div>
                 </div>
                 <div className={cn(`absolute bottom-4 left-4 flex items-center gap-2`)}>
 

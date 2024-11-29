@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "TourSection" ALTER COLUMN "name" DROP NOT NULL,
+ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "datetime" DROP NOT NULL;

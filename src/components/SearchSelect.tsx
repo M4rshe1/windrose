@@ -13,7 +13,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
 
 export default function SearchSelect(
-    {options, label, onChangeAction, defaultValue, className}: {
+    {options, label, onChangeAction, defaultValue, className, placeholder}: {
         options: {
             label: string,
             value: string,
@@ -23,6 +23,7 @@ export default function SearchSelect(
             image?: string
         }[],
         label?: string,
+        placeholder?: string,
         name: string,
         className?: string,
         defaultValue?: string,
@@ -73,7 +74,7 @@ export default function SearchSelect(
                                       {options.find((option) => option.label === value)?.label}
                                   </>
                               )
-                              : `Select ${label} `}
+                              : `Select ${placeholder ?? label} `}
                             </div>
 
                         </span>

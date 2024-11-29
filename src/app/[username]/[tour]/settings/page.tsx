@@ -9,10 +9,12 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import {TourToUserRole, UserRole} from "@prisma/client";
 import TourStatusInput from "@/components/tourStatusInput";
-import HeroInput from "@/components/HeroInput";
+import HeroInput from "@/components/heroInput";
 import {Label} from "@/components/ui/label";
 import SubtitleInput from "@/components/subtitleInput";
 import {revalidatePath} from "next/cache";
+import {redirect} from "next/navigation";
+import TourDangerSettings from "@/components/TourDangerSettings";
 
 const TourSettings = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -42,6 +44,9 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
             heroImage: true
         }
     });
+
+    const isAllowed = tour?.TourToUser.find(ttu => ttu.user.id === session?.user?.id && (ttu.role === TourToUserRole.OWNER || ttu.role === TourToUserRole.EDITOR)) || session?.user?.role === UserRole.ADMIN;
+    if (!session || !session?.user || !isAllowed) return redirect(`/${params.username}/${params.tour}`);
 
     const sectionCount = await db.tourSection.aggregate({
         _count: true,
@@ -113,7 +118,8 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                     <H1>General</H1>
                     <div className={cn(`grid lg:grid-cols-[1fr_auto] grid-cols-1 gap-8`)}>
                         <div className={cn('flex flex-col gap-3')}>
-                            <HeroInput tour={tour} image={getMinioLinkFromKey(tour?.heroImage?.fileKey as string)}/>
+                            <HeroInput tour={tour}
+                                       image={tour?.heroImage?.fileKey ? getMinioLinkFromKey(tour?.heroImage?.fileKey as string) : ""}/>
                             <SubtitleInput labelText={`Name`} type={`text`} name={`displayName`}
                                            id={`displayName`}
                                            defaultValue={tour?.displayName as string}
@@ -133,10 +139,12 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                                    className={cn(`w-full`)}
                                    subText={`(Optional) A short description of the tour.`}
                     />
-                    <H2>Collaboration</H2>
                     {
                         (userRole == TourToUserRole.OWNER || userRole == UserRole.ADMIN) && <>
+                            <H2>Collaboration</H2>
+
                             <H2 className={cn(`text-error`)} id={"delete"}>Danger Zone</H2>
+                            <TourDangerSettings tour={tour}/>
                         </>
                     }
                 </div>

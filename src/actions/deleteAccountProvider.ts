@@ -4,7 +4,7 @@ import {getServerSession, Session} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
 
-export async function removeAccountProvider(provider: string) {
+export async function deleteAccountProvider(provider: string) {
     const session: Session | null = await getServerSession(authOptions)
     if (!session) return false
 

@@ -11,7 +11,6 @@ import {updateTourStatusAction} from "@/actions/updateTourStatusAction";
 const TourStatusInput = ({tour}: {
     tour: any,
 }) => {
-    console.log(tour)
     const options = [
         {
             label: 'Not Started', value: TourStatus.PLANNING, icon: NotebookPen

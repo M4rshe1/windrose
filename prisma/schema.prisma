@@ -58,12 +58,12 @@ model User {
   username      String?               @unique
   email         String                @unique
   emailVerified DateTime?
-  image         File?                 @relation(fields: [fileId], references: [id])
+  image         File?                 @relation(fields: [fileId], references: [id], onDelete: SetNull)
   role          UserRole              @default(USER)
   bio           String?
   tz            String?
   showEmail     Boolean               @default(false)
-  country       Country?              @relation(fields: [countryId], references: [id])
+  country       Country?              @relation(fields: [countryId], references: [id], onDelete: SetNull)
   location      String?
   gender        Gender?               @default(UNKNOWN)
   accounts      Account[]
@@ -85,8 +85,8 @@ model Pin {
   tourId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  tour      Tour     @relation(fields: [tourId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tourId])
 }
@@ -97,8 +97,8 @@ model Saved {
   tourId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  tour      Tour     @relation(fields: [tourId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tour      Tour     @relation(fields: [tourId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tourId])
 }
@@ -138,19 +138,19 @@ model Session {
 }
 
 model File {
-  id                 String        @id @default(cuid())
+  id                 String              @id @default(cuid())
   fileName           String
   fileKey            String
   bucket             String
   contentType        String
   size               BigInt
-  uploadedAt         DateTime      @default(now())
+  uploadedAt         DateTime            @default(now())
   description        String?
-  status             FileStatus    @default(UPLOADED)
+  status             FileStatus          @default(UPLOADED)
   processingMetadata Json?
-  tourSection        TourSection[]
   tour               Tour[]
   User               User[]
+  TourSectionToFile  TourSectionToFile[]
 
   @@index([bucket, fileKey])
 }
@@ -162,10 +162,11 @@ model Tour {
   description  String?
   visibility   TourVisibility @default(PUBLIC)
   location     String?
+  startDate    DateTime?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   sections     TourSection[]
-  heroImage    File?          @relation(fields: [fileId], references: [id])
+  heroImage    File?          @relation(fields: [fileId], references: [id], onDelete: SetNull)
   fileId       String?
   status       TourStatus     @default(PLANNING)
   TourToUser   TourToUser[]
@@ -181,26 +182,35 @@ model UserLikeTourSection {
   tourSectionId String
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  user          User         @relation(fields: [userId], references: [id])
-  TourSection   TourSection? @relation(fields: [tourSectionId], references: [id])
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  TourSection   TourSection? @relation(fields: [tourSectionId], references: [id], onDelete: Cascade)
 }
 
 model TourSection {
   id                  String                @id @default(cuid())
   tourId              String
-  name                String
-  description         String
-  image               File?                 @relation(fields: [fileId], references: [id])
-  loaction            String?
+  name                String?
+  description         String?
   lat                 Float?
   lng                 Float?
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
-  tour                Tour                  @relation(fields: [tourId], references: [id])
-  fileId              String
-  datetime            DateTime
+  tour                Tour                  @relation(fields: [tourId], references: [id], onDelete: Cascade)
+  datetime            DateTime?
+  order               Int
   Comments            Comment[]
   UserLikeTourSection UserLikeTourSection[]
+  images              TourSectionToFile[]
+}
+
+model TourSectionToFile {
+  id            String      @id @default(cuid())
+  tourSectionId String
+  fileId        String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  tourSection   TourSection @relation(fields: [tourSectionId], references: [id], onDelete: Cascade)
+  file          File        @relation(fields: [fileId], references: [id], onDelete: Cascade)
 }
 
 model TourToUser {
@@ -210,8 +220,8 @@ model TourToUser {
   role      TourToUserRole
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
-  user      User           @relation(fields: [userId], references: [id])
-  tour      Tour           @relation(fields: [tourId], references: [id])
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tour      Tour           @relation(fields: [tourId], references: [id], onDelete: Cascade)
 
   @@unique([tourId, userId])
 }
@@ -222,12 +232,12 @@ model Notification {
   type      String
   read      Boolean  @default(false)
   message   String
-  Tour      Tour?    @relation(fields: [tourId], references: [id])
+  Tour      Tour?    @relation(fields: [tourId], references: [id], onDelete: Cascade)
   tourId    String?
   saved     Boolean  @default(false)
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
@@ -237,14 +247,14 @@ model Comment {
   message       String
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  user          User         @relation(fields: [userId], references: [id])
-  TourSection   TourSection? @relation(fields: [tourSectionId], references: [id])
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  TourSection   TourSection? @relation(fields: [tourSectionId], references: [id], onDelete: Cascade)
   tourSectionId String?
 }
 
 model Tag {
   tourId String @id @default(cuid())
-  tour   Tour   @relation(fields: [tourId], references: [id])
+  tour   Tour   @relation(fields: [tourId], references: [id], onDelete: Cascade)
   tag    String
 }
 

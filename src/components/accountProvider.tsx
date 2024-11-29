@@ -5,7 +5,7 @@ import {IconBrandGithub, IconBrandGoogle} from "@tabler/icons-react";
 import {Button} from "@/components/ui/button";
 import {Trash} from "lucide-react";
 import {confirmModal} from "@/components/confirmModal";
-import {removeAccountProvider} from "@/actions/removeAccountProvider";
+import {deleteAccountProvider} from "@/actions/deleteAccountProvider";
 
 const AccountProvider = ({item}: {
     item: { provider: string, token_type: string, scope: string, expires_at: string, session_state: string, access_token: string }
@@ -19,7 +19,7 @@ const AccountProvider = ({item}: {
             buttonTrue: 'Remove',
             confirmValue: item.provider
         })) {
-            await removeAccountProvider(item.provider)
+            await deleteAccountProvider(item.provider)
         }
     }
 

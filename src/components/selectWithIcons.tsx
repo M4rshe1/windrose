@@ -15,11 +15,12 @@ export default function SelectWithIcons({options, label, name, defaultValue, ...
             <Select
             name={name}
             defaultValue={defaultValue}
+            {...props}
             >
                 <SelectTrigger
                     id="select-35"
                     className={cn("[&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_svg]:shrink-0", props.className || '')}
-                    {...props}
+
                 >
                     <SelectValue placeholder={`Select ${label}`}/>
                 </SelectTrigger>
