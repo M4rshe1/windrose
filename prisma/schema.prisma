@@ -165,6 +165,7 @@ model Tour {
   startDate    DateTime?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+  sectionOrder Json[]
   sections     TourSection[]
   heroImage    File?          @relation(fields: [fileId], references: [id], onDelete: SetNull)
   fileId       String?
@@ -197,7 +198,6 @@ model TourSection {
   updatedAt           DateTime              @updatedAt
   tour                Tour                  @relation(fields: [tourId], references: [id], onDelete: Cascade)
   datetime            DateTime?
-  order               Int
   Comments            Comment[]
   UserLikeTourSection UserLikeTourSection[]
   images              TourSectionToFile[]

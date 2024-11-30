@@ -27,7 +27,7 @@ export async function createCollaborationAction(tourId: string, userId: string, 
         }
     });
 
-    if (!tourToUser) return false;
+    if (tourToUser) return false;
 
     await db.tourToUser.create({
         data: {

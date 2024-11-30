@@ -18,6 +18,7 @@ export async function deleteCollaborationAction(tourId: string, userId: string) 
 
     if (!isAllowed && session.user.role !== UserRole.ADMIN) return false;
 
+
     await db.tourToUser.deleteMany({
         where: {
             tourId: tourId,
@@ -25,7 +26,7 @@ export async function deleteCollaborationAction(tourId: string, userId: string) 
             AND: {
                 userId: {
                     not: session.user.id
-                }
+                },
             },
             role: {
                 not: TourToUserRole.OWNER

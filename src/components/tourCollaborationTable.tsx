@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {TourToUserRole} from "@prisma/client";
 import {DataTable} from "@/components/collaborationTable/data-table";
 import {columns} from "@/components/collaborationTable/columns";
-import {Button} from "@/components/ui/button";
+import {AddCollaboratorDialog} from "@/components/addCollaboratorDialog";
 
 const TourCollaborationTable = ({tour}: { tour: any }) => {
     const [users, setUsers] = useState(tour.TourToUser.filter((ttu: any) => ttu.role !== TourToUserRole.OWNER).map((ttu: any) => {
@@ -12,15 +12,17 @@ const TourCollaborationTable = ({tour}: { tour: any }) => {
                 userId: ttu.user.id,
                 name: ttu.user.name,
                 username: ttu.user.username,
-                role: ttu.role
+                role: ttu.role,
+                tourId: ttu.tourId
             }
         }
     ));
 
+
     useEffect(() => {
         setUsers(tour.TourToUser.filter((ttu: any) => ttu.role !== TourToUserRole.OWNER).map((ttu: any) => {
                 return {
-                    id: ttu.user.id,
+                    userId: ttu.user.id,
                     name: ttu.user.name,
                     username: ttu.user.username,
                     role: ttu.role,
@@ -33,7 +35,7 @@ const TourCollaborationTable = ({tour}: { tour: any }) => {
     return (
         <div className={'flex items-center gap-2 flex-col w-full'}>
             <div className={'flex items-center justify-end w-full'}>
-                <Button variant={'default'}>Add Collaborator</Button>
+                <AddCollaboratorDialog tour={tour}/>
             </div>
             <div className={'w-full'}>
                 <DataTable columns={columns} data={users}/>

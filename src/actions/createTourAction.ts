@@ -1,8 +1,8 @@
 'use server'
 import {getServerSession, Session} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
-import db from "@/lib/db";
 import {checkTourNameAction} from "@/actions/checkTourNameAction";
+import db from "@/lib/db";
 import {TourStatus, TourToUserRole, TourVisibility} from "@prisma/client";
 import {redirect} from "next/navigation";
 
@@ -30,7 +30,7 @@ export async function createTourAction(ownerId: string, name: string, descriptio
         return false;
     }
 
-    const result = await db.tour.create({
+    const tour = await db.tour.create({
         data: {
             name: name,
             description: description,
@@ -46,16 +46,24 @@ export async function createTourAction(ownerId: string, name: string, descriptio
         }
     });
 
-    if (!result) {
+    if (!tour) {
         return false;
     }
 
-    await db.tourSection.create({
+    const section = await db.tourSection.create({
         data: {
-            tourId: result.id,
+            tourId: tour.id,
             name: 'Starting Point',
-            order: 0,
             description: 'This is the first section of your tour. You can edit this section to add more information about your tour.',
+        }
+    });
+
+    await db.tour.update({
+        where: {
+            id: tour.id
+        },
+        data: {
+            sectionOrder: [section.id]
         }
     });
 
