@@ -6,7 +6,7 @@ import React from "react";
 
 interface RadioLabeledProps {
     label: string;
-    sublabel?: string;
+    subLabel?: string;
     description?: string;
     value: string;
 }
@@ -29,7 +29,7 @@ export default function RadioGroupLabeled({items, defaultValue, onClickAction, .
                                 <Label htmlFor={'radio-' + item.value}>
                                     {item.label}{" "}
                                     <span className="text-xs font-normal leading-[inherit] text-muted-foreground">
-                                        {item.sublabel}
+                                        {item.subLabel}
                                     </span>
                                 </Label>
                                 <p id={item.description} className="text-xs text-muted-foreground">

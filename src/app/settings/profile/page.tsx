@@ -149,6 +149,18 @@ const ProfileSettings = async () => {
         return revalidatePath('/settings/profile');
     }
 
+    async function updateMeasurementSystem(system: string) {
+        "use server"
+
+        await db.user.update({
+            where: {id: session?.user.id},
+            data: {
+                metric: system === 'METRIC'
+            }
+        })
+        return revalidatePath('/settings/profile');
+    }
+
     return (
         <>
             <BreadcrumbPortal items={
@@ -182,13 +194,13 @@ const ProfileSettings = async () => {
                                 <RadioGroupLabeled items={[
                                     {
                                         label: 'Visible',
-                                        sublabel: 'Everyone',
+                                        subLabel: 'Everyone',
                                         description: 'Your email is visible on your profile to everyone.',
                                         value: 'visible'
                                     },
                                     {
                                         label: 'Hidden',
-                                        sublabel: 'Only you',
+                                        subLabel: 'Only you',
                                         description: 'Your email will be hidden from everyone.',
                                         value: 'hidden'
                                     }
@@ -229,6 +241,24 @@ const ProfileSettings = async () => {
                     <SocialLinksSettings socials={
                         user?.Social as { name: string, url: string, id: string, userId: string }[] || []
                     } updateSocialsAction={updateSocials}
+                    />
+                    <H2 className={"mt-8"}>Measurement System</H2>
+
+                    <RadioGroupBordered items={
+                        [
+                            {
+                                label: `Metric`,
+                                description: `Centimeters and kilograms`,
+                                value: 'METRIC'
+                            },
+                            {
+                                label: `Imperial`,
+                                description: `Inches and pounds`,
+                                value: 'IMPERIAL'
+                            }
+                        ]
+                    } classNameWrapper={`grid lg:grid-cols-2 grid-cols-1`} onClickAction={updateMeasurementSystem}
+                                        defaultValue={user?.metric ? 'METRIC' : 'IMPERIAL'}
                     />
                     <H2 className={"mt-8"}>Location</H2>
                     <SubtitleInput labelText={`Location`} type={`text`} name={`location`} id={`location`}

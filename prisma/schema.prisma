@@ -65,6 +65,7 @@ model User {
   showEmail     Boolean               @default(false)
   country       Country?              @relation(fields: [countryId], references: [id], onDelete: SetNull)
   location      String?
+  metric        Boolean               @default(true)
   gender        Gender?               @default(UNKNOWN)
   accounts      Account[]
   sessions      Session[]
