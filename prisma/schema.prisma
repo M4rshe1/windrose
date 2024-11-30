@@ -194,6 +194,8 @@ model TourSection {
   description         String?
   lat                 Float?
   lng                 Float?
+  vehicle             String?
+  nights              Int?                  @default(0)
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   tour                Tour                  @relation(fields: [tourId], references: [id], onDelete: Cascade)

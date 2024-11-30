@@ -111,7 +111,7 @@ export function HeaderCommand() {
                                 className={'group/tour'}
                                 onSelect={() => {
                                     setOpen(false)
-                                    redirect(`/${tour.owner.name}/${tour.name}`
+                                    redirect(`/${tour.owner.username}/${tour.name}`
                                     )
                                 }}
                                 key={index}

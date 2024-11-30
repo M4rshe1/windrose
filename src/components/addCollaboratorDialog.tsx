@@ -47,7 +47,7 @@ export function AddCollaboratorDialog({tour, ...props}: { tour: any, [key: strin
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="default" {...props}>Add Collaborator</Button>
+                <Button variant="default" {...props}>Add</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

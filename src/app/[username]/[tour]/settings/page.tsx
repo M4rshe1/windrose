@@ -20,48 +20,42 @@ import TourCollaborationTable from "@/components/tourCollaborationTable";
 const TourSettings = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const session = await getServerSession(authOptions);
     const params = await props.params;
-    const tour = await db.tour.findFirst({
-        where: {
-            name: params.tour,
-            TourToUser: {
-                some: {
-                    user: {
-                        username: params.username
-                    },
-                    role: 'OWNER'
-                }
+    const [tour, user] = await Promise.all([
+        db.tour.findFirst({
+            where: {
+                name: params.tour,
+                TourToUser: {
+                    some: {
+                        user: {
+                            username: params.username
+                        },
+                        role: 'OWNER'
+                    }
+                },
             },
-        },
-        include: {
-            TourToUser: {
-                include: {
-                    user: {
-                        include: {
-                            image: true
+            include: {
+                TourToUser: {
+                    include: {
+                        user: {
+                            include: {
+                                image: true
+                            }
                         }
                     }
-                }
-            },
-            heroImage: true
-        }
-    });
+                },
+                heroImage: true,
+                sections: true
+            }
+        }),
+        db.user.findUnique({
+            where: {
+                username: params.username
+            }
+        })
+    ]);
 
     const isAllowed = tour?.TourToUser.find(ttu => ttu.user.id === session?.user?.id && (ttu.role === TourToUserRole.OWNER || ttu.role === TourToUserRole.EDITOR)) || session?.user?.role === UserRole.ADMIN;
     if (!session || !session?.user || !isAllowed) return redirect(`/${params.username}/${params.tour}`);
-
-    const sectionCount = await db.tourSection.aggregate({
-        _count: true,
-        where: {
-            tourId: tour?.id
-        }
-    });
-
-    const user = await db.user.findUnique({
-        where: {
-            username: params.username
-        }
-    });
-
 
     let userRole: string
     if (session?.user?.role == UserRole.ADMIN) {
@@ -112,7 +106,7 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                 ]
             }/>
 
-            <TourSettingsSecondaryNav activeTab={"Settings"} params={params} sectionCount={sectionCount._count}
+            <TourSettingsSecondaryNav activeTab={"Settings"} params={params} sectionCount={tour?.sections.length as number}
                                       userRole={userRole}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>

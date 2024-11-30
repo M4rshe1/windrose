@@ -3,7 +3,7 @@
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
-import {TourToUserRole} from "@prisma/client";
+import {TourToUserRole, UserRole} from "@prisma/client";
 import minioClient from "@/lib/minioClient";
 
 export async function deleteTourAction(tourId: string) {
@@ -18,7 +18,7 @@ export async function deleteTourAction(tourId: string) {
         }
     });
 
-    if (!allowed) {
+    if (!allowed && session?.user?.role !== UserRole.ADMIN) {
         return false;
     }
 

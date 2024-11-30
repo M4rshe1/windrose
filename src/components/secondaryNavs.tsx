@@ -11,7 +11,6 @@ export const TourSettingsSecondaryNav = ({activeTab, params, sectionCount, userR
     sectionCount: number
     userRole: string | TourToUserRole | UserRole
 }) => {
-
     const items = [
         {
             title: 'Overview', url: `/${params.username}/${params.tour}`, icon: Map

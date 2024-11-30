@@ -11,6 +11,7 @@ import SearchSelect from "@/components/SearchSelect";
 import {useState} from "react";
 import {deleteTourAction} from "@/actions/deleteTourAction";
 import {updateTourOwner} from "@/actions/updateTourOwner";
+import {redirect} from "next/navigation";
 
 const TourDangerSettings = ({tour}: { tour: any }) => {
     const [owner, setOwner] = useState(tour.TourToUser.find((ttu: any) => ttu.role === TourToUserRole.OWNER).user.username);
@@ -64,6 +65,7 @@ const TourDangerSettings = ({tour}: { tour: any }) => {
             }
         )) {
             await deleteTourAction(tour.id);
+            redirect(`/${tour.user.username}`);
         }
     }
 

@@ -5,7 +5,7 @@ import React from "react";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
-import {UserRole} from "@prisma/client";
+import {TourToUserRole, UserRole} from "@prisma/client";
 import H1 from "@/components/ui/h1";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string }> }) => {
@@ -19,7 +19,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                     user: {
                         username: params.username
                     },
-                    role: 'OWNER'
+                    role: TourToUserRole.OWNER
                 }
             },
         },
