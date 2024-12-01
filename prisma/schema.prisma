@@ -52,6 +52,12 @@ enum TourVisibility {
   PRIVATE
 }
 
+enum TourSectionStatus {
+  PLANNED
+  VISITED
+  SKIPPED
+}
+
 model User {
   id            String                @id @default(cuid())
   name          String?
@@ -166,7 +172,6 @@ model Tour {
   startDate    DateTime?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  sectionOrder Json[]
   sections     TourSection[]
   heroImage    File?          @relation(fields: [fileId], references: [id], onDelete: SetNull)
   fileId       String?
@@ -195,6 +200,9 @@ model TourSection {
   description         String?
   lat                 Float?
   lng                 Float?
+  distance            Float?
+  duration            Int?
+  status              TourSectionStatus     @default(PLANNED)
   vehicle             String?
   nights              Int?                  @default(0)
   createdAt           DateTime              @default(now())

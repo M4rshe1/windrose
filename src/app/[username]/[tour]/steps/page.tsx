@@ -7,7 +7,7 @@ import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
 import {TourToUserRole, UserRole} from "@prisma/client";
 import H1 from "@/components/ui/h1";
-import {StepsDNDContext} from "@/components/stepsDNDContext";
+import {StepsContainer} from "@/components/stepsContainer";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -34,24 +34,16 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                     }
                 }
             },
-            heroImage: true
-        }
-    });
-
-    const sections = await db.tourSection.findMany({
-        where: {
-            tourId: tour?.id
-        },
-        include: {
-            images: {
+            heroImage: true,
+            sections: {
                 include: {
-                    file: true
+                    images: true
                 }
             }
         }
     });
 
-    const user = await db.user.findUnique({
+     const user = await db.user.findUnique({
         where: {
             username: params.username
         }
@@ -83,13 +75,13 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                 ]
             }/>
 
-            <TourSettingsSecondaryNav activeTab={"Steps"} params={params} sectionCount={sections.length}
+            <TourSettingsSecondaryNav activeTab={"Steps"} params={params} sectionCount={tour?.sections.length as number}
                                       userRole={userRole}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
                     <H1>Steps</H1>
                     <div className={'flex flex-col w-full gap-2'}>
-                        <StepsDNDContext tourId={tour?.id as string} disabled={!isAllowed} order={tour?.sectionOrder as string[]} sections={sections || []}/>
+                        <StepsContainer disabled={!isAllowed}  tour={tour} metric={user?.metric as boolean} sort={"ASC"}/>
                     </div>
                 </div>
             </div>
