@@ -47,7 +47,7 @@ export async function deleteTourAction(tourId: string) {
 
 
     for (const image of images) {
-        await minioClient.removeObject(process.env.PUBLIC_MINIO_BUCKET as string, image.fileKey);
+        await minioClient.removeObject(process.env.NEXT_PUBLIC_MINIO_BUCKET as string, image.fileKey);
     }
 
 

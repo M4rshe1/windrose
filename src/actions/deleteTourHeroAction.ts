@@ -34,7 +34,7 @@ export async function deleteTourHeroAction(tourId: string) {
     if (!image?.heroImage) {
         return false;
     } else {
-        await minioClient.removeObject(process.env.PUBLIC_MINIO_BUCKET as string, image.heroImage.fileKey);
+        await minioClient.removeObject(process.env.NEXT_PUBLIC_MINIO_BUCKET as string, image.heroImage.fileKey);
     }
 
     const result =  await db.tour.update({

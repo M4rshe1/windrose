@@ -48,7 +48,7 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
         })
 
         for (const image of images) {
-            await minioClient.removeObject(process.env.PUBLIC_MINIO_BUCKET as string, image.fileKey);
+            await minioClient.removeObject(process.env.NEXT_PUBLIC_MINIO_BUCKET as string, image.fileKey);
         }
 
         await db.tourSection.delete({
@@ -177,36 +177,46 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                             }
                         </div>
                         <div className={'flex lg:items-center lg:flex-row flex-col lg:gap-2 whitespace-nowrap'}>
-                            <p className={'text-sm opacity-70'}>
+                            <p className={'text-sm opacity-70 flex lg:items-center max-lg:flex-col'}>
                                 {
                                     item.nights ? <>
                                         {
-                                            item.datetime?.toLocaleDateString(
-                                                'en-US',
+                                            <span>
                                                 {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: '2-digit',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    hour12: false
+                                                    item.datetime?.toLocaleDateString(
+                                                        'en-US',
+                                                        {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: '2-digit',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                            hour12: false
+                                                        }
+                                                    )
                                                 }
-                                            )
+                                                <span className={'lg:hidden'}> until</span>
+                                            </span>
                                         }
-                                        <span>&nbsp;-&nbsp;</span>
+                                        <span className={'max-lg:hidden'}>&nbsp;-&nbsp;</span>
                                         {
-                                            new Date(new Date(item.datetime as Date).setDate(new Date(item.datetime as Date).getDate() + item.nights))
-                                                .toLocaleDateString(
-                                                    'en-US',
-                                                    {
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: '2-digit',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                        hour12: false
-                                                    }
-                                                )
+                                            <span>
+                                                {
+                                                    new Date(new Date(item.datetime as Date).setDate(new Date(item.datetime as Date).getDate() + item.nights))
+                                                        .toLocaleDateString(
+                                                            'en-US',
+                                                            {
+                                                                year: 'numeric',
+                                                                month: 'long',
+                                                                day: '2-digit',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                                hour12: false
+                                                            }
+                                                        )
+                                                }
+                                            </span>
+
                                         }
                                     </> : <>
                                         {
@@ -225,11 +235,11 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                                     </>
                                 }
                             </p>
+                            {
+                                (item.duration || item.distance) && <span
+                                    className={'w-1.5 h-1.5 bg-base-content rounded-full opacity-70 lg:block hidden'}></span>
+                            }
                             <p>
-                                {
-                                    (item.duration || item.distance) && <span
-                                        className={'w-1.5 h-1.5 bg-base-content rounded-full opacity-70 lg:block hidden'}></span>
-                                }
                                 <span className={'text-sm opacity-70'}>
                                     {item.distance && distanceReadable(item.distance, metric)}
                                 </span>
@@ -247,7 +257,8 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                     !disabled &&
                     <div
                         className={'flex items-center gap-2 mr-4 transition ease-in-out duration-200 opacity-0 group-hover:opacity-100 max-lg:opacity-100'}>
-                        <DateTimeSelect defaultValueDate={item.datetime as Date} onDateTimeChangeAction={handleDateTimeChange}
+                        <DateTimeSelect defaultValueDate={item.datetime as Date}
+                                        onDateTimeChangeAction={handleDateTimeChange}
                                         label={"Date and Time"}/>
 
                         <StepsItemDropdown status={item.status} updateStatusAction={changeStatusAction}

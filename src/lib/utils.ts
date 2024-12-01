@@ -13,7 +13,7 @@ export function stringToDashCase(str: string | null | undefined | number): strin
 }
 
 export function getMinioLinkFromKey(key: string): string {
-    return `http://${process.env.PUBLIC_MINIO_ENDPOINT}:${process.env.PUBLIC_MINIO_PORT}/${process.env.PUBLIC_MINIO_BUCKET}/${key}`;
+    return `http://${process.env.NEXT_PUBLIC_MINIO_ENDPOINT}:${process.env.NEXT_PUBLIC_MINIO_PORT}/${process.env.NEXT_PUBLIC_MINIO_BUCKET}/${key}`;
 }
 
 export function hideFullToken(token: string): string {

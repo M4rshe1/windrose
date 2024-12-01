@@ -4,20 +4,20 @@ import fs from "fs/promises";
 import db from "@/lib/db";
 
 export const uploadFileToMinio = async (file: File, fileName: string) => {
-    const bucketName = process.env.PUBLIC_MINIO_BUCKET;
-    const cdnHost = process.env.PUBLIC_MINIO_ENDPOINT;
-    const port = process.env.PUBLIC_MINIO_PORT;
+    const bucketName = process.env.NEXT_PUBLIC_MINIO_BUCKET;
+    const cdnHost = process.env.NEXT_PUBLIC_MINIO_ENDPOINT;
+    const port = process.env.NEXT_PUBLIC_MINIO_PORT;
 
     if (!bucketName) {
-        throw new Error("PUBLIC_MINIO_BUCKET is required");
+        throw new Error("NEXT_PUBLIC_MINIO_BUCKET is required");
     }
 
     if (!cdnHost) {
-        throw new Error("PUBLIC_MINIO_ENDPOINT is required");
+        throw new Error("NEXT_PUBLIC_MINIO_ENDPOINT is required");
     }
 
     if (!port) {
-        throw new Error("PUBLIC_MINIO_PORT is required");
+        throw new Error("NEXT_PUBLIC_MINIO_PORT is required");
     }
 
 

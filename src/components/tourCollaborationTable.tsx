@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from "react";
 import {TourToUserRole} from "@prisma/client";
-import {DataTable} from "@/components/collaborationTable/data-table";
+import {DataTable} from "@/components/data-table";
 import {columns} from "@/components/collaborationTable/columns";
 import {AddCollaboratorDialog} from "@/components/addCollaboratorDialog";
 

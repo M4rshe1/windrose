@@ -7,7 +7,7 @@ const H2 = ({children, className, ...props}: {
     [key: string]: unknown
 }) => {
     return <h2
-        className={cn("text-2xl pb-1 px-2 my-3 font-bold border-b-2 border-neutral", className)} {...props}>{children}</h2>;
+        className={cn("text-2xl pb-1 px-2 my-3 font-bold border-b-2 border-neutral whitespace-nowrap", className)} {...props}>{children}</h2>;
 }
 
 export default H2;

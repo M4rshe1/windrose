@@ -7,6 +7,10 @@ import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
 import {UserRole} from "@prisma/client";
 import H1 from "@/components/ui/h1";
+import H2 from "@/components/ui/h2";
+import TourStepImageInput from "@/components/tourStepImageInput";
+import {revalidatePath} from "next/cache";
+import {Infinity as InfinityIcon} from "lucide-react";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string, step: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -69,6 +73,25 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
         })
     ]);
 
+    async function deleteImageAction(fileId: string) {
+        "use server"
+        await db.file.delete({
+            where: {
+                id: fileId,
+                TourSectionToFile: {
+                    some: {
+                        tourSectionId: params.step
+                    }
+                }
+            }
+        })
+        revalidatePath(`/${params.username}/${params.tour}/${params.step}`)
+    }
+
+    const maxImages = session?.user.role === UserRole.ADMIN ?
+        Infinity :
+        session?.user.role === UserRole.PREMIUM ? settings.find(setting => setting.key === 'MAX_SECTION_IMAGES_PREMIUM')?.value :
+            settings.find(setting => setting.key === 'MAX_SECTION_IMAGES_FREE')?.value;
 
     let userRole: string
     if (session?.user?.role == UserRole.ADMIN) {
@@ -99,6 +122,21 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
                     <H1>{section?.name || 'Unnamed Step'}</H1>
                 </div>
+                <H2 className={'flex items-end gap-1'}>Images
+                    {maxImages &&
+                        <span className={'text-lg opacity-70 flex items-center--'}>
+                            {section?.images.length} /&nbsp;{maxImages === Infinity ?
+                            <InfinityIcon/> : maxImages as React.ReactNode}
+                        </span>
+                    }
+
+                </H2>
+                <TourStepImageInput images={section?.images.map(image => image.file) || []}
+                                    deleteImage={deleteImageAction}
+                                    maxImages={maxImages as number}
+                                    sectionId={params.step}
+                                    reval={`/${params.username}/${params.tour}/${params.step}`}
+                />
             </div>
         </>)
 }

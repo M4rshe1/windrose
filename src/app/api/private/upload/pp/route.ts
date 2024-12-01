@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
         // delete existing avatar file from minio
         if (existingAvatar?.image?.fileKey) {
-            await minioClient.removeObject(process.env.PUBLIC_MINIO_BUCKET as string, existingAvatar.image.fileKey);
+            await minioClient.removeObject(process.env.NEXT_PUBLIC_MINIO_BUCKET as string, existingAvatar.image.fileKey);
         }
 
         const fileObject = await uploadFileToMinio(file, `avatar/${userId}-${Date.now()}.${fileName.split('.').pop()}`);

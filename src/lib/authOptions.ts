@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
                     },
                 });
 
-                const s3Endpoint = `${process.env.PUBLIC_MINIO_ENDPOINT}:${process.env.PUBLIC_MINIO_PORT}/${process.env.PUBLIC_MINIO_BUCKET}/`;
+                const s3Endpoint = `${process.env.NEXT_PUBLIC_MINIO_ENDPOINT}:${process.env.NEXT_PUBLIC_MINIO_PORT}/${process.env.NEXT_PUBLIC_MINIO_BUCKET}/`;
                 if (dbUser) {
                     session.user.role = dbUser.role;
                     session.user.username = dbUser.username;
