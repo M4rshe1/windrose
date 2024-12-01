@@ -10,14 +10,17 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
-import {MoreHorizontal, Trash, UserPen, UserRoundPlus, UserRoundSearch} from "lucide-react";
+import {MoreHorizontal, Trash, UserMinus, UserPen, UserPlus, UserRoundSearch} from "lucide-react";
 import {TourToUserRole} from "@prisma/client";
 import {updateCollaborationAction} from "@/actions/updateCollaborationAction";
 import {deleteCollaborationAction} from "@/actions/deleteCollaborationAction";
 
 type Collaborator = {
     userId: string
+    ownerUsername: string
+    tourName: string
     name: string
+    mentioned: boolean
     username: string
     role: TourToUserRole
     tourId: string
@@ -37,6 +40,13 @@ export const columns: ColumnDef<Collaborator>[] = [
         header: "Role",
     },
     {
+        accessorKey: "mentioned",
+        header: "Mentioned",
+        cell: ({row}) => {
+            return row.original.mentioned ? 'Yes' : 'No'
+        },
+    },
+    {
         id: "actions",
         cell: ({row}) => {
             const collaborator = row.original
@@ -46,11 +56,6 @@ export const columns: ColumnDef<Collaborator>[] = [
                     role: TourToUserRole.EDITOR,
                     label: 'Editor',
                     icon: UserPen
-                },
-                {
-                    role: TourToUserRole.FELLOW,
-                    label: 'Fellow',
-                    icon: UserRoundPlus
                 },
                 {
                     role: TourToUserRole.VIEWER,
@@ -69,11 +74,10 @@ export const columns: ColumnDef<Collaborator>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className={"bg-base-200"}>
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        {roles.map((role) => (
-                            <DropdownMenuItem key={role.role} onClick={
+                        {roles.map((role, index: number) => (
+                            <DropdownMenuItem key={index} onClick={
                                 async () => {
-                                    await updateCollaborationAction(collaborator.tourId, collaborator.userId, role.role)
-                                    document.location.reload()
+                                    await updateCollaborationAction(collaborator.tourId, collaborator.userId, role.role, collaborator.mentioned, `/${collaborator.ownerUsername}/${collaborator.tourName}/settings`)
                                 }
                             }>
                                 <role.icon/>
@@ -81,10 +85,19 @@ export const columns: ColumnDef<Collaborator>[] = [
                             </DropdownMenuItem>
                         ))}
                         <DropdownMenuSeparator/>
+                        <DropdownMenuItem onClick={
+                            async () => {
+                                await updateCollaborationAction(collaborator.tourId, collaborator.userId, collaborator.role, !collaborator.mentioned, `/${collaborator.ownerUsername}/${collaborator.tourName}/settings`)
+                            }
+                        }>{
+                            collaborator.mentioned ? <UserMinus/> : <UserPlus/>
+                        }
+                            {collaborator.mentioned ? 'Unmention' : 'Mention'}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator/>
                         <DropdownMenuItem className={"hover:bg-error hover:text-error-content"} onClick={
                             async () => {
-                                await deleteCollaborationAction(collaborator.tourId, collaborator.userId)
-                                document.location.reload()
+                                await deleteCollaborationAction(collaborator.tourId, collaborator.userId, `/${collaborator.ownerUsername}/${collaborator.tourName}/settings`)
                             }
                         }>
                             <Trash/>

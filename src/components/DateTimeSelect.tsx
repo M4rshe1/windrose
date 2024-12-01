@@ -5,26 +5,26 @@ import {Calendar as CalendarIcon} from "lucide-react"
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Calendar} from "@/components/ui/calendar"
-import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {useState} from "react";
 
 interface DateTimeSelectProps {
     onDateTimeChangeAction: (date: Date | null) => void
     defaultValue?: Date,
     className?: string,
-
-    [key: string]: any
+    [key: string]: unknown
 }
 
 export function DateTimeSelect({onDateTimeChangeAction, defaultValue, className, ...props}: DateTimeSelectProps) {
-    const [date, setDate] = React.useState<Date | undefined>(defaultValue)
-    const [selectedHour, setSelectedHour] = React.useState<string>(
+    const [date, setDate] = useState<Date | undefined>(defaultValue)
+    const [selectedHour, setSelectedHour] = useState<string>(
         defaultValue ? defaultValue.getHours().toString().padStart(2, '0') : "00"
     )
-    const [selectedMinute, setSelectedMinute] = React.useState<string>(
+    const [isOpened, setIsOpened] = useState(false)
+    const [selectedMinute, setSelectedMinute] = useState<string>(
         defaultValue ? defaultValue.getMinutes().toString().padStart(2, '0') : "00"
     )
-    const [isOpen, setIsOpen] = React.useState(false)
 
     const handleDateSelect = (newDate: Date | undefined) => {
         if (newDate) {
@@ -59,27 +59,15 @@ export function DateTimeSelect({onDateTimeChangeAction, defaultValue, className,
     }
 
     return (
-        <Popover open={isOpen} onOpenChange={(open) => {
-            setIsOpen(open)
-            if (!open) {
-                handlePopoverClose(false)
-            }
-        }}>
+        <Popover open={isOpened}>
             <PopoverTrigger asChild>
-                <Button
-                    variant={"outline"}
-                    size={"sm"}
-                    className={cn(
-                        "justify-start text-left font-normal",
-                        className
-                    )}
-                    {...props}
-                >
-                    <CalendarIcon className="h-4 w-4"/>
-                    {/*{date ? format(date, "PPP HH:mm") : <span>Pick a date and time</span>}*/}
-                </Button>
+                    <Button variant="outline" size={'sm'} className={cn('flex items-center gap-2', className)} {...props}
+                            onClick={() => setIsOpened(!isOpened)}
+                    >
+                        <CalendarIcon/>
+                    </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0">
                 <Calendar
                     mode="single"
                     selected={date}
@@ -115,14 +103,14 @@ export function DateTimeSelect({onDateTimeChangeAction, defaultValue, className,
                 </div>
                 <div className={'mb-2 mx-2 flex items-center gap-2'}>
                     <Button onClick={() => {
-                        setIsOpen(false);
                         handlePopoverClose(true);
+                        setIsOpened(false)
                     }} variant="outline" className="w-full">
                         Cancel
                     </Button>
                     <Button onClick={() => {
-                        setIsOpen(false);
                         handlePopoverClose(false);
+                        setIsOpened(false)
                     }} className="w-full">
                         Done
                     </Button>

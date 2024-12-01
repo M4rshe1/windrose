@@ -1,21 +1,19 @@
 import React from 'react';
 import {TourSection, TourSectionStatus, TourSectionToFile, TourStatus} from "@prisma/client";
 import {vehicles} from "@/lib/vehicles";
-import {GitCommitVertical, PenLine, Play, Trash} from "lucide-react";
-import Link from "next/link";
+import {GitCommitVertical, Play} from "lucide-react";
 import {distanceReadable, timeReadable} from "@/lib/utils";
-import {Button} from "@/components/ui/button";
-import {DateTimeSelect} from "@/components/DateTimeSelect";
 import {revalidatePath} from "next/cache";
 import db from "@/lib/db";
-import StepsStatusDropdown from "@/components/StepsStatusDropdown";
+import StepsItemDropdown from "@/components/StepsItemDropdown";
 import minioClient from "@/lib/minioClient";
+import {DateTimeSelect} from "@/components/DateTimeSelect";
 
 interface images extends TourSectionToFile {
     file: File
 }
 
-interface Item extends TourSection {
+export interface Item extends TourSection {
     images: images[]
 }
 
@@ -206,24 +204,12 @@ export function StepsItem({item, index, disabled, metric, tour}: {
                 </div>
                 {
                     !disabled &&
-                    <div
-                        className={'flex items-center gap-2 mr-4 transition ease-in-out duration-200 tooltip opacity-0 group-hover:opacity-100 max-lg:opacity-100'}>
-                        <StepsStatusDropdown status={item.status} setStatus={changeStatusAction} className={'tooltip'}
-                                             data-tip={'Change Status'}/>
-                        <Link data-tip={'Edit'}
-                              className={'tooltip'}
-                              href={`${item.id}`}>
-                            <Button variant={'outline'} size={'sm'}>
-                                <PenLine size={20}/>
-                            </Button>
-                        </Link>
-                        <DateTimeSelect data-tip={"Change Date"} onDateTimeChangeAction={handleDateTimeChange}
-                                        defaultValue={item.datetime as Date} className={'tooltip max-lg:hidden'}/>
-                        <Button data-tip={'Delete'} variant={'outline'} size={'sm'} onClick={handleDelete}
-                                className={'hover:bg-error hover:text-error-content tooltip'}
-                        >
-                            <Trash size={20}/>
-                        </Button>
+                    <div className={'flex items-center gap-2 mr-4 transition ease-in-out duration-200 opacity-0 group-hover:opacity-100 max-lg:opacity-100'}>
+                        <DateTimeSelect datetime={item.datetime as Date} onDateTimeChangeAction={handleDateTimeChange} label={"Date and Time"}/>
+
+                        <StepsItemDropdown status={item.status} updateStatusAction={changeStatusAction}
+                                           deleteStepAction={handleDelete} item={item}
+                        />
                     </div>
                 }
             </div>

@@ -4,8 +4,9 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
 import {TourToUserRole, UserRole} from "@prisma/client";
+import {revalidatePath} from "next/cache";
 
-export async function deleteCollaborationAction(tourId: string, userId: string) {
+export async function deleteCollaborationAction(tourId: string, userId: string, reval: string) {
     const session = await getServerSession(authOptions);
     if (!session) return false;
 
@@ -33,5 +34,7 @@ export async function deleteCollaborationAction(tourId: string, userId: string) 
             }
         }
     });
+    if (reval)
+        revalidatePath(reval);
     return true;
 }

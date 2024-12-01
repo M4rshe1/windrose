@@ -4,8 +4,9 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
 import {TourToUserRole, UserRole} from "@prisma/client";
+import {revalidatePath} from "next/cache";
 
-export async function createCollaborationAction(tourId: string, userId: string, role: TourToUserRole) {
+export async function createCollaborationAction(tourId: string, userId: string, role: TourToUserRole, reval: string) {
     const session = await getServerSession(authOptions);
     if (!session) return false;
     if (Object.keys(TourToUserRole).indexOf(role) === -1) return false;
@@ -36,5 +37,7 @@ export async function createCollaborationAction(tourId: string, userId: string, 
             userId: userId
         },
     });
+    if (reval)
+        revalidatePath(reval);
     return true;
 }

@@ -12,7 +12,7 @@ import {IconBrandSafari} from "@tabler/icons-react";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
-import {Map, Newspaper} from "lucide-react";
+import {Newspaper, Plus} from "lucide-react";
 import {HeaderCommand} from "@/components/headerCommand";
 
 const inter = Inter({subsets: ["latin"]});
@@ -61,31 +61,37 @@ export default async function RootLayout({
                                 <div id={"breadcrumb-bar"} className="flex-1"/>
                             </div>
                             {
-                                authenticated &&
-                                <div>
-                                    <div className={cn('flex items-center justify-end gap-2')}>
-                                        <HeaderCommand/>
-                                        <Link data-tip={'Notifications'} href={`/notifications`}
-                                              className={cn('tooltip tooltip-bottom')}>
-                                            <Button variant={`outline`} size={`sm`}
-                                            >
-                                                <Newspaper/>
-                                            </Button>
-                                        </Link>
-                                        <Link data-tip={'New Tour'} href={`/new`}
-                                              className={cn('tooltip tooltip-bottom')}>
+                                authenticated ?
+                                    <div>
+                                        <div className={cn('flex items-center justify-end gap-2')}>
+                                            <HeaderCommand/>
+                                            <Link data-tip={'Notifications'} href={`/notifications`}
+                                                  className={cn('tooltip tooltip-bottom')}>
+                                                <Button variant={`outline`} size={`sm`}
+                                                >
+                                                    <Newspaper/>
+                                                </Button>
+                                            </Link>
+                                            <Link data-tip={'New Tour'} href={`/new`}
+                                                  className={cn('tooltip tooltip-bottom')}>
 
-                                            <Button variant={`default`} size={`sm`}
-                                            >
-                                                <Map/> New
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </div>
+                                                <Button variant={`default`} size={`sm`}
+                                                >
+                                                    <Plus/> New
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div> :
+                                    <Link href={'/auth/login'}>
+                                        <Button size={'sm'}>
+                                            Login
+                                        </Button>
+                                    </Link>
                             }
                         </div>
-                        <div id={'secondary-header-nav'} className={cn('w-full max-w-full overflow-x-auto relative has-[*]:h-10')}/>
-                        </header>
+                        <div id={'secondary-header-nav'}
+                             className={cn('w-full max-w-full overflow-x-auto relative has-[*]:h-10')}/>
+                    </header>
                     {children}
                 </SidebarInset>
             </SidebarProvider>

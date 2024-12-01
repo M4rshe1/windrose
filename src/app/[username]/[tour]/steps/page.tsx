@@ -8,6 +8,9 @@ import db from "@/lib/db";
 import {TourToUserRole, UserRole} from "@prisma/client";
 import H1 from "@/components/ui/h1";
 import {StepsContainer} from "@/components/stepsContainer";
+import {Plus} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -79,7 +82,15 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                                       userRole={userRole}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
-                    <H1>Steps</H1>
+                    <H1 className={'flex items-center justify-between'}>
+                        Steps
+                        <Link href={ `/${params.username}/${params.tour}/new`}>
+
+                        <Button size={'sm'} variant={'default'} className={'ml-2'}>
+                            <Plus/> Add Step
+                        </Button>
+                        </Link>
+                    </H1>
                     <div className={'flex flex-col w-full gap-2'}>
                         <StepsContainer disabled={!isAllowed}  tour={tour} metric={user?.metric as boolean} sort={"ASC"}/>
                     </div>

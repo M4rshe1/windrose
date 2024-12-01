@@ -100,10 +100,9 @@ export function AddCollaboratorDialog({tour, ...props}: { tour: any, [key: strin
                     }
                 </div>
                 <DialogFooter>
-                    <Button type="submit" disabled={!collaborator}
+                    <Button disabled={!collaborator}
                             onClick={async () => {
-                                await createCollaborationAction(tour.id, collaborator?.id as string, TourToUserRole.VIEWER)
-                                document.location.reload();
+                                await createCollaborationAction(tour.id, collaborator?.id as string, TourToUserRole.VIEWER, `/${tour.owner}/${tour.name}/settings`)
                             }}
                     >Add Collaborator</Button>
                 </DialogFooter>

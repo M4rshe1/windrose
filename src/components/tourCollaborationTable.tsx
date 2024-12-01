@@ -12,8 +12,11 @@ const TourCollaborationTable = ({tour}: { tour: any }) => {
                 userId: ttu.user.id,
                 name: ttu.user.name,
                 username: ttu.user.username,
+                tourName: tour.name,
                 role: ttu.role,
-                tourId: ttu.tourId
+                mentioned: ttu.mentioned,
+                tourId: ttu.tourId,
+                ownerUsername: tour.TourToUser.find((ttu: any) => ttu.role === TourToUserRole.OWNER).user.username
             }
         }
     ));
@@ -25,8 +28,11 @@ const TourCollaborationTable = ({tour}: { tour: any }) => {
                     userId: ttu.user.id,
                     name: ttu.user.name,
                     username: ttu.user.username,
+                    tourName: tour.name,
+                    mentioned: ttu.mentioned,
                     role: ttu.role,
-                    tourId: ttu.tourId
+                    tourId: ttu.tourId,
+                    ownerUsername: tour.TourToUser.find((ttu: any) => ttu.role === TourToUserRole.OWNER).user.username
                 }
             }
         ));

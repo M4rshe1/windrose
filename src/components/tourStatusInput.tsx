@@ -48,7 +48,7 @@ const TourStatusInput = ({tour}: {
             <div className={cn('flex items-center gap-2')}>
             <SelectWithIcons options={options} className={cn('w-48')} name={'status'} defaultValue={status}
                              onValueChange={(value: string) => setStatus(value as TourStatus)} label={"Status"}/>
-            <Button className={cn('w-24 text-primary-content')} type={'submit'} onClick={handleStatusSave}
+            <Button className={cn('w-24 text-primary-content')} onClick={handleStatusSave}
                     disabled={status === tour.status}
             >
                 Save
