@@ -105,13 +105,13 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
 
                     <div className={'flex items-center justify-end gap-2'}>
                         <Link
-                            href={`/${params.username}/${params.tour}/steps?sort=${searchParams?.sort === 'ASC' ? 'DESC' : 'ASC'}`}>
-                            <Button size={'sm'} variant={'default'} className={'ml-2'}>
-                                {searchParams?.sort === 'ASC' || searchParams?.sort === undefined ? 'Start -> Finish' : 'Finish -> Start'}
+                            href={`/${params.username}/${params.tour}/steps?sort=${(searchParams?.sort === 'ASC' || !searchParams?.sort) ? 'DESC' : 'ASC'}`}>
+                            <Button size={'sm'} variant={'outline'} className={'ml-2'}>
+                                {(searchParams?.sort === 'ASC' || !searchParams?.sort) ? 'Start -> Finish' : 'Finish -> Start'}
                             </Button>
                         </Link>
                         {
-                            !isAllowed &&
+                            isAllowed &&
                             <Link href={`/${params.username}/${params.tour}/new`}>
                                 <Button size={'sm'} variant={'default'} className={'ml-2'}
                                         disabled={maxSections !== undefined && (tour?.sections.length || 0) >= Number(maxSections)}
