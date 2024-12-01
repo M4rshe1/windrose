@@ -1,29 +1,39 @@
 'use client'
 
 import * as React from "react"
-import {Calendar as CalendarIcon} from "lucide-react"
+import {useState} from "react"
+import {Calendar as CalendarIcon, MoonStar} from "lucide-react"
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Calendar} from "@/components/ui/calendar"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {useState} from "react";
+import {Input} from "@/components/ui/input";
 
 interface DateTimeSelectProps {
-    onDateTimeChangeAction: (date: Date | null) => void
-    defaultValue?: Date,
+    onDateTimeChangeAction: (date: Date | null, nights?: number) => void,
+    defaultValueDate?: Date,
     className?: string,
+    defaultValueNights?: number
+
     [key: string]: unknown
 }
 
-export function DateTimeSelect({onDateTimeChangeAction, defaultValue, className, ...props}: DateTimeSelectProps) {
-    const [date, setDate] = useState<Date | undefined>(defaultValue)
+export function DateTimeSelect({
+                                   onDateTimeChangeAction,
+                                   defaultValueDate,
+                                   defaultValueNights,
+                                   className,
+                                   ...props
+                               }: DateTimeSelectProps) {
+    const [date, setDate] = useState<Date | undefined>(defaultValueDate)
+    const [nights, setNights] = useState<number>(defaultValueNights || 0)
     const [selectedHour, setSelectedHour] = useState<string>(
-        defaultValue ? defaultValue.getHours().toString().padStart(2, '0') : "00"
+        defaultValueDate ? defaultValueDate.getHours().toString().padStart(2, '0') : "00"
     )
     const [isOpened, setIsOpened] = useState(false)
     const [selectedMinute, setSelectedMinute] = useState<string>(
-        defaultValue ? defaultValue.getMinutes().toString().padStart(2, '0') : "00"
+        defaultValueDate ? defaultValueDate.getMinutes().toString().padStart(2, '0') : "00"
     )
 
     const handleDateSelect = (newDate: Date | undefined) => {
@@ -50,22 +60,25 @@ export function DateTimeSelect({onDateTimeChangeAction, defaultValue, className,
         }
     }
 
-    const handlePopoverClose = (cancel: boolean) => {
-        if (date && !cancel) {
-            onDateTimeChangeAction(date)
-        } else {
-            onDateTimeChangeAction(null)
+    const handlePopoverClose = () => {
+        if (date) {
+            onDateTimeChangeAction(date, nights)
+            return
+        }
+
+        if (defaultValueDate && nights >= 0) {
+            onDateTimeChangeAction(defaultValueDate, nights)
         }
     }
 
     return (
         <Popover open={isOpened}>
             <PopoverTrigger asChild>
-                    <Button variant="outline" size={'sm'} className={cn('flex items-center gap-2', className)} {...props}
-                            onClick={() => setIsOpened(!isOpened)}
-                    >
-                        <CalendarIcon/>
-                    </Button>
+                <Button variant="outline" size={'sm'} className={cn('flex items-center gap-2', className)} {...props}
+                        onClick={() => setIsOpened(!isOpened)}
+                >
+                    <CalendarIcon/>
+                </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
                 <Calendar
@@ -74,7 +87,7 @@ export function DateTimeSelect({onDateTimeChangeAction, defaultValue, className,
                     onSelect={handleDateSelect}
                     initialFocus
                 />
-                <div className="flex items-center justify-between p-3 border-t">
+                <div className="flex items-center justify-between p-2 border-t-2 border-neutral">
                     <Select value={selectedHour} onValueChange={(value) => handleTimeChange('hour', value)}>
                         <SelectTrigger className="w-[110px]">
                             <SelectValue placeholder="Hour"/>
@@ -101,21 +114,37 @@ export function DateTimeSelect({onDateTimeChangeAction, defaultValue, className,
                         </SelectContent>
                     </Select>
                 </div>
-                <div className={'mb-2 mx-2 flex items-center gap-2'}>
-                    <Button onClick={() => {
-                        handlePopoverClose(true);
-                        setIsOpened(false)
-                    }} variant="outline" className="w-full">
-                        Cancel
-                    </Button>
-                    <Button onClick={() => {
-                        handlePopoverClose(false);
-                        setIsOpened(false)
-                    }} className="w-full">
-                        Done
-                    </Button>
+                <div className={'mb-2 mx-2'}>
+                    <div className="relative">
+                        <Input type="number"
+                               value={nights}
+                               placeholder={'Nights'}
+                               onChange={(e) => setNights(parseInt(e.target.value))}
+                               className="min-w-0 mb-2"
+                               inputMode="numeric"
+                               pattern="[0-9]*"
+                        />
+                        <div
+                            className="pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3  peer-disabled:opacity-50">
+                            <MoonStar size={16} strokeWidth={2} aria-hidden="true"/>
+                        </div>
+                    </div>
+                    <div className={'flex items-center gap-2'}>
+                        <Button onClick={() => {
+                            setIsOpened(false)
+                        }} variant="outline" className="w-full">
+                            Cancel
+                        </Button>
+                        <Button onClick={() => {
+                            handlePopoverClose();
+                            setIsOpened(false)
+                        }} className="w-full">
+                            Done
+                        </Button>
+                    </div>
                 </div>
             </PopoverContent>
         </Popover>
     )
 }
+

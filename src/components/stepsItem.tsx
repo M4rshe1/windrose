@@ -17,9 +17,11 @@ export interface Item extends TourSection {
     images: images[]
 }
 
-export function StepsItem({item, index, disabled, metric, tour}: {
+export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
     item: Item,
     index: number,
+    sort: "ASC" | "DESC",
+    length: number,
     disabled: boolean,
     metric: boolean
     tour: {
@@ -65,7 +67,7 @@ export function StepsItem({item, index, disabled, metric, tour}: {
 
     }
 
-    async function handleDateTimeChange(date: Date | null) {
+    async function handleDateTimeChange(date: Date | null, nights: number = 0) {
         "use server"
         if (!date || disabled) return
         await db.tourSection.update({
@@ -73,7 +75,8 @@ export function StepsItem({item, index, disabled, metric, tour}: {
                 id: item.id
             },
             data: {
-                datetime: date
+                datetime: date,
+                nights: nights
             }
         })
         revalidatePath(`/${tour.owner}/${tour.name}/steps`)
@@ -149,7 +152,8 @@ export function StepsItem({item, index, disabled, metric, tour}: {
                 <div className={'flex items-center p-2 gap-2'}>
                     <div className={'w-8 aspect-square grid place-items-center'}>
                         {
-                            index === 0 ? <Play size={20}/> :
+                            (index === 0 && sort == "ASC" || index === length - 1 && sort == "DESC") ?
+                                <Play size={20}/> :
                                 vehicles.find(vehicle => vehicle.value === item.vehicle)?.icon ||
                                 <GitCommitVertical size={20}/>
                         }
@@ -158,31 +162,68 @@ export function StepsItem({item, index, disabled, metric, tour}: {
                         <div className={'flex items-center gap-2'}>
 
                             <p className={' font-semibold'}>
-                                {item.name}
+                                {item.name || 'Unnamed'}
                             </p>
-                            {index !== 0 ?
-                                <p
-                                    className={`px-1 text-xs font-semibold rounded-full ${item.status === TourSectionStatus.VISITED ? 'bg-success/30 text-success' : item.status === TourSectionStatus.PLANNED ? 'bg-info/30 text-info' : 'bg-warning/50 text-warning'}`}
-                                >
-                                    {item.status}
-                                </p> : <p className={'text-xs font-semibold text-info'}>
-                                    Start
-                                </p>
+                            {
+                                (index === 0 && sort == "ASC" || index === length - 1 && sort == "DESC") ?
+                                    <p className={'text-xs font-semibold text-info'}>
+                                        Start
+                                    </p>
+                                    : <p
+                                        className={`px-1 text-xs font-semibold rounded-full ${item.status === TourSectionStatus.VISITED ? 'bg-success/30 text-success' : item.status === TourSectionStatus.PLANNED ? 'bg-info/30 text-info' : 'bg-warning/50 text-warning'}`}
+                                    >
+                                        {item.status}
+                                    </p>
                             }
                         </div>
                         <div className={'flex lg:items-center lg:flex-row flex-col lg:gap-2 whitespace-nowrap'}>
                             <p className={'text-sm opacity-70'}>
-                                {item.datetime?.toLocaleDateString(
-                                    'en-US',
-                                    {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: '2-digit',
-                                        hour: '2-digit',
-                                        minute: '2-digit',
-                                        hour12: false
-                                    }
-                                )}
+                                {
+                                    item.nights ? <>
+                                        {
+                                            item.datetime?.toLocaleDateString(
+                                                'en-US',
+                                                {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: '2-digit',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false
+                                                }
+                                            )
+                                        }
+                                        <span>&nbsp;-&nbsp;</span>
+                                        {
+                                            new Date(new Date(item.datetime as Date).setDate(new Date(item.datetime as Date).getDate() + item.nights))
+                                                .toLocaleDateString(
+                                                    'en-US',
+                                                    {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: '2-digit',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        hour12: false
+                                                    }
+                                                )
+                                        }
+                                    </> : <>
+                                        {
+                                            item.datetime?.toLocaleDateString(
+                                                'en-US',
+                                                {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: '2-digit',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false
+                                                }
+                                            )
+                                        }
+                                    </>
+                                }
                             </p>
                             <p>
                                 {
@@ -204,8 +245,10 @@ export function StepsItem({item, index, disabled, metric, tour}: {
                 </div>
                 {
                     !disabled &&
-                    <div className={'flex items-center gap-2 mr-4 transition ease-in-out duration-200 opacity-0 group-hover:opacity-100 max-lg:opacity-100'}>
-                        <DateTimeSelect datetime={item.datetime as Date} onDateTimeChangeAction={handleDateTimeChange} label={"Date and Time"}/>
+                    <div
+                        className={'flex items-center gap-2 mr-4 transition ease-in-out duration-200 opacity-0 group-hover:opacity-100 max-lg:opacity-100'}>
+                        <DateTimeSelect defaultValueDate={item.datetime as Date} onDateTimeChangeAction={handleDateTimeChange}
+                                        label={"Date and Time"}/>
 
                         <StepsItemDropdown status={item.status} updateStatusAction={changeStatusAction}
                                            deleteStepAction={handleDelete} item={item}

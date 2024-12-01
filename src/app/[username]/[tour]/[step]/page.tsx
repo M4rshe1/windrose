@@ -11,7 +11,7 @@ import H1 from "@/components/ui/h1";
 const Page = async (props: { params: Promise<{ username: string, tour: string, step: string }> }) => {
     const session = await getServerSession(authOptions);
     const params = await props.params;
-    const [tour, user] = await Promise.all([
+    const [tour, user, section, settings] = await Promise.all([
         db.tour.findFirst({
             where: {
                 name: params.tour,
@@ -27,27 +27,44 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
             include: {
                 TourToUser: {
                     include: {
-                        user: {
-                            include: {
-                                image: true
-                            }
-                        }
+                        user: true
                     }
                 },
-                heroImage: true,
-                sections: {
-                    include: {
-                        images: {
-                            include: {
-                                file: true
-                            }
+                sections: true
+            }
+        }), db.user.findUnique({
+            where: {
+                username: params.username
+            }
+        }),
+        db.tourSection.findUnique({
+            where: {
+                id: params.step,
+                tour: {
+                    name: params.tour,
+                    TourToUser: {
+                        some: {
+                            user: {
+                                username: params.username
+                            },
+                            role: 'OWNER'
                         }
+                    },
+                }
+            },
+            include: {
+                images: {
+                    include: {
+                        file: true
                     }
                 }
             }
-        }), await db.user.findUnique({
+        }),
+        db.setting.findMany({
             where: {
-                username: params.username
+                key: {
+                    in: ['MAX_SECTION_IMAGES_FREE', 'MAX_SECTION_IMAGES_PREMIUM']
+                }
             }
         })
     ]);
@@ -70,7 +87,8 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
                         title: tour?.displayName as string, url: `/${params.username}/${params.tour}`
                     },
                     {
-                        title: 'Steps', url: `/${params.username}/${params.tour}/steps`
+                        title: section?.name || 'Unnamed Step'
+                        , url: `/${params.username}/${params.tour}/${params.step}`
                     }
                 ]
             }/>
@@ -79,7 +97,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
                                       userRole={userRole}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
-                    <H1>Steps</H1>
+                    <H1>{section?.name || 'Unnamed Step'}</H1>
                 </div>
             </div>
         </>)

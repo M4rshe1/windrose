@@ -281,7 +281,7 @@ model Country {
 
 model Setting {
   id        String   @id @default(cuid())
-  key       String
+  key       String   @unique
   value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

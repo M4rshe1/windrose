@@ -5,14 +5,17 @@ import React from "react";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import db from "@/lib/db";
-import {TourToUserRole, UserRole} from "@prisma/client";
+import {Setting, TourToUserRole, UserRole} from "@prisma/client";
 import H1 from "@/components/ui/h1";
 import {StepsContainer} from "@/components/stepsContainer";
 import {Plus} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
-const Page = async (props: { params: Promise<{ username: string, tour: string }> }) => {
+const Page = async (props: { params: Promise<{ username: string, tour: string }>, searchParams: {
+        sort?: 'ASC' | 'DESC'
+    }} ) => {
+    const searchParams = await props.searchParams;
     const session = await getServerSession(authOptions);
     const params = await props.params;
     const tour = await db.tour.findFirst({
@@ -42,15 +45,29 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                 include: {
                     images: true
                 }
-            }
-        }
+            },
+        },
     });
 
-     const user = await db.user.findUnique({
+    const user = await db.user.findUnique({
         where: {
             username: params.username
         }
     });
+
+    const settings = await db.setting.findMany({
+        where: {
+            key: {
+                in: ['MAX_SECTION_IMAGES_PREMIUM', 'MAX_SECTION_IMAGES_FREE']
+            }
+        }
+    })
+
+    const maxSections = session?.user.role === UserRole.USER ?
+        settings?.find((s: Setting) => s.key === 'MAX_SECTION_IMAGES_FREE')?.value :
+        session?.user.role === UserRole.PREMIUM ?
+            settings?.find((s: Setting) => s.key === 'MAX_SECTION_IMAGES_PREMIUM')?.value :
+            Infinity
 
 
     let userRole: string
@@ -82,17 +99,31 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                                       userRole={userRole}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
-                    <H1 className={'flex items-center justify-between'}>
+                    <H1>
                         Steps
-                        <Link href={ `/${params.username}/${params.tour}/new`}>
-
-                        <Button size={'sm'} variant={'default'} className={'ml-2'}>
-                            <Plus/> Add Step
-                        </Button>
-                        </Link>
                     </H1>
+
+                    <div className={'flex items-center justify-end gap-2'}>
+                        <Link
+                            href={`/${params.username}/${params.tour}/steps?sort=${searchParams?.sort === 'ASC' ? 'DESC' : 'ASC'}`}>
+                            <Button size={'sm'} variant={'default'} className={'ml-2'}>
+                                {searchParams?.sort === 'ASC' || searchParams?.sort === undefined ? 'Start -> Finish' : 'Finish -> Start'}
+                            </Button>
+                        </Link>
+                        {
+                            !isAllowed &&
+                            <Link href={`/${params.username}/${params.tour}/new`}>
+                                <Button size={'sm'} variant={'default'} className={'ml-2'}
+                                        disabled={maxSections !== undefined && (tour?.sections.length || 0) >= Number(maxSections)}
+                                >
+                                    <Plus/> Add Step
+                                </Button>
+                            </Link>
+                        }
+                    </div>
                     <div className={'flex flex-col w-full gap-2'}>
-                        <StepsContainer disabled={!isAllowed}  tour={tour} metric={user?.metric as boolean} sort={"ASC"}/>
+                        <StepsContainer disabled={!isAllowed} tour={tour} metric={user?.metric as boolean}
+                                        sort={searchParams?.sort || 'ASC'}/>
                     </div>
                 </div>
             </div>

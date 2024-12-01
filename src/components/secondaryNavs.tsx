@@ -22,7 +22,7 @@ export const TourSettingsSecondaryNav = ({activeTab, params, sectionCount, userR
     if (userRole === TourToUserRole.OWNER || userRole === TourToUserRole.EDITOR || userRole === UserRole.ADMIN) {
         items.push(
             {
-                title: 'New', url: `/${params.username}/${params.tour}/new`, icon: ListPlus
+                title: 'New step', url: `/${params.username}/${params.tour}/new`, icon: ListPlus
             },
             {
                 title: 'Settings', url: `/${params.username}/${params.tour}/settings`, icon: Settings
