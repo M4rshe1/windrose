@@ -1,21 +1,15 @@
 import React from 'react';
-import {TourSection, TourSectionStatus, TourSectionToFile} from "@prisma/client";
+import {TourSection, TourSectionStatus, TourSectionToFile, TourStatus} from "@prisma/client";
 import {vehicles} from "@/lib/vehicles";
-import {Check, GitCommitVertical, MoreHorizontal, PenLine, Play, Trash} from "lucide-react";
+import {GitCommitVertical, PenLine, Play, Trash} from "lucide-react";
 import Link from "next/link";
 import {distanceReadable, timeReadable} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {DateTimeSelect} from "@/components/DateTimeSelect";
 import {revalidatePath} from "next/cache";
 import db from "@/lib/db";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
 import StepsStatusDropdown from "@/components/StepsStatusDropdown";
+import minioClient from "@/lib/minioClient";
 
 interface images extends TourSectionToFile {
     file: File
@@ -25,37 +19,130 @@ interface Item extends TourSection {
     images: images[]
 }
 
-export function StepsItem({item, index, disabled, metric, tourName, ownerName}: {
+export function StepsItem({item, index, disabled, metric, tour}: {
     item: Item,
     index: number,
     disabled: boolean,
     metric: boolean
-    tourName: string
-    ownerName: string
+    tour: {
+        name: string,
+        owner: string,
+        status: string
+    }
 }) {
     async function handleDelete() {
         'use server'
-        console.log(item.id);
+        if (disabled) return
+        const images = await db.file.findMany({
+            where: {
+                TourSectionToFile: {
+                    some: {
+                        tourSectionId: item.id
+                    }
+                }
+            },
+            select: {
+                fileKey: true
+
+            }
+        })
+
+        for (const image of images) {
+            await minioClient.removeObject(process.env.PUBLIC_MINIO_BUCKET as string, image.fileKey);
+        }
+
+        await db.tourSection.delete({
+            where: {
+                id: item.id
+            }
+        })
+        await db.tourSectionToFile.deleteMany({
+            where: {
+                id: {
+                    in: item.images.map(image => image.id)
+                }
+            }
+        })
+        revalidatePath(`/${tour.owner}/${tour.name}/steps`)
+
     }
 
     async function handleDateTimeChange(date: Date | null) {
         "use server"
-        if (date && !disabled) {
+        if (!date || disabled) return
+        await db.tourSection.update({
+            where: {
+                id: item.id
+            },
+            data: {
+                datetime: date
+            }
+        })
+        revalidatePath(`/${tour.owner}/${tour.name}/steps`)
+    }
+
+    async function changeStatusAction(status: TourSectionStatus) {
+        "use server"
+        if (disabled) return
+        if (status === TourSectionStatus.VISITED) {
+            await db.tourSection.updateMany({
+                where: {
+                    OR: [
+                        {
+                            id: item.id
+                        },
+                        {
+                            tour: {
+                                name: tour.name,
+                                TourToUser: {
+                                    some: {
+                                        user: {
+                                            username: tour.owner
+                                        }
+                                    }
+                                }
+                            },
+                            datetime: {
+                                lte: item.datetime as Date
+                            }
+                        }
+                    ],
+                    status: {
+                        notIn: [TourSectionStatus.VISITED, TourSectionStatus.SKIPPED]
+                    }
+                },
+                data: {
+                    status: status,
+                }
+            })
+        } else {
             await db.tourSection.update({
                 where: {
                     id: item.id
                 },
                 data: {
-                    datetime: date
+                    status: status,
                 }
             })
-            revalidatePath(`/${ownerName}/${tourName}/steps`)
         }
-    }
-
-    async function changeStatusAction(status: TourSectionStatus) {
-        "use server"
-        console.log(status);
+        if (tour.status === TourStatus.PLANNING && (status === TourSectionStatus.VISITED || status === TourSectionStatus.SKIPPED)) {
+            await db.tour.updateMany({
+                where: {
+                    name: tour.name,
+                    TourToUser: {
+                        some: {
+                            user: {
+                                username: tour.owner
+                            }
+                        }
+                    }
+                },
+                data: {
+                    status: TourStatus.ON_TOUR
+                }
+            })
+        }
+        revalidatePath(`/${tour.owner}/${tour.name}/steps`)
     }
 
     return (
@@ -75,11 +162,15 @@ export function StepsItem({item, index, disabled, metric, tourName, ownerName}: 
                             <p className={' font-semibold'}>
                                 {item.name}
                             </p>
-                            <p
-                                className={`px-1 text-xs font-semibold rounded-full ${item.status === TourSectionStatus.VISITED ? 'bg-success/30 text-success' : item.status === TourSectionStatus.PLANNED ? 'bg-info/30 text-info' : 'bg-warning/50 text-warning'}`}
-                            >
-                                {item.status}
-                            </p>
+                            {index !== 0 ?
+                                <p
+                                    className={`px-1 text-xs font-semibold rounded-full ${item.status === TourSectionStatus.VISITED ? 'bg-success/30 text-success' : item.status === TourSectionStatus.PLANNED ? 'bg-info/30 text-info' : 'bg-warning/50 text-warning'}`}
+                                >
+                                    {item.status}
+                                </p> : <p className={'text-xs font-semibold text-info'}>
+                                    Start
+                                </p>
+                            }
                         </div>
                         <div className={'flex lg:items-center lg:flex-row flex-col lg:gap-2 whitespace-nowrap'}>
                             <p className={'text-sm opacity-70'}>
@@ -117,7 +208,8 @@ export function StepsItem({item, index, disabled, metric, tourName, ownerName}: 
                     !disabled &&
                     <div
                         className={'flex items-center gap-2 mr-4 transition ease-in-out duration-200 tooltip opacity-0 group-hover:opacity-100 max-lg:opacity-100'}>
-                        <StepsStatusDropdown status={item.status} setStatus={changeStatusAction} className={'tooltip'} data-tip={'Change Status'}/>
+                        <StepsStatusDropdown status={item.status} setStatus={changeStatusAction} className={'tooltip'}
+                                             data-tip={'Change Status'}/>
                         <Link data-tip={'Edit'}
                               className={'tooltip'}
                               href={`${item.id}`}>

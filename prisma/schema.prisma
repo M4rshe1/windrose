@@ -208,7 +208,7 @@ model TourSection {
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   tour                Tour                  @relation(fields: [tourId], references: [id], onDelete: Cascade)
-  datetime            DateTime?
+  datetime            DateTime
   Comments            Comment[]
   UserLikeTourSection UserLikeTourSection[]
   images              TourSectionToFile[]

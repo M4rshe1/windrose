@@ -65,7 +65,7 @@ const Modal: FC<ModalProps> = ({
                             disabled={confirmValueMatch !== confirmValue && confirmValue !== undefined}
                             onClick={() => onClose(true)}
                             className={
-                                (buttonTrue == "Confirm" ? "bg-primary text-primary-foreground" : "bg-error text-error-content")
+                                (buttonTrue == "Confirm" ? "bg-primary text-primary-content" : "bg-error text-error-content")
                             }
                         >
                             {buttonTrue}

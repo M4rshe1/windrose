@@ -28,7 +28,11 @@ export function StepsContainer({tour, disabled, metric, sort}: {
         <>
             {
                 items.map((section: Item, index: number) =>
-                    <StepsItem key={index} item={section} disabled={disabled} metric={metric} index={index} tourName={tour.name} ownerName={tour.TourToUser.find((ttu: { role: string; }) => ttu.role === "OWNER").user.username}/>
+                    <StepsItem key={index} item={section} disabled={disabled} metric={metric} index={index} tour={{
+                        name: tour.name,
+                        owner: tour.TourToUser.find((ttu: { role: string; }) => ttu.role === "OWNER").user.username,
+                        status: tour.status
+                    }}/>
                 )
             }
         </>

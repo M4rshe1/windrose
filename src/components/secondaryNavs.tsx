@@ -2,7 +2,7 @@
 
 import {SecondaryNavPortal} from "@/components/secondaryHeaderNav";
 import React from "react";
-import {BellDot, CreditCard, Map, Pen, Route, Settings, ShieldPlus, User, UserPen} from "lucide-react";
+import {BellDot, CreditCard, ListPlus, Map, Pen, Route, Settings, ShieldPlus, User, UserPen} from "lucide-react";
 import {TourToUserRole, UserRole} from "@prisma/client";
 
 export const TourSettingsSecondaryNav = ({activeTab, params, sectionCount, userRole}: {
@@ -20,9 +20,14 @@ export const TourSettingsSecondaryNav = ({activeTab, params, sectionCount, userR
         }
     ]
     if (userRole === TourToUserRole.OWNER || userRole === TourToUserRole.EDITOR || userRole === UserRole.ADMIN) {
-        items.push({
-            title: 'Settings', url: `/${params.username}/${params.tour}/settings`, icon: Settings
-        })
+        items.push(
+            {
+                title: 'New', url: `/${params.username}/${params.tour}/new`, icon: ListPlus
+            },
+            {
+                title: 'Settings', url: `/${params.username}/${params.tour}/settings`, icon: Settings
+            }
+        )
     }
     return (
         <SecondaryNavPortal items={items.map(item => {
