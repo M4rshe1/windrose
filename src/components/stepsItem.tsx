@@ -173,17 +173,24 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                             <p className={' font-semibold'}>
                                 {item.name || 'Unnamed'}
                             </p>
+                            <p
+                                className={`px-1 text-xs font-semibold rounded-full ${item.status === TourSectionStatus.VISITED ? 'bg-success/30 text-success' : item.status === TourSectionStatus.PLANNED ? 'bg-info/30 text-info' : 'bg-warning/50 text-warning'}`}
+                            >
+                                {item.status}
+                            </p>
                             {
-                                (index === 0 && sort == "ASC" || index === length - 1 && sort == "DESC") ?
-                                    <p className={'text-xs font-semibold text-info'}>
-                                        Start
-                                    </p>
-                                    : <p
-                                        className={`px-1 text-xs font-semibold rounded-full ${item.status === TourSectionStatus.VISITED ? 'bg-success/30 text-success' : item.status === TourSectionStatus.PLANNED ? 'bg-info/30 text-info' : 'bg-warning/50 text-warning'}`}
-                                    >
-                                        {item.status}
-                                    </p>
+                                (index === 0 && sort == "ASC" || index === length - 1 && sort == "DESC") &&
+                                <p className={'text-xs font-semibold text-info'}>
+                                    Start
+                                </p>
                             }
+                            {
+                                (index === 0 && sort == "DESC" || index === length - 1 && sort == "ASC") &&
+                                <p className={'text-xs font-semibold text-success'}>
+                                    Finish
+                                </p>
+                            }
+
                         </div>
                         <div className={'flex lg:items-center lg:flex-row flex-col lg:gap-2 whitespace-nowrap'}>
                             <p className={'text-sm opacity-70 flex lg:items-center max-lg:flex-col'}>
