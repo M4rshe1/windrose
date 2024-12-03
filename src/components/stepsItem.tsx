@@ -88,29 +88,29 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
         if (status === TourSectionStatus.VISITED) {
             await db.tourSection.updateMany({
                 where: {
-                    OR: [
-                        {
-                            id: item.id
-                        },
-                        {
-                            tour: {
-                                name: tour.name,
-                                TourToUser: {
-                                    some: {
-                                        user: {
-                                            username: tour.owner
-                                        }
-                                    }
+                    tour: {
+                        name: tour.name,
+                        TourToUser: {
+                            some: {
+                                user: {
+                                    username: tour.owner
                                 }
-                            },
-                            datetime: {
-                                lte: item.datetime as Date
                             }
                         }
+                    },
+                    OR: [
+                        {
+                            datetime: {
+                                lt: item.datetime as Date
+                            },
+                            status: {
+                                notIn: [TourSectionStatus.SKIPPED]
+                            }
+                        },
+                        {
+                            datetime: item.datetime as Date,
+                        }
                     ],
-                    status: {
-                        notIn: [TourSectionStatus.VISITED, TourSectionStatus.SKIPPED]
-                    }
                 },
                 data: {
                     status: status,
@@ -126,8 +126,15 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                 }
             })
         }
+        let statusToSet = null
         if (tour.status === TourStatus.PLANNING && (status === TourSectionStatus.VISITED || status === TourSectionStatus.SKIPPED)) {
-            await db.tour.updateMany({
+            statusToSet = TourStatus.ON_TOUR
+        } else if (tour.status === TourStatus.FINISHED && (status === TourSectionStatus.PLANNED || status === TourSectionStatus.VISITED || status === TourSectionStatus.SKIPPED)) {
+            statusToSet = TourStatus.ON_TOUR
+        }
+
+        if (statusToSet) {
+            await db.tour.update({
                 where: {
                     name: tour.name,
                     TourToUser: {
@@ -139,10 +146,12 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                     }
                 },
                 data: {
-                    status: TourStatus.ON_TOUR
+                    status: statusToSet
                 }
             })
         }
+
+
         revalidatePath(`/${tour.owner}/${tour.name}/steps`)
     }
 

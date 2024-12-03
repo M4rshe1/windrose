@@ -58,18 +58,20 @@ export default function SearchSelect(
                                   // @ts-expect-error
                                   <>
                                       {
-                                            options.find((option) => option.label === value)?.icon
-                                                ? options.find((option) => option.label === value)?.icon
-                                                : options.find((option) => option.label === value)?.flag
-                                                ? options.find((option) => option.label === value)?.flag
-                                                : options.find((option) => option.label === value)?.image
-                                                ? <Avatar className="h-6 w-6">
-                                                    <AvatarImage src={options.find((option) => option.label === value)?.image} alt={value}/>
-                                                    <AvatarFallback className="rounded-lg">
-                                                        {value.split(' ').map((name: string) => name[0].toUpperCase()).join('')}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                : null
+                                          options.find((option) => option.label === value)?.icon
+                                              ? options.find((option) => option.label === value)?.icon
+                                              : options.find((option) => option.label === value)?.flag
+                                                  ? options.find((option) => option.label === value)?.flag
+                                                  : options.find((option) => option.label === value)?.image
+                                                      ? <Avatar className="h-6 w-6">
+                                                          <AvatarImage
+                                                              src={options.find((option) => option.label === value)?.image}
+                                                              alt={value}/>
+                                                          <AvatarFallback className="rounded-lg">
+                                                              {value.split(' ').map((name: string) => name[0].toUpperCase()).join('')}
+                                                          </AvatarFallback>
+                                                      </Avatar>
+                                                      : null
                                       }
                                       {options.find((option) => option.label === value)?.label}
                                   </>
@@ -86,7 +88,8 @@ export default function SearchSelect(
                         />
                         {
                             value && options.find((option) => option.label === value)?.color &&
-                            <PulsatingCircle color={options.find((option) => option.label === value)?.color}/>
+                            <PulsatingCircle
+                                style={{background: options.find((option) => option.label === value)?.color}}/>
                         }
                     </Button>
                 </PopoverTrigger>
@@ -134,7 +137,7 @@ export default function SearchSelect(
                                             />
                                             {
                                                 option.color &&
-                                                <PulsatingCircle color={option.color}/>
+                                                <PulsatingCircle style={{background: option.color}}/>
                                             }
                                         </div>
                                     </CommandItem>

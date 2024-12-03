@@ -1,16 +1,17 @@
 import React from "react";
+import {cn} from "@/lib/utils";
 
-const PulsatingCircle = ({ color = "#3b82f6" }) => {
+const PulsatingCircle = ({background = "", ...props}) => {
     return (
         <div className="flex items-center justify-center m-2">
             <div className="relative flex items-center justify-center">
                 <div
-                    className="absolute h-3 w-3 rounded-full animate-ping"
-                    style={{ backgroundColor: color }}
+                    className={cn("absolute h-3 w-3 rounded-full animate-ping", background)}
+                    {...props}
                 ></div>
                 <div
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: color }}
+                    className={cn("h-2 w-2 rounded-full", background)}
+                    {...props}
                 ></div>
             </div>
         </div>
