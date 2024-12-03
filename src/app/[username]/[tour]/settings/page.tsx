@@ -10,12 +10,13 @@ import {authOptions} from "@/lib/authOptions";
 import {TourToUserRole, UserRole} from "@prisma/client";
 import TourStatusInput from "@/components/tourStatusInput";
 import HeroInput from "@/components/heroInput";
-import {Label} from "@/components/ui/label";
 import SubtitleInput from "@/components/subtitleInput";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
 import TourDangerSettings from "@/components/tourDangerSettings";
 import TourCollaborationTable from "@/components/tourCollaborationTable";
+import {Tag} from "emblor";
+import TagInputComponent from "@/components/tagInput";
 
 const TourSettings = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -44,7 +45,8 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                     }
                 },
                 heroImage: true,
-                sections: true
+                sections: true,
+                Tags: true
             }
         }),
         db.user.findUnique({
@@ -89,6 +91,26 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
         return revalidatePath(`/${params.username}/${params.tour}/settings`)
     }
 
+    async function deleteTag(tag: Tag) {
+        "use server"
+        await db.tag.deleteMany({
+            where: {
+                tourId: tour?.id,
+                tag: tag.text
+            }
+        })
+    }
+
+    async function createTag(tag: Tag) {
+        "use server"
+        await db.tag.create({
+            data: {
+                tag: tag.text,
+                tourId: tour?.id as string
+            }
+        })
+    }
+
 
     return (
         <>
@@ -124,6 +146,10 @@ const TourSettings = async (props: { params: Promise<{ username: string, tour: s
                         </div>
                         <div className={cn('flex flex-col gap-3')}>
                             <TourStatusInput tour={tour}/>
+                            <TagInputComponent tags={tour?.Tags.map(tag => ({id: tag.id, text: tag.tag})) as Tag[]}
+                                               onTagAddAction={createTag}
+                                               onTagRemoveAction={deleteTag}
+                            />
                         </div>
                     </div>
                     <SubtitleInput labelText={`Description`} type={`text`} name={`description`}

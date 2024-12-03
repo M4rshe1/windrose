@@ -39,11 +39,16 @@ const TourStatusInput = ({tour}: {
         }
     }
 
+    const style =  getComputedStyle(document.body)
+    const infoColor = style.getPropertyValue('--in')
+    const successColor = style.getPropertyValue('--su')
+    const warningColor = style.getPropertyValue('--wa')
+    console.log(warningColor.split(" "))
 
     return (
         <div className="flex gap-2 flex-col">
             <Label htmlFor={'status'} className={cn('flex items-center')}>Status
-                <PulsatingCircle color={status === TourStatus.ON_TOUR ? '#ffc400' : status === TourStatus.FINISHED ? '#12c924' : '#1b68e3'}/>
+                <PulsatingCircle color={status === TourStatus.ON_TOUR ? warningColor : status === TourStatus.FINISHED ? successColor : infoColor}/>
             </Label>
             <div className={cn('flex items-center gap-2')}>
             <SelectWithIcons options={options} className={cn('w-48')} name={'status'} defaultValue={status}

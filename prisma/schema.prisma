@@ -264,7 +264,8 @@ model Comment {
 }
 
 model Tag {
-  tourId String @id @default(cuid())
+  id     String @id @default(cuid())
+  tourId String
   tour   Tour   @relation(fields: [tourId], references: [id], onDelete: Cascade)
   tag    String
 }
