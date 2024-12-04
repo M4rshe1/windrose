@@ -95,6 +95,7 @@ const CreateTourForm = ({options}: { options: { label: string, value: string, im
                                onBlurAction={tourNameBlurHandler}
                                className={cn(`lg:max-w-[16rem] w-full`)}
                                placeholder={namePlaceholder}
+                               subText={`This will be in the URL of your tour. It can't be changed`}
                 />
                 <p className={cn("text-xs text-error mt-2")} role="region" aria-live="polite">
                     {tourNameInvalid ? 'Tour name already exists or is invalid' : ''}
