@@ -15,7 +15,6 @@ interface DateTimeSelectProps {
     defaultValueDate?: Date,
     className?: string,
     defaultValueNights?: number
-
     [key: string]: unknown
 }
 

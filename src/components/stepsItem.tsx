@@ -225,8 +225,6 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                                                                 year: 'numeric',
                                                                 month: 'long',
                                                                 day: '2-digit',
-                                                                hour: '2-digit',
-                                                                minute: '2-digit',
                                                                 hour12: false
                                                             }
                                                         )
@@ -274,6 +272,7 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                     <div
                         className={'flex items-center gap-2 mr-4 transition ease-in-out duration-200 opacity-0 group-hover:opacity-100 max-lg:opacity-100'}>
                         <DateTimeSelect defaultValueDate={item.datetime as Date}
+                                        defaultValueNights={item.nights || 0}
                                         onDateTimeChangeAction={handleDateTimeChange}
                                         label={"Date and Time"}/>
 
