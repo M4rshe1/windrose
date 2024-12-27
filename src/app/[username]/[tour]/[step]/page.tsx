@@ -11,6 +11,8 @@ import H2 from "@/components/ui/h2";
 import TourStepImageInput from "@/components/tourStepImageInput";
 import {revalidatePath} from "next/cache";
 import {Infinity as InfinityIcon} from "lucide-react";
+import MapInput from "@/components/mapInput";
+import MapInputServerComponentWrapper from "@/components/MapInputServerComponentWrapper";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string, step: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -121,6 +123,9 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
                     <H1>{section?.name || 'Unnamed Step'}</H1>
+                </div>
+                <div className={'aspect-video w-full'}>
+                    <MapInputServerComponentWrapper lat={section?.lat || 51.52402063531574} lon={section?.lng as number || -0.1586415330899539} zoom={5}/>
                 </div>
                 <H2 className={'flex items-end gap-1'}>Images
                     {maxImages &&

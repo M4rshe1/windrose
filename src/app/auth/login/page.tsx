@@ -55,8 +55,8 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 border-2 border-neutral rounded-lg bg-base-200 p-4">
+        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 h-full">
+            <div className="max-w-md w-full space-y-8 border-2 border-neutral rounded-lg bg-base-200 p-4 m-auto">
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-extrabold">
                         Sign in to Windrose

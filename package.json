@@ -35,6 +35,7 @@
     "date-fns": "^3.6.0",
     "emblor": "^1.4.7",
     "formidable": "^3.5.2",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.460.0",
     "minio": "^8.0.2",
     "next": "15.0.3",
@@ -50,6 +51,7 @@
   "devDependencies": {
     "@catppuccin/daisyui": "^1.2.1",
     "@types/formidable": "^3.4.5",
+    "@types/leaflet": "^1.9.15",
     "@types/minio": "^7.1.0",
     "@types/node": "^20.17.8",
     "@types/react": "^18",
