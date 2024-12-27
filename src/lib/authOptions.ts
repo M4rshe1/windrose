@@ -47,7 +47,8 @@ export const authOptions: NextAuthOptions = {
                             select: {
                                 fileKey: true,
                             }
-                        }
+                        },
+                        metric: true,
                     },
                 });
 
@@ -56,6 +57,7 @@ export const authOptions: NextAuthOptions = {
                     session.user.role = dbUser.role;
                     session.user.username = dbUser.username;
                     session.user.image = dbUser.image ? `http://${s3Endpoint}${dbUser.image.fileKey}` : null;
+                    session.user.metric = dbUser.metric;
                 }
             } catch (error) {
                 console.error('Error fetching user role:', error);
@@ -156,6 +158,7 @@ declare module 'next-auth' {
             email?: string | null;
             image?: string | null;
             role?: string | null;
+            metric?: boolean | null;
         }
     }
 }
