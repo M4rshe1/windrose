@@ -130,7 +130,6 @@ export default class LocationIQ {
             const response = await fetch(`https://api.locationiq.com/v1/directions/${profile}/${chunk.map(p => `${p.lon},${p.lat}`).join(';')}?key=${this.apiKey}&steps=true&geometries=polyline&overview=full`);
             return response.json();
         }));
-        console.log(data)
         const error = data.find(d => d.error);
         const code = data.find(d => d.code !== 'Ok')?.code;
         if (error) return error;

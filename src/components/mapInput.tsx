@@ -96,7 +96,7 @@ const MapInput = ({lat, lon, zoom = 5, onChange}: MapProps) => {
             try {
                 const data = await locationIQAction('autocomplete', {query: searchQuery});
                 if (!data?.error) setAutocompleteResults(data);
-            } catch (error) {
+            } catch {
             }
         }, 200);
 
@@ -135,7 +135,7 @@ const MapInput = ({lat, lon, zoom = 5, onChange}: MapProps) => {
             onChange?.(location);
             return
         }
-        
+
         if (!marker) return;
         const latlng = marker.getLatLng();
         const data = await locationIQAction('reverse', {lat: latlng.lat, lon: latlng.lng});
@@ -170,8 +170,8 @@ const MapInput = ({lat, lon, zoom = 5, onChange}: MapProps) => {
                     />
                 </div>
             </div>
-            <div className={"h-full"}>
-                {autocompleteResults.length > 0 && (
+            {autocompleteResults.length > 0 && (
+                <div className={"h-full"}>
                     <div
                         ref={autocompleteRef}
                         className="absolute top-14 right-4 w-full bg-base-100 border-2 border-neutral rounded-md sc p-1 space-y-1 h-full max-w-xs overflow-y-auto max-h-64"
@@ -195,8 +195,8 @@ const MapInput = ({lat, lon, zoom = 5, onChange}: MapProps) => {
                             </div>
                         ))}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

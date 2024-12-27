@@ -8,6 +8,7 @@ import db from "@/lib/db";
 import StepsItemDropdown from "@/components/StepsItemDropdown";
 import minioClient from "@/lib/minioClient";
 import {DateTimeSelect} from "@/components/DateTimeSelect";
+import {recalculateDirectionsAround} from "@/lib/directions";
 
 interface images extends TourSectionToFile {
     file: File
@@ -27,7 +28,8 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
     tour: {
         name: string,
         owner: string,
-        status: string
+        status: string,
+        id: string
     }
 }) {
     async function handleDelete() {
@@ -70,6 +72,15 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
     async function handleDateTimeChange(date: Date | null, nights: number = 0) {
         "use server"
         if (!date || disabled) return
+        const sections = await db.tourSection.findMany({
+            where: {
+                tour: {
+                    id: tour.id
+                },
+            }
+        })
+        const currentIndex = sections.findIndex(section => section.id === item.id)
+        
         await db.tourSection.update({
             where: {
                 id: item.id
@@ -79,6 +90,10 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                 nights: nights
             }
         })
+        
+        await recalculateDirectionsAround(tour.id, item.id)
+        if (currentIndex > 0) await recalculateDirectionsAround(tour.id, sections[currentIndex - 1].id)
+        if (currentIndex < sections.length - 1) await recalculateDirectionsAround(tour.id, sections[currentIndex + 1].id)
         revalidatePath(`/${tour.owner}/${tour.name}/steps`)
     }
 
@@ -261,7 +276,13 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                                     (item.duration || item.distance) && <span className={'text-sm'}> in </span>
                                 }
                                 <span className={'text-sm opacity-70'}>
-                                    {item.duration && timeReadable(item.duration)}
+                                    {item.duration && timeReadable(item.duration, {
+                                        days: "total",
+                                        hours: "rest",
+                                        minutes: "rest",
+                                        label: "short",
+                                        type: "seconds",
+                                    })}
                                 </span>
                             </p>
                         </div>

@@ -13,8 +13,9 @@ import {revalidatePath} from "next/cache";
 import {Infinity as InfinityIcon} from "lucide-react";
 import MapInputServerComponentWrapper from "@/components/MapInputServerComponentWrapper";
 import {redirect} from "next/navigation";
-import LocationIQ, {LocationIQResponse} from "@/lib/locationIQ";
+import {LocationIQResponse} from "@/lib/locationIQ";
 import SubtitleInput from "@/components/subtitleInput";
+import {recalculateDirectionsAround} from "@/lib/directions";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string, step: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -94,34 +95,6 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
 
     async function UpdateLocation(location: LocationIQResponse) {
         "use server"
-        const sections = await db.tourSection.findMany({
-            where: {
-                tourId: tour?.id
-            },
-            orderBy: {
-                datetime: 'asc'
-            }
-        })
-        const locationIQ = new LocationIQ()
-        const dataPrevious = {duration: null, distance: null} as { duration: number | null, distance: number | null }
-        const sectionIndex = sections.findIndex(s => s.id === params.step)
-        console.log(sectionIndex)
-        if (sectionIndex === -1) return;
-        if (sectionIndex > 0) {
-            const previousSection = sections[sectionIndex - 1]
-            console.log(previousSection)
-            if (previousSection.lat && previousSection.lng) {
-                const directions = await locationIQ.directions([
-                    {lat: previousSection.lat as number, lon: previousSection.lng as number},
-                    {lat: parseFloat(location.lat), lon: parseFloat(location.lon)}
-                ])
-                console.log(directions)
-                if ("routes" in directions && directions.routes.length > 0) {
-                    dataPrevious.duration = directions.routes[0].duration
-                    dataPrevious.distance = directions.routes[0].distance
-                }
-            }
-        }
 
         await db.tourSection.update({
             where: {
@@ -131,30 +104,10 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
                 lat: parseFloat(location.lat),
                 lng: parseFloat(location.lon),
                 name: location.display_place || location.display_name.split(',')[0],
-                ...dataPrevious
             }
         })
+        await recalculateDirectionsAround(tour?.id as string, params.step)
 
-        if (sectionIndex < sections.length - 1) {
-            const nextSection = sections[sectionIndex + 1]
-            if (nextSection.lat && nextSection.lng) {
-                const directions = await locationIQ.directions([
-                    {lat: parseFloat(location.lat), lon: parseFloat(location.lon)},
-                    {lat: nextSection.lat as number, lon: nextSection.lng as number}
-                ])
-                if ("routes" in directions && directions.routes.length > 0) {
-                    await db.tourSection.update({
-                        where: {
-                            id: nextSection.id
-                        },
-                        data: {
-                            duration: directions.routes[0].duration,
-                            distance: directions.routes[0].distance
-                        }
-                    })
-                }
-            }
-        }
         revalidatePath(`/${params.username}/${params.tour}/${params.step}`)
     }
 
