@@ -117,13 +117,13 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
             icon: Play,
             title: 'started',
             value: new Date(tour?.sections[0].datetime as Date).toLocaleDateString(),
-            link: `/${params.username}/${params.tour}#list-0`
+            link: `/${params.username}/${params.tour}#section-0`
         },
         {
             icon: Goal,
             title: 'finished',
             value: new Date(tour?.sections[tour?.sections.length - 1].datetime as Date).toLocaleDateString(),
-            link: `/${params.username}/${params.tour}#list-${tour?.sections.length}`
+            link: `/${params.username}/${params.tour}#section-${tour?.sections.length}`
         },
         {
             icon: CalendarClock,

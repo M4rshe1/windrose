@@ -2,16 +2,9 @@
 
 import {Country, File as PrismaFile, TourSection, TourSectionStatus, TourSectionToFile} from "@prisma/client";
 import {cn, distanceReadable, getMinioLinkFromKey} from "@/lib/utils";
-import {
-    Carousel,
-    CarouselApi,
-    CarouselContent,
-    CarouselItem,
-} from "@/components/ui/carousel";
-import Image from "next/image";
+import {CarouselApi,} from "@/components/ui/carousel";
 import React, {useEffect, useState} from "react";
-import {ArrowLeft, ArrowRight} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import InfiniteCarousel from "@/components/infinity-craousel";
 
 interface images extends TourSectionToFile {
     file: PrismaFile
@@ -32,6 +25,7 @@ const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, le
 }) => {
     return (
         <div
+            id={`section-${section.id}`}
             className={"w-full grid grid-cols-[4rem_1fr] items-start auto-rows-[minmax(12rem,auto)] gap-4"}
         >{
             index !== 0 ?
@@ -153,33 +147,40 @@ const TourSectionItemImagesCarousel = ({images}: { images: PrismaFile[] }) => {
             setCurrent(api.selectedScrollSnap() + 1)
         })
     }, [api])
-    
-    
+
+
     return (
         <div
+            className={"mt-2 max-h-48 aspect-video rounded overflow-hidden"}
         >
-            <Carousel
-                setApi={setApi}
-                opts={{
-                    align: "start",
-                    loop: true,
-                }}
-            >
-                <CarouselContent>
-                    {images.map((image, index) => (
-                        <CarouselItem key={index}>
-                            <div className="p-1 max-h-48 aspect-video">
-                                <Image
-                                    src={getMinioLinkFromKey(image.fileKey)}
-                                    alt={image.fileName}
-                                    width={1000}
-                                    height={1000}
-                                />
-                            </div>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-            </Carousel>
+            {
+                images.length > 0 &&
+                <InfiniteCarousel images={images.map(image => getMinioLinkFromKey(image.fileKey))}/>
+            }
+            {/*<Carousel*/}
+            {/*    setApi={setApi}*/}
+            {/*    opts={{*/}
+            {/*        align: "start",*/}
+            {/*        loop: true,*/}
+            {/*    }}*/}
+            {/*>*/}
+            {/*    <CarouselContent>*/}
+            {/*        {images.map((image, index) => (*/}
+            {/*            <CarouselItem key={index}>*/}
+            {/*                <div className="p-1 max-h-48 aspect-video">*/}
+            {/*                    <Image*/}
+            {/*                        src={getMinioLinkFromKey(image.fileKey)}*/}
+            {/*                        alt={image.fileName}*/}
+            {/*                        width={1000}*/}
+            {/*                        height={1000}*/}
+            {/*                    />*/}
+            {/*                </div>*/}
+            {/*            </CarouselItem>*/}
+            {/*        ))}*/}
+            {/*    </CarouselContent>*/}
+            {/*    <CarouselNext/>*/}
+            {/*    <CarouselPrevious/>*/}
+            {/*</Carousel>*/}
             {/*{*/}
             {/* count > 1 &&   */}
             {/*<div className="flex justify-between mt-2">*/}
@@ -203,7 +204,7 @@ const TourSectionItemImagesCarousel = ({images}: { images: PrismaFile[] }) => {
     )
 }
 
-const TourSectionItemNumber = ({section, distanceUntilNow,distance, index, metric, status, length}: {
+const TourSectionItemNumber = ({section, distanceUntilNow, distance, index, metric, status, length}: {
     section: Section,
     distanceUntilNow: number,
     distance: number,
@@ -216,9 +217,9 @@ const TourSectionItemNumber = ({section, distanceUntilNow,distance, index, metri
         <div
             className={"w-full h-full relative flex items-center justify-center"}
         >
-                <div
-                    className={cn("absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-full bg-base-200")}>
-                </div>
+            <div
+                className={cn("absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-full bg-base-200")}>
+            </div>
             <div
                 className={cn("absolute top-0 left-1/2 transform -translate-x-1/2 rounded-full flex items-center justify-center flex-col aspect-square h-12 text-2xl bg-base-200 border-2",
                     status == TourSectionStatus.PLANNED ? "border-info" : status == TourSectionStatus.SKIPPED ? "border-warning" : "border-success"
@@ -230,14 +231,14 @@ const TourSectionItemNumber = ({section, distanceUntilNow,distance, index, metri
             {
                 index !== length - 1 &&
                 <div
-                    className={cn("absolute top-1/2 left-1/2 pb-6 transform -translate-x-1/2 -translate-y-1/2 text-primary font-bold -rotate-90 whitespace-nowrap")}>
-                    +{section?.distance && distanceReadable(distance, metric, 0)}
+                    className={cn("absolute top-1/2 left-1/2 pb-6 transform pr-12 -translate-x-1/2 -translate-y-1/2 text-primary font-bold -rotate-90 whitespace-nowrap")}>
+                    +{distanceReadable(distance, metric, 0)}
                 </div>
-            } 
+            }
             {
                 (index !== length - 1 && index !== 0) &&
                 <div
-                    className={cn("absolute top-1/2 left-1/2 pt-6 transform -translate-x-1/2 -translate-y-1/2 opacity-50 font-bold -rotate-90 whitespace-nowrap")}>
+                    className={cn("absolute top-1/2 left-1/2 pt-6 transform pr-12 -translate-x-1/2 -translate-y-1/2 opacity-50 font-bold -rotate-90 whitespace-nowrap")}>
                     {distanceReadable(distanceUntilNow, metric, 0)}
                 </div>
             }
