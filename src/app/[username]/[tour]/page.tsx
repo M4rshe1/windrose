@@ -8,7 +8,7 @@ import db from "@/lib/db";
 import {Country, TourStatus, TourToUserRole, UserRole} from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import {Clock, Flag, LandPlot, Route} from "lucide-react";
+import {CalendarClock, Clock, Flag, Goal, LandPlot, Play, Route} from "lucide-react";
 import ReactCountryFlag from "react-country-flag";
 import {TOUR_STATUS} from "@/lib/status";
 import PulsatingCircle from "@/components/PulsatingCircle";
@@ -103,17 +103,32 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
             icon: LandPlot,
             title: 'traveled',
             value: distanceReadable(totalDistance, session?.user?.metric || true),
-            link: `/${params.username}/${params.tour}#distance`
         },
         {
             icon: Clock,
-            title: 'time spent',
+            title: 'driving',
             value: timeReadable(tour?.sections.reduce((acc, section) => acc + (section.duration || 0), 0) || 0, {
                 days: "total",
                 hours: "rest",
                 minutes: "rest",
             }),
-            link: `/${params.username}/${params.tour}#duration`
+        },
+        {
+            icon: Play,
+            title: 'started',
+            value: new Date(tour?.sections[0].datetime as Date).toLocaleDateString(),
+            link: `/${params.username}/${params.tour}#list-0`
+        },
+        {
+            icon: Goal,
+            title: 'finished',
+            value: new Date(tour?.sections[tour?.sections.length - 1].datetime as Date).toLocaleDateString(),
+            link: `/${params.username}/${params.tour}#list-${tour?.sections.length}`
+        },
+        {
+            icon: CalendarClock,
+            title: 'days',
+            value: Math.ceil((new Date(tour?.sections[tour?.sections.length - 1].datetime as Date).getTime() - new Date(tour?.sections[0].datetime as Date).getTime()) / (1000 * 60 * 60 * 24)),
         }
     ]
 
@@ -122,7 +137,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
         PLANNING: 'bg-info',
         FINISHED: 'bg-success'
     }
-    
+
     let distance = 0;
 
     return (
@@ -139,7 +154,9 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
             }/>
 
             <TourSettingsSecondaryNav activeTab={"Overview"} params={params} sectionCount={sectionCount._count}
-                                      userRole={userRole}/>
+                                      userRole={userRole}
+                                      mentionsCount={tour?.TourToUser.filter(ttu => ttu.mentioned || ttu.role === TourToUserRole.OWNER).length as number}
+            />
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
                     <div
@@ -170,14 +187,19 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                         </div>
                     </div>
                 </div>
-                <div className={cn("grid grid-cols-1 md:grid-cols-[4fr_2fr] gap-4")}>
-                    <div>
+                <div className={cn("grid grid-cols-1 lg:grid-cols-[4fr_2fr] gap-4")}>
+                    <div
+                        className={"max-w-full"}
+                    >
                         {
                             sortedSections?.map((section, index) => {
-                                distance += section.distance || 0;
-                                return <TourSectionItem section={section as Section} key={section.id} index={index} distance={distance}
-                                                        metric={session?.user?.metric || true}
-                                                        length={sortedSections.length}
+                                distance += sortedSections?.[index + 1]?.distance || 0;
+                                return <TourSectionItem
+                                    section={section as Section} key={section.id} index={index}
+                                    distance={sortedSections?.[index + 1]?.distance || 0}
+                                    distanceUntilNow={distance}
+                                    metric={session?.user?.metric || true}
+                                    length={sortedSections.length}
                                 />
                             })
                         }
@@ -211,9 +233,9 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                             {
                                 stats.map(stat => (
                                     <Link
-                                        href={stat.link}
+                                        href={stat.link || '#'}
                                         key={stat.title}
-                                        className={cn("flex items-center gap-2 hover:text-primary transition duration-200 ease-in-out")}>
+                                        className={cn("flex items-center gap-2 hover:text-primary transition duration-200 ease-in-out", stat.link ? 'hover:link' : 'pointer-events-none')}>
                                         <stat.icon size={16}/>
                                         <p>
                                             <span
@@ -227,38 +249,46 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                                 ))
                             }
                         </div>
-                        <div className={cn("flex w-full h-0.5 bg-base-100 ")}></div>
-                        <div className={cn("text-lg font-bold")}>
-                            Mentions
-                        </div>
+                        <div className={cn("flex w-full h-0.5 bg-base-100")}></div>
+                        <Link className={cn("text-lg font-bold hover:underline hover:text-primary transition duration-200 ease-in-out")}
+                              href={`/${params.username}/${params.tour}/mentions`}
+                        >
+                            Mentions{' '}
+                            <span
+                                className={cn("bg-base-100 text-xs rounded-full px-2 py-0.5")}>{tour?.TourToUser.filter(ttu => ttu.mentioned || ttu.role === TourToUserRole.OWNER).length}</span>
+                        </Link>
                         <div className={cn("flex flex-wrap gap-2")}>
                             {
-                                tour?.TourToUser.map(ttu => (
-                                    <Link
-                                        href={`/${ttu.user.username}`}
-                                        key={ttu.user.username}
-                                        data-tip={ttu.user.name as string}
-                                        className={cn("flex gap-2 items-center tooltip before:bg-base-300 before:text-base-content after:text-base-300")}>
-                                        {
-                                            ttu.user.image ?
-                                                <Image src={getMinioLinkFromKey(ttu.user.image?.fileKey)}
-                                                       alt={ttu.user.name as string}
-                                                       width={32} height={32} className={cn("rounded-full")}/>
-                                                :
-                                                <div
-                                                    className={cn("w-8 h-8 rounded-full bg-base-100 flex items-center justify-center")}>
+                                tour?.TourToUser
+                                    .filter(ttu => ttu.mentioned || ttu.role === TourToUserRole.OWNER)
+                                    .map(ttu => (
+                                        <Link
+                                            href={`/${ttu.user.username}`}
+                                            key={ttu.user.username}
+                                            data-tip={ttu.user.name as string}
+                                            className={cn("flex gap-2 items-center tooltip before:bg-base-300 before:text-base-content after:text-base-300")}>
+                                            {
+                                                ttu.user.image ?
+                                                    <Image src={getMinioLinkFromKey(ttu.user.image?.fileKey)}
+                                                           alt={ttu.user.name as string}
+                                                           width={32} height={32} className={cn("rounded-full")}/>
+                                                    :
+                                                    <div
+                                                        className={cn("w-8 h-8 rounded-full bg-base-100 flex items-center justify-center")}>
                                                     <span>
                                                         {ttu.user.name?.charAt(0)}
                                                     </span>
-                                                </div>
-                                        }
-                                    </Link>
-                                ))
+                                                    </div>
+                                            }
+                                        </Link>
+                                    ))
                             }
                         </div>
                         <div className={cn("flex w-full h-0.5 bg-base-100 ")}></div>
-                        <div className={cn("text-lg font-bold")}>
-                            Countries
+                        <div className={cn("text-lg font-bold flex items-center gap-1")}>
+                            Countries{' '}
+                            <span
+                                className={cn("bg-base-100 text-xs rounded-full px-2 py-0.5")}>{uniqueCountries?.length}</span>
                         </div>
                         <div className={"flex flex-col gap-2"}>
                             <div className={cn("flex flex-wrap gap-y-1 gap-x-2")}>

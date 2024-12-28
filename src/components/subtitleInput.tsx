@@ -3,7 +3,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {useState} from "react";
 
-export default function SubtitleInput({labelText, subText, onBlurAction, className, limit, ...props}: {
+export default function SubtitleInput({labelText, subText, onBlurAction, className, limit = Infinity, ...props}: {
     labelText?: string,
     subText?: string,
     className?: string,
@@ -24,8 +24,9 @@ export default function SubtitleInput({labelText, subText, onBlurAction, classNa
                        if (limit && event.target.value.length > limit) {
                            return;
                        }
-                       setValue(event.target.value);
+                       setValue(event.target.value.slice(0, limit));
                    }}
+                   value={value}
                    className={className}
                    {...props}/>
             {

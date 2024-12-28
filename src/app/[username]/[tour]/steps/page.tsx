@@ -95,7 +95,9 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
             }/>
 
             <TourSettingsSecondaryNav activeTab={"Steps"} params={params} sectionCount={tour?.sections.length as number}
-                                      userRole={userRole}/>
+                                      userRole={userRole}
+                                      mentionsCount={tour?.TourToUser.filter(ttu => ttu.mentioned || ttu.role === TourToUserRole.OWNER).length as number}
+            />
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
                     <H1>

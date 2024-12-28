@@ -34,7 +34,7 @@ const TourStatusInput = ({tour}: {
                 <PulsatingCircle background={status === TourStatus.ON_TOUR ? 'bg-warning' : status === TourStatus.FINISHED ? 'bg-success' : 'bg-info'}/>
             </Label>
             <div className={cn('flex items-center gap-2')}>
-            <SelectWithIcons options={TOUR_STATUS} className={cn('w-48')} name={'status'} defaultValue={status}
+            <SelectWithIcons options={TOUR_STATUS} className={cn('w-48')} name={'status'} value={status}
                              onValueChange={(value: string) => setStatus(value as TourStatus)} label={"Status"}/>
             <Button className={cn('w-24 text-primary-content')} onClick={handleStatusSave}
                     disabled={status === tour.status}

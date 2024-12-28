@@ -2,13 +2,26 @@
 
 import {SecondaryNavPortal} from "@/components/secondaryHeaderNav";
 import React from "react";
-import {BellDot, CreditCard, ListPlus, Map, Pen, Route, Settings, ShieldPlus, User, UserPen} from "lucide-react";
+import {
+    AtSign,
+    BellDot,
+    CreditCard,
+    ListPlus,
+    Map,
+    Pen,
+    Route,
+    Settings,
+    ShieldPlus,
+    User,
+    UserPen
+} from "lucide-react";
 import {TourToUserRole, UserRole} from "@prisma/client";
 
-export const TourSettingsSecondaryNav = ({activeTab, params, sectionCount, userRole}: {
+export const TourSettingsSecondaryNav = ({activeTab, params, sectionCount, userRole, mentionsCount}: {
     activeTab: string,
     params: { username: string, tour: string },
     sectionCount: number
+    mentionsCount: number
     userRole: string | TourToUserRole | UserRole
 }) => {
     const items = [
@@ -17,6 +30,9 @@ export const TourSettingsSecondaryNav = ({activeTab, params, sectionCount, userR
         },
         {
             title: 'Steps', url: `/${params.username}/${params.tour}/steps`, icon: Route, badge: sectionCount
+        },
+        {
+            title: 'Mentions', url: `/${params.username}/${params.tour}/mentions`, icon: AtSign, badge: mentionsCount
         }
     ]
     if (userRole === TourToUserRole.OWNER || userRole === TourToUserRole.EDITOR || userRole === UserRole.ADMIN) {

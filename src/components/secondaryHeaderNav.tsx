@@ -50,8 +50,7 @@ export const SecondaryHeaderNav = ({items}: SecondaryHeaderNavProps) => {
                             {item.title}
                             {
                                 item.badge != undefined ?
-                                    <span
-                                        className={cn("bg-base-300 text-xs rounded-full px-2 py-0.5")}>{item.badge}</span>
+                                    <span className={cn("bg-base-300 text-xs rounded-full px-2 py-0.5")}>{item.badge}</span>
                                     : null
                             }
                         </span>

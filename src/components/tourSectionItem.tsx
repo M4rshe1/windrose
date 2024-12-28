@@ -1,8 +1,17 @@
+"use client"
+
 import {Country, File as PrismaFile, TourSection, TourSectionStatus, TourSectionToFile} from "@prisma/client";
 import {cn, distanceReadable, getMinioLinkFromKey} from "@/lib/utils";
-import {Carousel, CarouselContent, CarouselItem} from "@/components/ui/carousel";
+import {
+    Carousel,
+    CarouselApi,
+    CarouselContent,
+    CarouselItem,
+} from "@/components/ui/carousel";
 import Image from "next/image";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {ArrowLeft, ArrowRight} from "lucide-react";
+import {Button} from "@/components/ui/button";
 
 interface images extends TourSectionToFile {
     file: PrismaFile
@@ -13,33 +22,36 @@ export interface Section extends TourSection {
     country: Country
 }
 
-const TourSectionItem = ({section, index, distance, metric, length}: {
+const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, length}: {
     section: Section,
     index: number,
     distance: number,
+    distanceUntilNow: number,
     metric: boolean,
     length: number
 }) => {
     return (
         <div
-            className={"w-full grid grid-cols-[4rem_1fr] auto-rows-[16rem] items-start"}
+            className={"w-full grid grid-cols-[4rem_1fr] items-start auto-rows-[minmax(12rem,auto)] gap-4"}
         >{
             index !== 0 ?
                 <>
-                    <TourSectionItemNumber distance={distance} index={index}
+                    <TourSectionItemNumber distanceUntilNow={distanceUntilNow} index={index}
+                                           distance={distance}
                                            metric={metric}
                                            status={section.status}
                                            length={length}
                                            section={section}
                     />
-                    <div>
+                    <div className={"max-w-full"}>
 
-                        <TourSectionItemImagesCarousel images={section.images.map(image => image.file)}/>
                         <TourSectionItemText section={section}/>
+                        <TourSectionItemImagesCarousel images={section.images.map(image => image.file)}/>
                     </div>
                 </> : (
                     <>
-                        <TourSectionItemNumber distance={distance} index={index}
+                        <TourSectionItemNumber distanceUntilNow={distanceUntilNow} index={index}
+                                               distance={distance}
                                                metric={metric}
                                                status={section.status}
                                                length={length}
@@ -61,7 +73,7 @@ const TourSectionItemText = ({section}: { section: Section }) => {
             >
                 {section.name}
                 {section?.duration && section?.distance &&
-                    <span className={'text-lg opacity-70 flex items-center gap-1'}>
+                    <span className={'text-lg opacity-70 flex items-center gap-1 font-normal'}>
                                 {
                                     section.nights ? <>
                                         {
@@ -125,20 +137,41 @@ const TourSectionItemText = ({section}: { section: Section }) => {
 }
 
 const TourSectionItemImagesCarousel = ({images}: { images: PrismaFile[] }) => {
-    console.log(images)
+    const [api, setApi] = useState<CarouselApi>()
+    const [current, setCurrent] = useState(0)
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        if (!api) {
+            return
+        }
+
+        setCount(api.scrollSnapList().length)
+        setCurrent(api.selectedScrollSnap() + 1)
+
+        api.on("select", () => {
+            setCurrent(api.selectedScrollSnap() + 1)
+        })
+    }, [api])
+    
+    
     return (
         <div
-            className={"w-full"}
         >
-            <Carousel className="w-full max-w-full">
+            <Carousel
+                setApi={setApi}
+                opts={{
+                    align: "start",
+                    loop: true,
+                }}
+            >
                 <CarouselContent>
                     {images.map((image, index) => (
                         <CarouselItem key={index}>
-                            <div className="p-1">
+                            <div className="p-1 max-h-48 aspect-video">
                                 <Image
                                     src={getMinioLinkFromKey(image.fileKey)}
                                     alt={image.fileName}
-                                    layout="responsive"
                                     width={1000}
                                     height={1000}
                                 />
@@ -146,15 +179,33 @@ const TourSectionItemImagesCarousel = ({images}: { images: PrismaFile[] }) => {
                         </CarouselItem>
                     ))}
                 </CarouselContent>
-                {/*<CarouselPrevious/>*/}
-                {/*<CarouselNext/>*/}
             </Carousel>
+            {/*{*/}
+            {/* count > 1 &&   */}
+            {/*<div className="flex justify-between mt-2">*/}
+            {/*    <Button*/}
+            {/*        variant={"outline"}*/}
+            {/*        size={"sm"}*/}
+            {/*    >*/}
+            {/*        <ArrowLeft size={24}/>*/}
+            {/*    </Button>*/}
+            {/*    <p>{current} / {count}</p>*/}
+            {/*    */}
+            {/*    <Button*/}
+            {/*        variant={"outline"}*/}
+            {/*        size={"sm"}*/}
+            {/*    >*/}
+            {/*        <ArrowRight size={24}/>*/}
+            {/*    </Button>*/}
+            {/*</div>*/}
+            {/*}*/}
         </div>
     )
 }
 
-const TourSectionItemNumber = ({section, distance, index, metric, status, length}: {
+const TourSectionItemNumber = ({section, distanceUntilNow,distance, index, metric, status, length}: {
     section: Section,
+    distanceUntilNow: number,
     distance: number,
     index: number,
     metric: boolean,
@@ -165,12 +216,9 @@ const TourSectionItemNumber = ({section, distance, index, metric, status, length
         <div
             className={"w-full h-full relative flex items-center justify-center"}
         >
-            {
-                index !== length - 1 &&
                 <div
                     className={cn("absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-full bg-base-200")}>
                 </div>
-            }
             <div
                 className={cn("absolute top-0 left-1/2 transform -translate-x-1/2 rounded-full flex items-center justify-center flex-col aspect-square h-12 text-2xl bg-base-200 border-2",
                     status == TourSectionStatus.PLANNED ? "border-info" : status == TourSectionStatus.SKIPPED ? "border-warning" : "border-success"
@@ -180,17 +228,17 @@ const TourSectionItemNumber = ({section, distance, index, metric, status, length
                 </p>
             </div>
             {
-                index !== 0 &&
+                index !== length - 1 &&
                 <div
-                    className={cn("absolute -top-1/2 left-1/2 pb-6 pl-12 transform -translate-x-1/2 translate-y-1/2 text-success/50 font-bold -rotate-90 whitespace-nowrap")}>
-                    +{section?.distance && distanceReadable(section.distance, metric, 0)}
+                    className={cn("absolute top-1/2 left-1/2 pb-6 transform -translate-x-1/2 -translate-y-1/2 text-primary font-bold -rotate-90 whitespace-nowrap")}>
+                    +{section?.distance && distanceReadable(distance, metric, 0)}
                 </div>
             } 
             {
-                index > 1 &&
+                (index !== length - 1 && index !== 0) &&
                 <div
-                    className={cn("absolute -top-1/2 left-1/2 pt-6 pl-12 transform -translate-x-1/2 translate-y-1/2 opacity-50 font-bold -rotate-90 whitespace-nowrap")}>
-                    {distanceReadable(distance, metric, 0)}
+                    className={cn("absolute top-1/2 left-1/2 pt-6 transform -translate-x-1/2 -translate-y-1/2 opacity-50 font-bold -rotate-90 whitespace-nowrap")}>
+                    {distanceReadable(distanceUntilNow, metric, 0)}
                 </div>
             }
         </div>
