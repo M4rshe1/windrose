@@ -4,29 +4,18 @@ import SelectWithIcons from "@/components/selectWithIcons";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {TourStatus} from "@prisma/client";
-import {Goal, NotebookPen, Waypoints} from "lucide-react";
 import {confirmModal} from "@/components/confirmModal";
 import {updateTourStatusAction} from "@/actions/updateTourStatusAction";
 import {useState} from "react";
 import {Label} from "@/components/ui/label";
 import PulsatingCircle from "@/components/PulsatingCircle";
+import {TOUR_STATUS} from "@/lib/status";
 
 const TourStatusInput = ({tour}: {
     tour: any,
 }) => {
     const [status, setStatus] = useState(tour.status);
-    const options = [
-        {
-            label: 'Not Started', value: TourStatus.PLANNING, icon: NotebookPen
 
-        },
-        {
-            label: 'On Tour', value: TourStatus.ON_TOUR, icon: Waypoints
-        },
-        {
-            label: 'Finished', value: TourStatus.FINISHED, icon: Goal
-        },
-    ]
 
     async function handleStatusSave() {
         if (await confirmModal({
@@ -45,7 +34,7 @@ const TourStatusInput = ({tour}: {
                 <PulsatingCircle background={status === TourStatus.ON_TOUR ? 'bg-warning' : status === TourStatus.FINISHED ? 'bg-success' : 'bg-info'}/>
             </Label>
             <div className={cn('flex items-center gap-2')}>
-            <SelectWithIcons options={options} className={cn('w-48')} name={'status'} defaultValue={status}
+            <SelectWithIcons options={TOUR_STATUS} className={cn('w-48')} name={'status'} defaultValue={status}
                              onValueChange={(value: string) => setStatus(value as TourStatus)} label={"Status"}/>
             <Button className={cn('w-24 text-primary-content')} onClick={handleStatusSave}
                     disabled={status === tour.status}

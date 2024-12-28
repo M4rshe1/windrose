@@ -1,6 +1,6 @@
 import React from 'react';
-import {TourSection, TourSectionStatus, TourSectionToFile, TourStatus} from "@prisma/client";
-import {vehicles} from "@/lib/vehicles";
+import {Country, TourSection, TourSectionStatus, TourSectionToFile, TourStatus} from "@prisma/client";
+import {VEHICLES} from "@/lib/vehicles";
 import {GitCommitVertical, Play} from "lucide-react";
 import {distanceReadable, timeReadable} from "@/lib/utils";
 import {revalidatePath} from "next/cache";
@@ -8,7 +8,8 @@ import db from "@/lib/db";
 import StepsItemDropdown from "@/components/StepsItemDropdown";
 import minioClient from "@/lib/minioClient";
 import {DateTimeSelect} from "@/components/DateTimeSelect";
-import {recalculateDirectionsAround} from "@/lib/directions";
+import {calculateDirections, getNextSection} from "@/lib/directions";
+import ReactCountryFlag from "react-country-flag";
 
 interface images extends TourSectionToFile {
     file: File
@@ -16,6 +17,7 @@ interface images extends TourSectionToFile {
 
 export interface Item extends TourSection {
     images: images[]
+    country: Country
 }
 
 export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
@@ -72,14 +74,7 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
     async function handleDateTimeChange(date: Date | null, nights: number = 0) {
         "use server"
         if (!date || disabled) return
-        const sections = await db.tourSection.findMany({
-            where: {
-                tour: {
-                    id: tour.id
-                },
-            }
-        })
-        const currentIndex = sections.findIndex(section => section.id === item.id)
+        const nextSection = await getNextSection(tour.id, item.id)
         
         await db.tourSection.update({
             where: {
@@ -91,9 +86,13 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
             }
         })
         
-        await recalculateDirectionsAround(tour.id, item.id)
-        if (currentIndex > 0) await recalculateDirectionsAround(tour.id, sections[currentIndex - 1].id)
-        if (currentIndex < sections.length - 1) await recalculateDirectionsAround(tour.id, sections[currentIndex + 1].id)
+        const newNextSection = await getNextSection(tour.id, item.id)
+        await Promise.all([
+            calculateDirections(tour.id, item.id),
+            calculateDirections(tour.id, nextSection?.id),
+            calculateDirections(tour.id, newNextSection?.id)
+        ])
+        
         revalidatePath(`/${tour.owner}/${tour.name}/steps`)
     }
 
@@ -168,6 +167,14 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
 
 
         revalidatePath(`/${tour.owner}/${tour.name}/steps`)
+
+    }
+
+    let Icon
+    if (index === 0 && sort == "ASC" || index === length - 1 && sort == "DESC") {
+        Icon = Play
+    } else {
+        Icon = VEHICLES.find(vehicle => vehicle.value === item.vehicle)?.icon || GitCommitVertical
     }
 
     return (
@@ -175,17 +182,15 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
             <div className={'flex items-center justify-between border-2 border-neutral rounded-lg bg-base-100 group'}>
                 <div className={'flex items-center p-2 gap-2'}>
                     <div className={'w-8 aspect-square grid place-items-center'}>
-                        {
-                            (index === 0 && sort == "ASC" || index === length - 1 && sort == "DESC") ?
-                                <Play size={20}/> :
-                                vehicles.find(vehicle => vehicle.value === item.vehicle)?.icon ||
-                                <GitCommitVertical size={20}/>
-                        }
+                        <Icon size={24} className={'text-primary'}/>
                     </div>
                     <div className={'flex flex-col gap-1'}>
                         <div className={'flex items-center gap-2'}>
-
-                            <p className={' font-semibold'}>
+                            <p className={'font-semibold flex items-center gap-1'}>
+                                {
+                                 item?.country?.code &&   
+                                <ReactCountryFlag countryCode={item?.country?.code} svg/>
+                                }
                                 {item.name || 'Unnamed'}
                             </p>
                             <p

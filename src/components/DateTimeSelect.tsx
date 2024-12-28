@@ -79,12 +79,13 @@ export function DateTimeSelect({
                     <CalendarIcon/>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
+            <PopoverContent className="w-auto p-0 bg-base-100">
                 <Calendar
                     mode="single"
                     selected={date}
                     onSelect={handleDateSelect}
                     initialFocus
+                    weekStartsOn={1}
                 />
                 <div className="flex items-center justify-between p-2 border-t-2 border-neutral">
                     <Select value={selectedHour} onValueChange={(value) => handleTimeChange('hour', value)}>

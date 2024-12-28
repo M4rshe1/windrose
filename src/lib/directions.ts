@@ -3,7 +3,8 @@
 import db from "@/lib/db";
 import LocationIQ from "@/lib/locationIQ";
 
-export async function recalculateDirectionsAround(tourId: string, sectionId: string) {
+export async function calculateDirections(tourId: string, sectionId: string | undefined) {
+    if (!sectionId) return;
     const sections = await db.tourSection.findMany({
         where: {
             tourId: tourId
@@ -29,8 +30,8 @@ export async function recalculateDirectionsAround(tourId: string, sectionId: str
                         id: currentSection.id
                     },
                     data: {
-                        duration: directions.routes[0].duration,
-                        distance: directions.routes[0].distance
+                        duration: directions.routes[0]?.duration,
+                        distance: directions.routes[0]?.distance
                     }
                 })
             }
@@ -46,25 +47,39 @@ export async function recalculateDirectionsAround(tourId: string, sectionId: str
             }
         })
     }
-
-    if (sectionIndex < sections.length - 1) {
-        const nextSection = sections[sectionIndex + 1]
-        if (nextSection.lat && nextSection.lng) {
-            const directions = await locationIQ.directions([
-                {lat: currentSection.lat as number, lon: currentSection.lng as number},
-                {lat: nextSection.lat as number, lon: nextSection.lng as number}
-            ])
-            if ("routes" in directions && directions.routes.length > 0) {
-                await db.tourSection.update({
-                    where: {
-                        id: nextSection.id
-                    },
-                    data: {
-                        duration: directions.routes[0]?.duration,
-                        distance: directions.routes[0]?.distance
-                    }
-                })
-            }
-        }
-    }
 }
+
+export async function getPreviousSection(tourId: string, sectionId: string) {
+    const sections = await db.tourSection.findMany({
+        where: {
+            tourId: tourId
+        },
+        orderBy: {
+            datetime: 'asc'
+        }
+    })
+    const sectionIndex = sections.findIndex(s => s.id === sectionId)
+    if (sectionIndex === -1) return;
+    if (sectionIndex > 0) {
+        return null
+    }
+    return null
+}
+
+export async function getNextSection(tourId: string, sectionId: string) {
+    const sections = await db.tourSection.findMany({
+        where: {
+            tourId: tourId
+        },
+        orderBy: {
+            datetime: 'asc'
+        }
+    })
+    const sectionIndex = sections.findIndex(s => s.id === sectionId)
+    if (sectionIndex === -1) return;
+    if (sectionIndex < sections.length - 1) {
+        return sections[sectionIndex + 1]
+    }
+    return null
+}
+

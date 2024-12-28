@@ -4,7 +4,7 @@ import {LucideIcon} from "lucide-react";
 import {cn} from "@/lib/utils";
 
 export default function SelectWithIcons({options, label, name, ...props}: {
-    options: { label: string, value: string, icon: TablerIcon | LucideIcon }[],
+    options: { label: string, value: string, icon: TablerIcon | LucideIcon | null }[],
     label?: string,
     name: string,
     [key: string]: unknown
@@ -12,8 +12,8 @@ export default function SelectWithIcons({options, label, name, ...props}: {
     return (
         <div className="space-y-2">
             <Select
-            name={name}
-            {...props}
+                name={name}
+                {...props}
             >
                 <SelectTrigger
                     id="select-35"
@@ -27,7 +27,10 @@ export default function SelectWithIcons({options, label, name, ...props}: {
                     {options.map((option, index) => (
                         <SelectItem key={index} value={option.value}>
                             <div className={cn('flex items-center whitespace-nowrap gap-1')}>
-                                <option.icon size={16} strokeWidth={2} aria-hidden="true"/>
+                                {
+                                    option.icon &&
+                                    <option.icon size={16} strokeWidth={2} aria-hidden="true"/>
+                                }
                                 <span className="truncate">{option.label}</span>
                             </div>
                         </SelectItem>

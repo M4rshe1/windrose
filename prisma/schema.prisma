@@ -208,6 +208,8 @@ model TourSection {
   updatedAt           DateTime              @updatedAt
   tour                Tour                  @relation(fields: [tourId], references: [id], onDelete: Cascade)
   datetime            DateTime
+  country             Country?              @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  countryId           String?
   Comments            Comment[]
   UserLikeTourSection UserLikeTourSection[]
   images              TourSectionToFile[]
@@ -271,13 +273,14 @@ model Tag {
 }
 
 model Country {
-  id        String   @id @default(cuid())
-  name      String
-  code      String   @unique
-  color     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User      User[]
+  id          String        @id @default(cuid())
+  name        String
+  code        String        @unique
+  color       String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  User        User[]
+  TourSection TourSection[]
 }
 
 model Setting {

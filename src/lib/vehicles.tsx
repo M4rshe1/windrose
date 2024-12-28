@@ -1,58 +1,57 @@
-import {Bike, Bus, CableCar, Car, Plane, Ship, Train} from "lucide-react";
-import {IconMotorbike, IconSpeedboat, IconWalk} from "@tabler/icons-react";
-import React from "react";
+import {Bike, Bus, CableCar, Car, LucideIcon, Plane, Ship, Train} from "lucide-react";
+import {IconMotorbike, IconSpeedboat, IconWalk, TablerIcon} from "@tabler/icons-react";
 
 interface Vehicle {
     label: string,
     value: string,
-    icon: React.ReactNode | null
+    icon: TablerIcon | LucideIcon | null
 }
 
-export const vehicles: Vehicle[] = [
+export const VEHICLES: Vehicle[] = [
     {
         label: 'Car',
         value: 'CAR',
-        icon: <Car size={20}/>
+        icon: Car
     },
     {
         label: 'Motorcycle',
         value: 'MOTORCYCLE',
-        icon: <IconMotorbike size={20}/>
+        icon: IconMotorbike
     },
     {
         label: 'Bicycle',
         value: 'BICYCLE',
-        icon: <Bike size={20}/>
+        icon: Bike
     },
     {
         label: 'Bus',
         value: 'BUS',
-        icon: <Bus size={20}/>
+        icon: Bus
     },
     {
         label: 'Train',
         value: 'TRAIN',
-        icon: <Train size={20}/>
+        icon: Train
     },
     {
         label: 'Plane',
         value: 'PLANE',
-        icon: <Plane size={20}/>
+        icon: Plane
     },
     {
         label: 'Boat',
         value: 'BOAT',
-        icon: <IconSpeedboat size={20}/>
+        icon: IconSpeedboat
     },
     {
         label: 'Walking',
         value: 'WALKING',
-        icon: <IconWalk size={20}/>
+        icon: IconWalk
     },
     {
         label: 'Ferry',
         value: 'FERRY',
-        icon: <Ship size={20}/>
+        icon: Ship
     },
     {
         label: 'Other',
@@ -62,6 +61,6 @@ export const vehicles: Vehicle[] = [
     {
         label: 'Cable Car',
         value: 'CABLE_CAR',
-        icon: <CableCar size={20}/>
+        icon: CableCar
     }
 ];

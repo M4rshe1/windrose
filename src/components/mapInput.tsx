@@ -55,8 +55,8 @@ const MapInput = ({lat, lon, zoom = 5, onChange}: MapProps) => {
     useEffect(() => {
         const loadScriptsAndInitialize = async () => {
             try {
-                const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                const streets = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://carto.com/">carto.com</a> contributors',
                 });
 
                 const mapInstance = L.map('map', {
@@ -74,7 +74,6 @@ const MapInput = ({lat, lon, zoom = 5, onChange}: MapProps) => {
                 //     updateMarker(e.latlng.lat, e.latlng.lng);
                 //    
                 // });
-
 
                 return () => mapInstance.remove();
             } catch {

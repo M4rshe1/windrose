@@ -15,7 +15,11 @@ import MapInputServerComponentWrapper from "@/components/MapInputServerComponent
 import {redirect} from "next/navigation";
 import {LocationIQResponse} from "@/lib/locationIQ";
 import SubtitleInput from "@/components/subtitleInput";
-import {recalculateDirectionsAround} from "@/lib/directions";
+import {calculateDirections, getNextSection} from "@/lib/directions";
+import {DateTimeSelect} from "@/components/DateTimeSelect";
+import {Label} from "@/components/ui/label";
+import SelectWithIcons from "@/components/selectWithIcons";
+import {VEHICLES} from "@/lib/vehicles";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string, step: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -96,17 +100,55 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
     async function UpdateLocation(location: LocationIQResponse) {
         "use server"
 
+        const [nextSection, update] = await Promise.all([
+            getNextSection(tour?.id as string, params.step),
+            db.tourSection.update({
+                where: {
+                    id: params.step
+                },
+                data: {
+                    lat: parseFloat(location.lat),
+                    lng: parseFloat(location.lon),
+                    name: location.display_place || location.display_name.split(',')[0],
+                    country: {
+                        connect: {
+                            code: location.address.country_code?.toUpperCase()
+                        }
+                    }
+                }
+            })
+        ])
+        
+
+        await Promise.all([
+            calculateDirections(tour?.id as string, update.id),
+            calculateDirections(tour?.id as string, nextSection?.id),
+        ])
+
+        revalidatePath(`/${params.username}/${params.tour}/${params.step}`)
+    }
+
+    async function handleDateTimeChange(date: Date | null, nights: number = 0) {
+        "use server"
+        if (!date) return
+        const nextSection = await getNextSection(tour?.id as string, section?.id as string)
+
         await db.tourSection.update({
             where: {
-                id: params.step
+                id: section?.id
             },
             data: {
-                lat: parseFloat(location.lat),
-                lng: parseFloat(location.lon),
-                name: location.display_place || location.display_name.split(',')[0],
+                datetime: date,
+                nights: nights
             }
         })
-        await recalculateDirectionsAround(tour?.id as string, params.step)
+
+        const newNextSection = await getNextSection(tour?.id as string, section?.id as string)
+        await Promise.all([
+            calculateDirections(tour?.id as string, section?.id),
+            calculateDirections(tour?.id as string, nextSection?.id),
+            calculateDirections(tour?.id as string, newNextSection?.id)
+        ])
 
         revalidatePath(`/${params.username}/${params.tour}/${params.step}`)
     }
@@ -119,6 +161,18 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
             },
             data: {
                 description: description
+            }
+        })
+    }
+
+    async function setTourSectionVehicle(vehicle: string) {
+        "use server"
+        await db.tourSection.update({
+            where: {
+                id: params.step
+            },
+            data: {
+                vehicle: vehicle
             }
         })
     }
@@ -176,22 +230,47 @@ const Page = async (props: { params: Promise<{ username: string, tour: string, s
 
                 </div>
                 <div className={'aspect-video w-full'}>
-                    <MapInputServerComponentWrapper lat={section?.lat || 51.52402063531574}
-                                                    lon={section?.lng as number || -0.1586415330899539} zoom={5}
-                                                    onChange={UpdateLocation}/>
+                    <MapInputServerComponentWrapper
+                        lat={section?.lat || 51.52402063531574}
+                        lon={section?.lng as number || -0.1586415330899539} zoom={5}
+                        onChange={UpdateLocation}/>
                 </div>
-                <SubtitleInput labelText={`Description`} type={`text`} name={`description`}
-                               id={`description`}
-                               defaultValue={section?.description as string}
-                               onBlurAction={setTourSectionDescription}
-                               subText={`(Optional) Tell us something about your experience at this location.`}
-                               className={cn(`w-full`)}
-                               limit={200}
+                <SubtitleInput
+                    labelText={`Description`} type={`text`} name={`description`}
+                    id={`description`}
+                    defaultValue={section?.description as string}
+                    onBlurAction={setTourSectionDescription}
+                    subText={`(Optional) Tell us something about your experience at this location.`}
+                    className={cn(`w-full`)}
+                    limit={200}
                 />
+                <div className={"grid md:grid-cols-2 w-full gap-2"}>
+                    <div>
+                        <Label htmlFor="datetime">Date and Time</Label>
+                        <DateTimeSelect defaultValueDate={section?.datetime as Date}
+                                        defaultValueNights={section?.nights || 0}
+                                        onDateTimeChangeAction={handleDateTimeChange}
+                                        label={"Date and Time"}
+                                        id={"datetime"}
+                                        className={cn('w-full border-2 h-[35px] box-border')}
+                        />
+                    </div>
+                    <div className="flex gap-2 flex-col">
+                        <Label htmlFor={'vehicle'} className={cn('flex items-center')}>Vehicle
+                        </Label>
+                        <SelectWithIcons
+                            options={VEHICLES}
+                            className={cn('w-full')} name={'vehicle'}
+                            defaultValue={section?.vehicle || null}
+                            onValueChange={setTourSectionVehicle}
+                            label={"Status"}
+                        />
+                    </div>
+                </div>
                 <H2 className={'flex items-end gap-1'}>Images
                     {maxImages &&
                         <span className={'text-lg opacity-70 flex items-center--'}>
-                            {section?.images.length} /&nbsp;{maxImages === Infinity ?
+                            {section?.images.length} / {maxImages === Infinity ?
                             <InfinityIcon/> : maxImages as React.ReactNode}
                         </span>
                     }

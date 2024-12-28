@@ -1,14 +1,6 @@
 import React from 'react';
-import {StepsItem} from './stepsItem';
-import {TourSection, TourSectionToFile} from "@prisma/client";
+import {Item, StepsItem} from './stepsItem';
 
-interface images extends TourSectionToFile {
-    file: File
-}
-
-interface Item extends TourSection {
-    images: images[]
-}
 
 export function StepsContainer({tour, disabled, metric, sort}: {
     tour: any,
@@ -32,7 +24,7 @@ export function StepsContainer({tour, disabled, metric, sort}: {
                         name: tour.name,
                         owner: tour.TourToUser.find((ttu: { role: string; }) => ttu.role === "OWNER").user.username,
                         status: tour.status,
-                        id: tour.id
+                        id: tour.id,
                     }}/>
                 )
             }

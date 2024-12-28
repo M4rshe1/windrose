@@ -274,12 +274,12 @@ const ProfileSettings = async () => {
                                       defaultValue={counties.find(county => county.id === user?.countryId)?.name || ""}
                                       className={cn(`lg:max-w-[16rem] w-full`)}
                                       options={
-                                          counties.map(county => ({
-                                              label: county.name,
-                                              value: county.id,
-                                              flag: <ReactCountryFlag countryCode={county.code} svg
+                                          counties.map(country => ({
+                                              label: country.name,
+                                              value: country.id,
+                                              flag: <ReactCountryFlag countryCode={country.code} svg
                                                                       className={cn('mr-2')}/>,
-                                              color: county.color
+                                              color: country.color
                                           }))
                                       }
                         />

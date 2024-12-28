@@ -12,9 +12,9 @@ import {Plus} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
-const Page = async (props: { params: Promise<{ username: string, tour: string }>, searchParams: {
+const Page = async (props: { params: Promise<{ username: string, tour: string }>, searchParams: Promise<{
         sort?: 'ASC' | 'DESC'
-    }} ) => {
+    }>} ) => {
     const searchParams = await props.searchParams;
     const session = await getServerSession(authOptions);
     const params = await props.params;
@@ -40,12 +40,11 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                     }
                 }
             },
-            heroImage: true,
             sections: {
                 include: {
-                    images: true
+                    country: true,
                 }
-            },
+            }
         },
     });
 
