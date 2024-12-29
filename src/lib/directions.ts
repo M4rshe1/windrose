@@ -1,7 +1,22 @@
 'use server'
 
 import db from "@/lib/db";
-import LocationIQ from "@/lib/locationIQ";
+import LocationIQ, {Route} from "@/lib/locationIQ";
+import {GeoJSON} from "geojson";
+
+export async function generateGeoJsonFromRoute(route: Route): Promise<GeoJSON> {
+    const coordinates = route.legs.flatMap(leg => {
+        return leg.steps.flatMap(step => {
+            return step.intersections.map(intersection => {
+                return intersection.location
+            })
+        })
+    })
+    return {
+        type: "LineString",
+        coordinates: coordinates
+    }
+}
 
 export async function calculateDirections(tourId: string, sectionId: string | undefined) {
     if (!sectionId) return;
@@ -31,7 +46,8 @@ export async function calculateDirections(tourId: string, sectionId: string | un
                     },
                     data: {
                         duration: directions.routes[0]?.duration,
-                        distance: directions.routes[0]?.distance
+                        distance: directions.routes[0]?.distance,
+                        geojson: await generateGeoJsonFromRoute(directions.routes[0]) as unknown as never
                     }
                 })
             }

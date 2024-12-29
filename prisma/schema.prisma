@@ -201,6 +201,7 @@ model TourSection {
   lng                 Float?
   distance            Float?
   duration            Int?
+  geojson             Json?
   status              TourSectionStatus     @default(PLANNED)
   vehicle             String?
   nights              Int?                  @default(0)

@@ -13,6 +13,8 @@ import ReactCountryFlag from "react-country-flag";
 import {TOUR_STATUS} from "@/lib/status";
 import PulsatingCircle from "@/components/PulsatingCircle";
 import TourSectionItem, {Section} from "@/components/tourSectionItem";
+import RouteMapServerComponentWrapper from "@/components/RouteMapServerComponentWrapper";
+import {GeoJSON} from "geojson";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -97,7 +99,6 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
             icon: Flag,
             title: 'Countries',
             value: new Set(tour?.sections.map(section => section.country?.name).filter(Boolean)).size,
-            link: `/${params.username}/${params.tour}#countries`
         },
         {
             icon: LandPlot,
@@ -123,7 +124,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
             icon: Goal,
             title: 'finished',
             value: new Date(tour?.sections[tour?.sections.length - 1].datetime as Date).toLocaleDateString(),
-            link: `/${params.username}/${params.tour}#section-${tour?.sections.length}`
+            link: `/${params.username}/${params.tour}#section-${tour?.sections.length ? tour?.sections.length - 1 : 0}`
         },
         {
             icon: CalendarClock,
@@ -204,117 +205,143 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                             })
                         }
                     </div>
-                    <div className={'flex flex-col h-min gap-2 bg-base-200 rounded-lg p-4'}>
-                        <div className={cn("text-lg font-bold")}>
-                            About
-                        </div>
-                        <div className={cn("text-base")}>
-                            {
-                                tour?.description ? tour.description : <span
-                                    className={cn("opacity-60 italic")}>
+                    <div>
+
+                        <div className={'flex flex-col h-min gap-2 bg-base-200 rounded-lg p-4'}>
+                            <div className={cn("text-lg font-bold")}>
+                                About
+                            </div>
+                            <div className={cn("text-base")}>
+                                {
+                                    tour?.description ? tour.description : <span
+                                        className={cn("opacity-60 italic")}>
                                     No Description
                                 </span>
-                            }
-                        </div>
+                                }
+                            </div>
 
-                        <div className={cn("flex flex-wrap gap-2")}>
-                            {
-                                tour?.Tags.map(tag => (
-                                    <Link key={tag.id}
-                                          href={`/explore?tags=${tag.tag}`}
-                                          className={cn("bg-primary/10 text-primary rounded-full px-2 py-0.5 text-sm hover:bg-primary hover:text-primary-content transition duration-200 ease-in-out")}>
-                                        {tag.tag}
-                                    </Link>
-                                ))
-                            }
-                        </div>
-                        <div
-                            className={cn("flex flex-col text-sm")}>
-                            {
-                                stats.map(stat => (
-                                    <Link
-                                        href={stat.link || '#'}
-                                        key={stat.title}
-                                        className={cn("flex items-center gap-2 hover:text-primary transition duration-200 ease-in-out", stat.link ? 'hover:link' : 'pointer-events-none')}>
-                                        <stat.icon size={16}/>
-                                        <p>
+                            <div className={cn("flex flex-wrap gap-2")}>
+                                {
+                                    tour?.Tags.map(tag => (
+                                        <Link key={tag.id}
+                                              href={`/explore?tags=${tag.tag}`}
+                                              className={cn("bg-primary/10 text-primary rounded-full px-2 py-0.5 text-sm hover:bg-primary hover:text-primary-content transition duration-200 ease-in-out")}>
+                                            {tag.tag}
+                                        </Link>
+                                    ))
+                                }
+                            </div>
+                            <div
+                                className={cn("flex flex-col text-sm")}>
+                                {
+                                    stats.map(stat => (
+                                        <Link
+                                            href={stat.link || '#'}
+                                            key={stat.title}
+                                            className={cn("flex items-center gap-2 hover:text-primary transition duration-200 ease-in-out", stat.link ? 'hover:link' : 'pointer-events-none')}>
+                                            <stat.icon size={16}/>
+                                            <p>
                                             <span
                                                 className={cn("font-semibold")}>
                                                 {stat.value}
                                             </span>
-                                            {' '}
-                                            {stat.title}
-                                        </p>
-                                    </Link>
-                                ))
-                            }
-                        </div>
-                        <div className={cn("flex w-full h-0.5 bg-base-100")}></div>
-                        <Link className={cn("text-lg font-bold hover:underline hover:text-primary transition duration-200 ease-in-out")}
-                              href={`/${params.username}/${params.tour}/mentions`}
-                        >
-                            Mentions{' '}
-                            <span
-                                className={cn("bg-base-100 text-xs rounded-full px-2 py-0.5")}>{tour?.TourToUser.filter(ttu => ttu.mentioned || ttu.role === TourToUserRole.OWNER).length}</span>
-                        </Link>
-                        <div className={cn("flex flex-wrap gap-2")}>
-                            {
-                                tour?.TourToUser
-                                    .filter(ttu => ttu.mentioned || ttu.role === TourToUserRole.OWNER)
-                                    .map(ttu => (
-                                        <Link
-                                            href={`/${ttu.user.username}`}
-                                            key={ttu.user.username}
-                                            data-tip={ttu.user.name as string}
-                                            className={cn("flex gap-2 items-center tooltip before:bg-base-300 before:text-base-content after:text-base-300")}>
-                                            {
-                                                ttu.user.image ?
-                                                    <Image src={getMinioLinkFromKey(ttu.user.image?.fileKey)}
-                                                           alt={ttu.user.name as string}
-                                                           width={32} height={32} className={cn("rounded-full")}/>
-                                                    :
-                                                    <div
-                                                        className={cn("w-8 h-8 rounded-full bg-base-100 flex items-center justify-center")}>
+                                                {' '}
+                                                {stat.title}
+                                            </p>
+                                        </Link>
+                                    ))
+                                }
+                            </div>
+                            <div className={cn("flex w-full h-0.5 bg-base-100")}></div>
+                            <Link
+                                className={cn("text-lg font-bold hover:underline hover:text-primary transition duration-200 ease-in-out")}
+                                href={`/${params.username}/${params.tour}/mentions`}
+                            >
+                                Mentions{' '}
+                                <span
+                                    className={cn("bg-base-100 text-xs rounded-full px-2 py-0.5")}>{tour?.TourToUser.filter(ttu => ttu.mentioned || ttu.role === TourToUserRole.OWNER).length}</span>
+                            </Link>
+                            <div className={cn("flex flex-wrap gap-2")}>
+                                {
+                                    tour?.TourToUser
+                                        .filter(ttu => ttu.mentioned || ttu.role === TourToUserRole.OWNER)
+                                        .map(ttu => (
+                                            <Link
+                                                href={`/${ttu.user.username}`}
+                                                key={ttu.user.username}
+                                                data-tip={ttu.user.name as string}
+                                                className={cn("flex gap-2 items-center tooltip before:bg-base-300 before:text-base-content after:text-base-300")}>
+                                                {
+                                                    ttu.user.image ?
+                                                        <Image src={getMinioLinkFromKey(ttu.user.image?.fileKey)}
+                                                               alt={ttu.user.name as string}
+                                                               width={32} height={32} className={cn("rounded-full")}/>
+                                                        :
+                                                        <div
+                                                            className={cn("w-8 h-8 rounded-full bg-base-100 flex items-center justify-center")}>
                                                     <span>
                                                         {ttu.user.name?.charAt(0)}
                                                     </span>
-                                                    </div>
-                                            }
-                                        </Link>
-                                    ))
-                            }
-                        </div>
-                        <div className={cn("flex w-full h-0.5 bg-base-100 ")}></div>
-                        <div className={cn("text-lg font-bold flex items-center gap-1")}>
-                            Countries{' '}
-                            <span
-                                className={cn("bg-base-100 text-xs rounded-full px-2 py-0.5")}>{uniqueCountries?.length}</span>
-                        </div>
-                        <div className={"flex flex-col gap-2"}>
-                            <div className={cn("flex flex-wrap gap-y-1 gap-x-2")}>
-                                {
-                                    uniqueCountries?.length > 0 ?
-                                        uniqueCountries?.map((country) => (
-                                            <Link
-                                                href={`/explore?countries=${country?.code}`}
-                                                key={country?.code}
-                                                className={cn("flex items-center hover:text-primary hover:link transition duration-200 ease-in-out")}>
-                                                <div
-                                                    className={cn("flex gap-1 items-center")}
-                                                >
-                                                    <ReactCountryFlag countryCode={country.code} svg/>
-                                                    <span className={"text-sm"}>
-                                                    {country?.name}
-                                                </span>
-                                                </div>
+                                                        </div>
+                                                }
                                             </Link>
                                         ))
-                                        :
-                                        <span className={cn("opacity-60 italic text-sm")}>
-                                            No Countries
-                                        </span>
                                 }
                             </div>
+                            <div className={cn("flex w-full h-0.5 bg-base-100 ")}></div>
+                            <div className={cn("text-lg font-bold flex items-center gap-1")}>
+                                Countries{' '}
+                                <span
+                                    className={cn("bg-base-100 text-xs rounded-full px-2 py-0.5")}>{uniqueCountries?.length}</span>
+                            </div>
+                            <div className={"flex flex-col gap-2"}>
+                                <div className={cn("flex flex-wrap gap-y-1 gap-x-2")}>
+                                    {
+                                        uniqueCountries?.length > 0 ?
+                                            uniqueCountries?.map((country) => (
+                                                <Link
+                                                    href={`/explore?countries=${country?.code}`}
+                                                    key={country?.code}
+                                                    className={cn("flex items-center hover:text-primary hover:link transition duration-200 ease-in-out")}>
+                                                    <div
+                                                        className={cn("flex gap-1 items-center")}
+                                                    >
+                                                        <ReactCountryFlag countryCode={country.code} svg/>
+                                                        <span className={"text-sm"}>
+                                                    {country?.name}
+                                                </span>
+                                                    </div>
+                                                </Link>
+                                            ))
+                                            :
+                                            <span className={cn("opacity-60 italic text-sm")}>
+                                            No Countries
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            {
+                                sortedSections?.map((section) => !section.lat || !section.lng) ?
+                                    <RouteMapServerComponentWrapper
+                                        geometries={sortedSections.map(section => section.geojson as unknown as GeoJSON) ?? []}
+                                        lat={tour?.sections[0].lat as number} lon={tour?.sections[0].lng as number}
+                                        markers={tour?.sections.map(section => ({
+                                            lat: section.lat as number,
+                                            lon: section.lng as number,
+                                            icon: <></>
+                                        }))}/>
+                                    :
+                                    <div className={cn("flex flex-col gap-2 bg-base-200 rounded-lg p-4")}>
+                                        <div className={cn("text-lg font-bold")}>
+                                            Route
+                                        </div>
+                                        <div className={cn("text-base")}>
+                                            There is no route available, it is missing location data.
+                                        </div>
+                                    </div>
+                            }
                         </div>
                     </div>
                 </div>

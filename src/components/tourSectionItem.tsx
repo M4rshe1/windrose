@@ -1,9 +1,6 @@
-"use client"
-
 import {Country, File as PrismaFile, TourSection, TourSectionStatus, TourSectionToFile} from "@prisma/client";
 import {cn, distanceReadable, getMinioLinkFromKey} from "@/lib/utils";
-import {CarouselApi,} from "@/components/ui/carousel";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import InfiniteCarousel from "@/components/infinity-craousel";
 
 interface images extends TourSectionToFile {
@@ -25,7 +22,7 @@ const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, le
 }) => {
     return (
         <div
-            id={`section-${section.id}`}
+            id={`section-${index}`}
             className={"w-full grid grid-cols-[4rem_1fr] items-start auto-rows-[minmax(12rem,auto)] gap-4"}
         >{
             index !== 0 ?
@@ -35,7 +32,6 @@ const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, le
                                            metric={metric}
                                            status={section.status}
                                            length={length}
-                                           section={section}
                     />
                     <div className={"max-w-full"}>
 
@@ -49,7 +45,6 @@ const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, le
                                                metric={metric}
                                                status={section.status}
                                                length={length}
-                                               section={section}
                         />
                         <TourSectionItemText section={section}/>
                     </>
@@ -131,24 +126,6 @@ const TourSectionItemText = ({section}: { section: Section }) => {
 }
 
 const TourSectionItemImagesCarousel = ({images}: { images: PrismaFile[] }) => {
-    const [api, setApi] = useState<CarouselApi>()
-    const [current, setCurrent] = useState(0)
-    const [count, setCount] = useState(0)
-
-    useEffect(() => {
-        if (!api) {
-            return
-        }
-
-        setCount(api.scrollSnapList().length)
-        setCurrent(api.selectedScrollSnap() + 1)
-
-        api.on("select", () => {
-            setCurrent(api.selectedScrollSnap() + 1)
-        })
-    }, [api])
-
-
     return (
         <div
             className={"mt-2 max-h-48 aspect-video rounded overflow-hidden"}
@@ -157,55 +134,11 @@ const TourSectionItemImagesCarousel = ({images}: { images: PrismaFile[] }) => {
                 images.length > 0 &&
                 <InfiniteCarousel images={images.map(image => getMinioLinkFromKey(image.fileKey))}/>
             }
-            {/*<Carousel*/}
-            {/*    setApi={setApi}*/}
-            {/*    opts={{*/}
-            {/*        align: "start",*/}
-            {/*        loop: true,*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    <CarouselContent>*/}
-            {/*        {images.map((image, index) => (*/}
-            {/*            <CarouselItem key={index}>*/}
-            {/*                <div className="p-1 max-h-48 aspect-video">*/}
-            {/*                    <Image*/}
-            {/*                        src={getMinioLinkFromKey(image.fileKey)}*/}
-            {/*                        alt={image.fileName}*/}
-            {/*                        width={1000}*/}
-            {/*                        height={1000}*/}
-            {/*                    />*/}
-            {/*                </div>*/}
-            {/*            </CarouselItem>*/}
-            {/*        ))}*/}
-            {/*    </CarouselContent>*/}
-            {/*    <CarouselNext/>*/}
-            {/*    <CarouselPrevious/>*/}
-            {/*</Carousel>*/}
-            {/*{*/}
-            {/* count > 1 &&   */}
-            {/*<div className="flex justify-between mt-2">*/}
-            {/*    <Button*/}
-            {/*        variant={"outline"}*/}
-            {/*        size={"sm"}*/}
-            {/*    >*/}
-            {/*        <ArrowLeft size={24}/>*/}
-            {/*    </Button>*/}
-            {/*    <p>{current} / {count}</p>*/}
-            {/*    */}
-            {/*    <Button*/}
-            {/*        variant={"outline"}*/}
-            {/*        size={"sm"}*/}
-            {/*    >*/}
-            {/*        <ArrowRight size={24}/>*/}
-            {/*    </Button>*/}
-            {/*</div>*/}
-            {/*}*/}
         </div>
     )
 }
 
-const TourSectionItemNumber = ({section, distanceUntilNow, distance, index, metric, status, length}: {
-    section: Section,
+const TourSectionItemNumber = ({distanceUntilNow, distance, index, metric, status, length}: {
     distanceUntilNow: number,
     distance: number,
     index: number,
