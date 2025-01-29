@@ -2,6 +2,7 @@ import {Country, File as PrismaFile, TourSection, TourSectionStatus, TourSection
 import {cn, distanceReadable, getMinioLinkFromKey} from "@/lib/utils";
 import React from "react";
 import InfiniteCarousel from "@/components/infinity-craousel";
+import {VEHICLES} from "@/lib/vehicles";
 
 interface images extends TourSectionToFile {
     file: PrismaFile
@@ -21,7 +22,7 @@ const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, le
     length: number
 }) => {
     const images = section.images.map(image => image.file);
-    
+
     return (
         <div
             id={`section-${index}`}
@@ -60,18 +61,32 @@ const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, le
 }
 
 const TourSectionItemText = ({section}: { section: Section }) => {
+    const Vehicle = VEHICLES.find(vehicle => vehicle.value === section.vehicle)?.icon;
     return (
         <div>
-            <h2
-                className={"text-2xl font-bold mt-2 flex flex-col items-start"}
+            <div
+                className={"flex flex-col items-start"}
             >
-                {section.name}
+
+                <h2
+                    className={"text-2xl font-bold mt-2 flex items-center gap-2"}
+                >
+                    {section.name}
+                    {
+                        Vehicle &&   
+                    <span
+                        className={"text-sm opacity-70"}
+                    >
+                        <Vehicle/>
+                    </span>
+                    }
+                </h2>
                 {section?.duration && section?.distance &&
-                    <span className={'text-sm opacity-70 flex items-center gap-1 font-normal'}>
+                    <p className={'text-sm opacity-70 flex items-center gap-1 font-normal'}>
+                        {
+                            section.nights ? <>
                                 {
-                                    section.nights ? <>
-                                        {
-                                            <span>
+                                    <span>
                                                 {
                                                     section.datetime?.toLocaleDateString(
                                                         'en-US',
@@ -85,12 +100,12 @@ const TourSectionItemText = ({section}: { section: Section }) => {
                                                         }
                                                     )
                                                 }
-                                                <span className={'lg:hidden'}> until</span>
+                                        <span className={'lg:hidden'}> until</span>
                                             </span>
-                                        }
-                                        <span className={'max-lg:hidden'}>&nbsp;-&nbsp;</span>
-                                        {
-                                            <span>
+                                }
+                                <span className={'max-lg:hidden'}>&nbsp;-&nbsp;</span>
+                                {
+                                    <span>
                                                 {
                                                     new Date(new Date(section.datetime as Date).setDate(new Date(section.datetime as Date).getDate() + section.nights))
                                                         .toLocaleDateString(
@@ -105,26 +120,27 @@ const TourSectionItemText = ({section}: { section: Section }) => {
                                                 }
                                             </span>
 
-                                        }
-                                    </> : <>
-                                        {
-                                            section.datetime?.toLocaleDateString(
-                                                'en-US',
-                                                {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: '2-digit',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    hour12: false
-                                                }
-                                            )
-                                        }
-                                    </>
                                 }
-                            </span>
+                            </> : <>
+                                {
+                                    section.datetime?.toLocaleDateString(
+                                        'en-US',
+                                        {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: false
+                                        }
+                                    )
+                                }
+                            </>
+                        }
+                    </p>
                 }
-            </h2>
+            </div>
+
             <p>{section.description}</p>
         </div>
     )
@@ -149,15 +165,18 @@ const TourSectionItemNumber = ({distanceUntilNow, distance, index, metric, statu
     index: number,
     metric: boolean,
     status: TourSectionStatus,
-    length: number
+    length: number,
 }) => {
     return (
         <div
             className={"w-full h-full relative flex items-center justify-center"}
         >
-            <div
-                className={cn("absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-full bg-base-200")}>
-            </div>
+            {
+                index !== length - 1 &&
+                <div
+                    className={cn("absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-full bg-base-200")}>
+                </div>
+            }
             <div
                 className={cn("absolute top-0 left-1/2 transform -translate-x-1/2 rounded-full flex items-center justify-center flex-col aspect-square h-12 text-2xl bg-base-200 border-2",
                     status == TourSectionStatus.PLANNED ? "border-info" : status == TourSectionStatus.SKIPPED ? "border-warning" : "border-success"
@@ -174,7 +193,7 @@ const TourSectionItemNumber = ({distanceUntilNow, distance, index, metric, statu
                 </div>
             }
             {
-                (index !== length - 1 && index !== 0) &&
+                index !== length - 1 &&
                 <div
                     className={cn("absolute top-1/2 left-1/2 pt-6 transform pr-12 -translate-x-1/2 -translate-y-1/2 opacity-50 font-bold -rotate-90 whitespace-nowrap")}>
                     {distanceReadable(distanceUntilNow, metric, 0)}

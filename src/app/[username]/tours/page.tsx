@@ -39,7 +39,7 @@ export default async function ProfileToursPage(props: { params: Promise<{ userna
     return (
         <>
             <BreadcrumbPortal items={[{title: user?.name as string, url: `/${params.username}`}]}/>
-            <UserSecondaryNav activeTab="Overview" username={params.username}
+            <UserSecondaryNav activeTab="Tours" username={params.username}
                               isProfileOwner={session?.user?.username === params.username}
                               tours={user?.TourToUser.length || 0}/>
 
