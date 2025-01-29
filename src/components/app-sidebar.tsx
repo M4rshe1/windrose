@@ -35,6 +35,10 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
                 })
         }
     }, [tours]);
+    
+    const version = process.env.NEXT_PUBLIC_VERSION || "0.0.0"
+    const env = process.env.NODE_ENV || "development"
+    
     const data = {
         user: {
             name: session.user.name as string,
@@ -166,7 +170,7 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
             <SidebarContent>
                 <NavMain items={data.navMain}/>
                 <NavProjects tours={data?.tours || []} username={data.user.username}/>
-                <NavSecondary items={data.navSecondary} className="mt-auto"/>
+                <NavSecondary items={data.navSecondary} version={version} env={env} className="mt-auto"/>
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={data.user}/>

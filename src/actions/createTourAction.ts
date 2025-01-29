@@ -50,20 +50,12 @@ export async function createTourAction(ownerId: string, name: string, descriptio
         return false;
     }
 
-    const section = await db.tourSection.create({
+    await db.tourSection.create({
         data: {
             tourId: tour.id,
             name: 'Starting Point',
             description: 'This is the first section of your tour. You can edit this section to add more information about your tour.',
-        }
-    });
-
-    await db.tour.update({
-        where: {
-            id: tour.id
-        },
-        data: {
-            sectionOrder: [section.id]
+            datetime: new Date(),
         }
     });
 

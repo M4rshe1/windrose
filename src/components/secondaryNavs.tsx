@@ -4,7 +4,7 @@ import {SecondaryNavPortal} from "@/components/secondaryHeaderNav";
 import React from "react";
 import {
     AtSign,
-    BellDot,
+    BellDot, BookOpen, ChartNoAxesGantt,
     CreditCard,
     ListPlus,
     Map,
@@ -16,6 +16,50 @@ import {
     UserPen
 } from "lucide-react";
 import {TourToUserRole, UserRole} from "@prisma/client";
+
+export const UserSecondaryNav = ({activeTab, username, isProfileOwner, tours}: {
+    activeTab: string,
+    username: string,
+    tours: number,
+    isProfileOwner: boolean,
+}) => {
+    const items = [
+        {
+            title: 'Overview', url: `/${username}`, icon: BookOpen
+        },
+        {
+            title: 'Tours', url: `/${username}/tours`, icon: Route, badge: tours
+        },
+        {
+            title: 'Timeline', url: `/${username}/timeline`, icon: ChartNoAxesGantt
+        }, 
+        {
+            title: 'Following', url: `/${username}/following`, icon: AtSign
+        }, 
+        {
+            title: 'Followers', url: `/${username}/followers`, icon: AtSign
+        },
+        {
+            title: 'Saved', url: `/${username}/saved`, icon: ListPlus
+        }
+    ]
+
+    if (isProfileOwner) {
+        items.push(
+            {
+                title: 'Settings', url: `settings`, icon: Settings
+            }
+        )
+    }
+    return (
+        <SecondaryNavPortal items={items.map(item => {
+            if (item.title === activeTab) {
+                return {...item, active: true}
+            }
+            return item
+        })}/>
+    )
+}
 
 export const TourSettingsSecondaryNav = ({activeTab, params, sectionCount, userRole, mentionsCount}: {
     activeTab: string,

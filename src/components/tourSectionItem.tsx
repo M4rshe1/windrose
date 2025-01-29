@@ -20,10 +20,12 @@ const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, le
     metric: boolean,
     length: number
 }) => {
+    const images = section.images.map(image => image.file);
+    
     return (
         <div
             id={`section-${index}`}
-            className={"w-full grid grid-cols-[4rem_1fr] items-start auto-rows-[minmax(12rem,auto)] gap-4"}
+            className={"w-full grid grid-cols-[4rem_1fr] items-start auto-rows-[minmax(10rem,auto)] gap-4"}
         >{
             index !== 0 ?
                 <>
@@ -36,7 +38,10 @@ const TourSectionItem = ({section, index, distance, distanceUntilNow, metric, le
                     <div className={"max-w-full"}>
 
                         <TourSectionItemText section={section}/>
-                        <TourSectionItemImagesCarousel images={section.images.map(image => image.file)}/>
+                        {
+                            section.images.length > 0 &&
+                            <TourSectionItemImagesCarousel images={images}/>
+                        }
                     </div>
                 </> : (
                     <>
@@ -58,11 +63,11 @@ const TourSectionItemText = ({section}: { section: Section }) => {
     return (
         <div>
             <h2
-                className={"text-2xl font-bold mt-2 flex items-end gap-1"}
+                className={"text-2xl font-bold mt-2 flex flex-col items-start"}
             >
                 {section.name}
                 {section?.duration && section?.distance &&
-                    <span className={'text-lg opacity-70 flex items-center gap-1 font-normal'}>
+                    <span className={'text-sm opacity-70 flex items-center gap-1 font-normal'}>
                                 {
                                     section.nights ? <>
                                         {

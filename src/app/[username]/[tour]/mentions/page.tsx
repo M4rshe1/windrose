@@ -88,9 +88,7 @@ const Page = async (props: {
                                         <Link
                                             href={`/${ttu.user.username}`}
                                             key={ttu.user.username}
-                                            className={cn(`flex flex-col gap-2 p-4 border-2 border-neutral rounded-md hover:border-primary transition duration-200 ease-in-out hover:shadow-md`, {
-                                                'border-secondary': ttu.role === TourToUserRole.OWNER
-                                            })}>
+                                            className={cn(`flex flex-col gap-2 p-4 border-2 border-neutral rounded-md hover:border-primary transition duration-200 ease-in-out hover:shadow-md`)}>
                                             <div className={cn(`flex items-center gap-2`)}>
                                                 <div
                                                     className={cn(`w-12 h-12 rounded-full bg-neutral text-neutral-content flex items-center justify-center relative`)}
@@ -106,11 +104,21 @@ const Page = async (props: {
                                                 </div>
                                                 <div className={cn(`flex flex-col gap-1`)}>
                                                     <div className={cn(`flex items-center gap-2`)}>
-                                                        <h2>{ttu.user.name}</h2>
+                                                        <h2
+                                                        className={cn(`font-bold text-lg flex items-center gap-2`)}>
+                                                        {ttu.user.name}
+                                                            {
+                                                                ttu.role === TourToUserRole.OWNER &&
+                                                                <span
+                                                                    className={cn(`badge badge-primary font-bold text-sm`)}>
+                                                                    Owner
+                                                                </span>
+                                                            }
+                                                        </h2>
                                                     </div>
                                                     <p
-                                                        className={cn(`italic opacity-70`)}
-                                                    >{ttu.user.username}</p>
+                                                        className={cn(`opacity-70`)}
+                                                    >@{ttu.user.username}</p>
                                                 </div>
                                             </div>
                                         </Link>

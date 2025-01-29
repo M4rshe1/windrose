@@ -13,6 +13,8 @@ import {type TablerIcon} from "@tabler/icons-react";
 
 export function NavSecondary({
   items,
+    version,
+    env,
   ...props
 }: {
   items: {
@@ -20,22 +22,27 @@ export function NavSecondary({
     url: string
     icon: LucideIcon | TablerIcon
     target?: string
-  }[]
+  }[],
+    version: string,
+  env: string,
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild size="sm">
-                <Link href={item.url} target={item?.target}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild size="sm">
+                  <Link href={item.url} target={item?.target}>
+                    <item.icon/>
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
           ))}
+          <div className="px-4 py-2 text-xs text-gray-500">
+            {env}-{version}
+          </div>
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

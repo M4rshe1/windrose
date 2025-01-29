@@ -15,6 +15,7 @@ import PulsatingCircle from "@/components/PulsatingCircle";
 import TourSectionItem, {Section} from "@/components/tourSectionItem";
 import RouteMapServerComponentWrapper from "@/components/RouteMapServerComponentWrapper";
 import {GeoJSON} from "geojson";
+import ScrollIntoViewButton from "@/components/scrollIntoViewButton";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const session = await getServerSession(authOptions);
@@ -117,19 +118,19 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
         {
             icon: Play,
             title: 'started',
-            value: new Date(tour?.sections[0].datetime as Date).toLocaleDateString(),
-            link: `/${params.username}/${params.tour}#section-0`
+            value: new Date(tour?.sections?.[0]?.datetime as Date).toLocaleDateString(),
+            link: `#section-0`
         },
         {
             icon: Goal,
             title: 'finished',
-            value: new Date(tour?.sections[tour?.sections.length - 1].datetime as Date).toLocaleDateString(),
-            link: `/${params.username}/${params.tour}#section-${tour?.sections.length ? tour?.sections.length - 1 : 0}`
+            value: new Date(tour?.sections?.[tour?.sections.length - 1]?.datetime as Date).toLocaleDateString(),
+            link: `#section-${tour?.sections.length ? tour?.sections.length - 1 : 0}`
         },
         {
             icon: CalendarClock,
             title: 'days',
-            value: Math.ceil((new Date(tour?.sections[tour?.sections.length - 1].datetime as Date).getTime() - new Date(tour?.sections[0].datetime as Date).getTime()) / (1000 * 60 * 60 * 24)),
+            value: Math.ceil((new Date(tour?.sections?.[tour?.sections.length - 1]?.datetime as Date).getTime() - new Date(tour?.sections?.[0]?.datetime as Date).getTime()) / (1000 * 60 * 60 * 24)),
         }
     ]
 
@@ -140,6 +141,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
     }
 
     let distance = 0;
+
 
     return (
         <>
@@ -190,8 +192,34 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                 </div>
                 <div className={cn("grid grid-cols-1 lg:grid-cols-[4fr_2fr] gap-4")}>
                     <div
-                        className={"max-w-full"}
-                    >
+                        className={"max-w-full flex flex-col"}>
+                        <div className={
+                            cn("flex flex-col gap-2 w-full aspect-video mb-4")
+                        }>
+                            {
+                                sortedSections &&
+                                sortedSections?.length > 0 &&
+                                !sortedSections?.some((section) => !section.lat || !section.lng) ?
+                                    <RouteMapServerComponentWrapper
+                                        geometries={sortedSections
+                                            .filter(section => section.geojson)
+                                            .map(section => section.geojson as unknown as GeoJSON) ?? []}
+                                        lat={tour?.sections[0].lat as number} lon={tour?.sections[0].lng as number}
+                                        markers={tour?.sections.map(section => ({
+                                            lat: section.lat as number,
+                                            lon: section.lng as number,
+                                        }))}/> :
+                                    <div className={cn("flex flex-col gap-2 bg-base-200 rounded-lg p-4")}>
+                                        <div className={cn("text-lg font-bold")}>
+                                            Route
+                                        </div>
+                                        <div className={cn("text-base italic opacity-60")}>
+                                            There is no route available, it is missing location data.
+                                        </div>
+                                    </div>
+                            }
+                        </div>
+
                         {
                             sortedSections?.map((section, index) => {
                                 distance += sortedSections?.[index + 1]?.distance || 0;
@@ -205,8 +233,9 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                             })
                         }
                     </div>
-                    <div>
-
+                    <div className={
+                        cn("flex flex-col gap-4 w-full")
+                    }>
                         <div className={'flex flex-col h-min gap-2 bg-base-200 rounded-lg p-4'}>
                             <div className={cn("text-lg font-bold")}>
                                 About
@@ -235,8 +264,8 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                                 className={cn("flex flex-col text-sm")}>
                                 {
                                     stats.map(stat => (
-                                        <Link
-                                            href={stat.link || '#'}
+                                        <ScrollIntoViewButton
+                                            link={stat.link}
                                             key={stat.title}
                                             className={cn("flex items-center gap-2 hover:text-primary transition duration-200 ease-in-out", stat.link ? 'hover:link' : 'pointer-events-none')}>
                                             <stat.icon size={16}/>
@@ -248,7 +277,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                                                 {' '}
                                                 {stat.title}
                                             </p>
-                                        </Link>
+                                        </ScrollIntoViewButton>
                                     ))
                                 }
                             </div>
@@ -321,28 +350,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            {
-                                sortedSections?.map((section) => !section.lat || !section.lng) ?
-                                    <RouteMapServerComponentWrapper
-                                        geometries={sortedSections.map(section => section.geojson as unknown as GeoJSON) ?? []}
-                                        lat={tour?.sections[0].lat as number} lon={tour?.sections[0].lng as number}
-                                        markers={tour?.sections.map(section => ({
-                                            lat: section.lat as number,
-                                            lon: section.lng as number,
-                                            icon: <></>
-                                        }))}/>
-                                    :
-                                    <div className={cn("flex flex-col gap-2 bg-base-200 rounded-lg p-4")}>
-                                        <div className={cn("text-lg font-bold")}>
-                                            Route
-                                        </div>
-                                        <div className={cn("text-base")}>
-                                            There is no route available, it is missing location data.
-                                        </div>
-                                    </div>
-                            }
-                        </div>
+                       
                     </div>
                 </div>
             </div>

@@ -1,5 +1,3 @@
-import fs from 'fs'
-
 export interface LocationIQResponse {
     place_id: string;
     osm_id: string;
@@ -91,7 +89,6 @@ export interface Waypoint {
 }
 
 
-
 export default class LocationIQ {
     private readonly apiKey: string
 
@@ -107,7 +104,7 @@ export default class LocationIQ {
         const url = new URL(`https://us1.locationiq.com/v1/reverse`)
         url.searchParams.append('key', this.apiKey)
         url.searchParams.append('lat', lat.toString())
-        url.searchParams.append('lon', lon.toString())  
+        url.searchParams.append('lon', lon.toString())
         url.searchParams.append('format', 'json')
         url.searchParams.append('accept-language', 'en')
         const response = await fetch(url.toString())
@@ -138,41 +135,23 @@ export default class LocationIQ {
         return response.json()
     }
 
-    async directions(points: { lat: number, lon: number }[], profile: 'driving' = 'driving'): Promise<RouteResponse | ErrorResponse> {
+    async directions(points: {
+        lat: number,
+        lon: number
+    }[], profile: 'driving' = 'driving'): Promise<RouteResponse | ErrorResponse> {
         if (!points || !this.apiKey) throw new Error("Missing points")
 
         const maxPoints = 24;
-        const chunks = [];
-        for (let i = 0; i < points.length; i += maxPoints) {
-            chunks.push(points.slice(i, i + maxPoints));
+        if (points.length > maxPoints) {
+            throw new Error(`Too many points, maximum is ${maxPoints}`)
         }
-        
-        const data: RouteResponse[]  = await Promise.all(chunks.map(async chunk => {
-            const url = new URL(`https://api.locationiq.com/v1/directions/${profile}/${chunk.map(p => `${p.lon},${p.lat}`).join(';')}`)
-            url.searchParams.append('key', this.apiKey)
-            url.searchParams.append('steps', 'true')
-            url.searchParams.append('geometries', 'polyline')
-            url.searchParams.append('overview', 'full')
-            const response = await fetch(url.toString())
-            return await response.json();
-        }));
-        
-        fs.writeFileSync('data.json', JSON.stringify(data, null, 2))
-        const error = data.find(d => d.error);
-        const code = data.find(d => d.code !== 'Ok')?.code;
-        if (error) return error;
-        if (code !== 'Ok' && error != undefined) return { error: code as string };
 
-        const distance = data.map(d => d.routes[0].distance).reduce((a, b) => a + b, 0);
-        const duration = data.map(d => d.routes[0].duration).reduce((a, b) => a + b, 0);
-        const geometry = data.map(d => d.routes[0].geometry).join(';');
-        const legs = data.map(d => d.routes[0].legs).flat();
-        const routes = data.map(d => d.routes).flat();
-        routes[0].distance = distance;
-        routes[0].duration = duration
-        routes[0].geometry = geometry;
-        routes[0].legs = legs;
-        const waypoints = data.map(d => d.waypoints).flat();
-        return { code: 'Ok', routes, waypoints };
+        const url = new URL(`https://api.locationiq.com/v1/directions/${profile}/${points.map(p => `${p.lon},${p.lat}`).join(';')}`)
+        url.searchParams.append('key', this.apiKey)
+        url.searchParams.append('steps', 'true')
+        url.searchParams.append('geometries', 'polyline')
+        url.searchParams.append('overview', 'full')
+        const response = await fetch(url.toString())
+        return response.json();
     }
 }
