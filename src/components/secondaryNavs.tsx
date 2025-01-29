@@ -47,7 +47,7 @@ export const UserSecondaryNav = ({activeTab, username, isProfileOwner, tours}: {
     if (isProfileOwner) {
         items.push(
             {
-                title: 'Settings', url: `settings`, icon: Settings
+                title: 'Settings', url: `/settings/profile`, icon: Settings
             }
         )
     }

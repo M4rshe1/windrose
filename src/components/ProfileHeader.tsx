@@ -1,5 +1,5 @@
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {distanceReadable, getMinioLinkFromKey} from "@/lib/utils";
+import {cn, distanceReadable, getMinioLinkFromKey} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {SOCIALS} from "@/lib/socials";
 import {LinkIcon} from "lucide-react";
@@ -21,7 +21,7 @@ const ProfileHeader = ({user, params, session}: {user: ExtendedUser, params: {us
                 <div className="flex-1">
                     <h1 className="text-2xl font-bold">{user?.name}</h1>
                     <p className="text-neutral-500">@{user?.username}</p>
-                    <p className="mt-2 text-sm">{user?.bio || "This user hasn't added a bio yet."}</p>
+                    <p className={cn("mt-2 text-sm", {"italic": !user?.bio})}>{user?.bio || "This user hasn't added a bio yet."}</p>
                     {session?.user?.username !== params.username && <Button className="mt-4">Follow</Button>}
                     <div className="flex gap-4 mt-4">
                         {user?.Social.map(({name, url}) => {

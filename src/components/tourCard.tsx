@@ -10,7 +10,7 @@ const TourCard = ({tour, metric, username}: { tour: ExtendedTour; metric: boolea
     return (
         <Link
             href={`/${username}/${tour.name}`}
-            className={`flex flex-col gap-4 p-4 border-2 hover:border-primary border-neutral rounded-lg cursor-pointer hover:shadow-lg transition-all duration-300 ease-in-out relative`}
+            className={`flex flex-col gap-4 p-4 border-2 hover:shadow-md hover:border-primary border-neutral rounded-lg cursor-pointer hover:shadow-lg transition-all duration-300 ease-in-out relative`}
         >
             <div className="flex gap-4">
                 <div className="w-32 h-32 bg-neutral rounded-lg overflow-hidden relative">

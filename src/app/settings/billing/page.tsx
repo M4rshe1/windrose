@@ -25,11 +25,11 @@ const NewTourPage = async () => {
                         title: 'Settings', url: '/settings'
                     },
                     {
-                        title: 'Sessions', url: '/settings/sessions'
+                        title: 'Billing', url: '/settings/billing'
                     }
                 ]
             }/>
-            <SettingsSecondaryNav activeTab={'Sessions'}/>
+            <SettingsSecondaryNav activeTab={'Billing'}/>
             <div className="flex flex-1 flex-col gap-4 p-4 lg:max-w-screen-lg max-w-lg w-full mx-auto ">
                 <div className={cn(`flex flex-col gap-2 w-full`)}>
                     <H1>Billing</H1>
