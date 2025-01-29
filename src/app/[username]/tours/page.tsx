@@ -5,7 +5,6 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/lib/authOptions";
 import {UserSecondaryNav} from "@/components/secondaryNavs";
 import TourCard from "@/components/tourCard";
-import Link from "next/link";
 import ProfileHeader from "@/components/ProfileHeader";
 import {redirect} from "next/navigation";
 
