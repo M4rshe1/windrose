@@ -11,27 +11,48 @@ import {redirect} from "next/navigation";
 export default async function ProfileToursPage(props: { params: Promise<{ username: string }> }) {
     const params = await props.params;
     const session = await getServerSession(authOptions);
-    const user = await db.user.findUnique({
-        where: {username: params.username},
-        include: {
-            image: {select: {fileKey: true}},
-            TourToUser: {
-                include: {
-                    tour: {
-                        include: {
-                            heroImage: {select: {fileKey: true}},
-                            sections: {
-                                include: {country: true}
-                            }
-                        },
-                    }
 
+    const [user, tours] = await Promise.all([
+        db.user.findUnique({
+            where: {username: params.username},
+            include: {
+                image: {select: {fileKey: true}},
+                Saved: true,
+                Social: true
+            }
+        }),
+        db.tour.findMany({
+            where: {
+                TourToUser: {
+                    some: {
+                        user: {
+                            username: params.username
+                        }
+                    }
                 }
             },
-            Saved: true,
-            Social: true
-        }
-    });
+            include: {
+                heroImage: true,
+                sections: {
+                    include: {
+                        country: true
+                    }
+                },
+                TourToUser: {
+                    where: {
+                        role: "OWNER"
+                    },
+                    include: {
+                        user: {
+                            include: {
+                                image: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    ]);
 
     if (user === null) return redirect("/error/404");
 
@@ -40,17 +61,18 @@ export default async function ProfileToursPage(props: { params: Promise<{ userna
             <BreadcrumbPortal items={[{title: user?.name as string, url: `/${params.username}`}]}/>
             <UserSecondaryNav activeTab="Tours" username={params.username}
                               isProfileOwner={session?.user?.username === params.username}
-                              tours={user?.TourToUser.length || 0}/>
+                              tours={tours.length || 0}/>
 
             <div className="flex flex-1 flex-col gap-4 p-4 mt-8 lg:max-w-screen-lg max-w-lg w-full mx-auto">
-                <ProfileHeader user={user} params={params} session={session}/>
+                <ProfileHeader user={user} tours={tours} params={params} session={session}/>
 
                 <h2 className="text-xl font-bold mt-4">Tours</h2>
                 <div className="grid grid-cols-1 gap-4">
-                    {user?.TourToUser
-                        .map(({tour}) => (
+                    {tours
+                        .map((tour) => (
                             <TourCard key={tour.id} username={params.username} tour={tour}
-                                      metric={session?.user?.metric || true}/>
+                                      metric={session?.user?.metric || true}
+                            />
                         ))}
                 </div>
             </div>

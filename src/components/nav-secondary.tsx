@@ -41,7 +41,7 @@ export function NavSecondary({
               </SidebarMenuItem>
           ))}
           <div className="px-4 py-2 text-xs text-gray-500">
-            {env}-{version}
+            {env} {version}
           </div>
         </SidebarMenu>
       </SidebarGroupContent>

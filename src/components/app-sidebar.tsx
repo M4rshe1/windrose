@@ -25,7 +25,7 @@ import {UserRole} from "@prisma/client";
 import {getUserToursAction, Tour} from "@/actions/getUserToursAction";
 
 
-export function AppSidebar({session, ...props}: { session: Session, [key: string]: unknown }) {
+export function AppSidebar({session, version, ...props}: { session: Session, version: string, [key: string]: unknown }) {
     const username = session.user.username || session.user.id
     const [tours, setTours] = useState<Tour[] | null>(null)
     useEffect(() => {
@@ -36,7 +36,6 @@ export function AppSidebar({session, ...props}: { session: Session, [key: string
         }
     }, [tours]);
     
-    const version = process.env.NEXT_PUBLIC_VERSION || "0.0.0"
     const env = process.env.NODE_ENV || "development"
     
     const data = {

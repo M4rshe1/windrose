@@ -14,6 +14,7 @@ import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {Newspaper, Plus} from "lucide-react";
 import {HeaderCommand} from "@/components/headerCommand";
+import {version} from "../../package.json";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -29,6 +30,7 @@ export default async function RootLayout({
 }>) {
     const session = await getServerSession(authOptions);
     const authenticated = !!session?.user;
+    
     return (
         <ThemeProvider>
             <body
@@ -37,7 +39,7 @@ export default async function RootLayout({
             <div className={cn('fixed top-0 right-0')} id={'alerts'}></div>
             <SidebarProvider>
                 {authenticated ?
-                    <AppSidebar session={session}/>
+                    <AppSidebar session={session} version={version}/>
                     : <div data-varieant="inset" className="hidden"/>
 
                 }

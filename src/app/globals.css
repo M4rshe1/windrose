@@ -8,6 +8,25 @@
     inherits: false;
 }
 
+.glow-effect {
+    position: relative;
+    transition: box-shadow 0.5s ease-in-out;
+}
+
+.glow-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: currentColor;
+    filter: blur(1rem);
+    transition: box-shadow 0.5s ease-in-out;
+    opacity: .5;
+}
+
+
 .fancy-border-1, .fancy-border-2 {
     background-image: conic-gradient(from var(--angle), #ff6ec4, #ff9a8b, #7873f5, #1fd1f9, #1fd1f9, #78f573, #f5e178, #ff9a8b, #ff6ec4);
     padding: 3px;
@@ -15,8 +34,8 @@
 }
 
 .fancy-border-2 {
-    filter: blur(1.5rem);
-    opacity: 0.5;
+    filter: blur(1rem);
+    opacity: 0.7;
 }
 
 @keyframes spin {

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import Image from "next/image";
@@ -11,6 +11,7 @@ interface CarouselProps {
 
 export default function InfiniteCarousel({ images }: CarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const carouselRef = useRef<HTMLDivElement>(null)
 
     const nextSlide = useCallback(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
@@ -21,8 +22,16 @@ export default function InfiniteCarousel({ images }: CarouselProps) {
     }, [images.length])
 
     return (
-        <div className="relative w-full max-w-3xl mx-auto group/carousel">
-            <div className="overflow-hidden aspect-video">
+        <div ref={carouselRef} className="relative w-full max-w-3xl mx-auto group/carousel">
+            <div className="overflow-hidden aspect-video" onClick={() => {
+                if (carouselRef.current) {
+                    if (!document.fullscreenElement) {
+                        carouselRef.current.requestFullscreen();
+                    } else {
+                        document.exitFullscreen();
+                    }
+                }
+            }}>
                 {images.map((image, index) => (
                     <Image
                         key={index}
