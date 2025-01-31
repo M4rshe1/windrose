@@ -58,16 +58,15 @@ export default async function ProfilePage(props: { params: Promise<{ username: s
         })
     ]);
 
-    async function pinToursServerAction(formData: FormData) {
+    async function pinToursServerAction(pins: string[]) {
         "use server"
         if (!session?.user) return redirect("/login");
-        const tourIds = Array.from(formData.keys());
 
         const unpinned = await db.tourToUser.updateMany({
             where: {
                 userId: session?.user?.id,
                 tourId: {
-                    notIn: tourIds
+                    notIn: pins
                 }
             },
             data: {
@@ -79,7 +78,7 @@ export default async function ProfilePage(props: { params: Promise<{ username: s
             where: {
                 userId: session?.user?.id,
                 tourId: {
-                    in: tourIds
+                    in: pins
                 }
             },
             data: {

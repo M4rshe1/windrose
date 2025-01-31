@@ -16,20 +16,21 @@ const PinnedToursFormPopup = ({
                                   username
                               }: {
     tours: ExtendedTour[];
-    pinToursAction: (formData: FormData) => void;
+    pinToursAction: (pins: string[]) => void;
     username: string;
 }) => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [pinned, setPinned] = useState<string[]>(tours.filter(tour => tour.TourToUser.some(ttu => ttu.pinned && ttu.user.username == username)).map(tour => tour.id));
     const [open, setOpen] = useState(false);
-
     const filteredTours = tours.filter((tour) =>
         tour.displayName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    
     return (
         <Dialog open={open}>
             <DialogTrigger>
-                <Button variant="outline" size={`sm`} onClick={()=> setOpen(true)}>Pin Tours</Button>
+                <Button variant="outline" size={`sm`} onClick={() => setOpen(true)}>Pin Tours</Button>
             </DialogTrigger>
             <DialogContent className="max-w-lg">
                 <DialogTitle className="hidden">Pin Tours</DialogTitle>
@@ -41,7 +42,7 @@ const PinnedToursFormPopup = ({
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="mb-4 border-neutral"
                 />
-                <form action={pinToursAction} className="space-y-4">
+                <div className="space-y-4">
                     <ScrollArea className="max-h-60 border-2 border-neutral rounded-md p-2">
                         <div className="grid gap-2">
                             {filteredTours.map((tour) => {
@@ -55,8 +56,13 @@ const PinnedToursFormPopup = ({
                                             <input
                                                 type="checkbox"
                                                 id={tour.id}
-                                                name={tour.id}
-                                                value={tour.id}
+                                                onClick={() => {
+                                                    if (pinned.includes(tour.id)) {
+                                                        setPinned(pinned.filter((id) => id !== tour.id));
+                                                    } else {
+                                                        setPinned([...pinned, tour.id]);
+                                                    }
+                                                }}
                                                 defaultChecked={tour.TourToUser.some(ttu => ttu.pinned && ttu.user.username == username)}
                                                 className="mr-2 accent-primary"
                                             />
@@ -70,8 +76,8 @@ const PinnedToursFormPopup = ({
                                              owner?.username == username ? `${tour.displayName}` : `${owner?.name}/${tour.displayName}`
                                          }
                                      </span>
-                                                    <span
-                                                        className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out opacity-0', 'translate-y-[100%] group-hover/tour:translate-y-0 group-hover/tour:opacity-100')}>
+                                                <span
+                                                    className={cn('truncate text-sm absolute transition-all duration-300 ease-in-out opacity-0', 'translate-y-[100%] group-hover/tour:translate-y-0 group-hover/tour:opacity-100')}>
                                     {
                                         owner?.username == username ? `${tour.name}` : `${owner?.username}/${tour.name}`
                                     }
@@ -92,9 +98,14 @@ const PinnedToursFormPopup = ({
                         </div>
                     </ScrollArea>
                     <div className="flex justify-end">
-                        <Button type="submit" onClick={() => setOpen(false)}>Save Pins</Button>
+                        <div role={"button"} className={"btn btn-sm btn-primary"} onClick={() => {
+                            pinToursAction(pinned);
+                            setOpen(false);
+                        }}>Save
+                            Pins
+                        </div>
                     </div>
-                </form>
+                </div>
             </DialogContent>
         </Dialog>
     );
