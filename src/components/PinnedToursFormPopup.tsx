@@ -26,11 +26,11 @@ const PinnedToursFormPopup = ({
         tour.displayName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    
+
     return (
         <Dialog open={open}>
-            <DialogTrigger>
-                <Button variant="outline" size={`sm`} onClick={() => setOpen(true)}>Pin Tours</Button>
+            <DialogTrigger asChild>
+                <Button variant="outline" size={`sm`} onClick={() => setOpen(!open)}>Pin Tours</Button>
             </DialogTrigger>
             <DialogContent className="max-w-lg">
                 <DialogTitle className="hidden">Pin Tours</DialogTitle>
@@ -97,13 +97,16 @@ const PinnedToursFormPopup = ({
                             )}
                         </div>
                     </ScrollArea>
-                    <div className="flex justify-end">
-                        <div role={"button"} className={"btn btn-sm btn-primary"} onClick={() => {
+                    <div className="flex justify-end gap-2">
+                        <Button variant={"outline"} onClick={() => {
+                            setOpen(false);
+                        }}>Cancel
+                        </Button>
+                        <Button  onClick={() => {
                             pinToursAction(pinned);
                             setOpen(false);
-                        }}>Save
-                            Pins
-                        </div>
+                        }}>Save Pins
+                        </Button>
                     </div>
                 </div>
             </DialogContent>
