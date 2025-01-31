@@ -2,8 +2,8 @@ import {BreadcrumbPortal} from "@/components/breadcrumbBar";
 import {TourSettingsSecondaryNav} from "@/components/secondaryNavs";
 import {cn, distanceReadable, getMinioLinkFromKey, timeReadable} from "@/lib/utils";
 import React from "react";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 import {Country, TourStatus, TourToUserRole, UserRole} from "@prisma/client";
 import Image from "next/image";
@@ -18,7 +18,7 @@ import {GeoJSON} from "geojson";
 import ScrollIntoViewButton from "@/components/scrollIntoViewButton";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string }> }) => {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     const params = await props.params;
     const tour = await db.tour.findFirst({
         where: {

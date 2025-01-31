@@ -1,6 +1,6 @@
 import {BreadcrumbPortal} from "@/components/breadcrumbBar";
-import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import H1 from "@/components/ui/h1";
 import {cn} from "@/lib/utils";
 import SubtitleInput from "@/components/subtitleInput";
@@ -20,9 +20,10 @@ import {Gender} from "@prisma/client";
 import RadioGroupBordered from "@/components/radioGroupBordered";
 import GoToPersonalProfileButton from "@/components/goToPersonalProfileButton";
 import {SettingsSecondaryNav} from "@/components/secondaryNavs";
+import { Session } from "next-auth";
 
 const ProfileSettings = async () => {
-    const session: Session | null = await getServerSession(authOptions)
+    const session = await auth()
     if (!session?.user?.id) {
         return;
     }

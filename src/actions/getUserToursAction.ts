@@ -3,8 +3,8 @@
 import db from "@/lib/db";
 import {TourToUserRole} from "@prisma/client";
 import {getMinioLinkFromKey} from "@/lib/utils";
-import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 
 export interface Tour {
     owner: {
@@ -22,7 +22,7 @@ export interface Tour {
 
 
 export async function getUserToursAction(count?: number, owned?: boolean): Promise<Tour[]> {
-    const session: Session | null = await getServerSession(authOptions)
+    const session = await auth()
     const [tours] = await Promise.all([
         db.tour.findMany({
             where: {

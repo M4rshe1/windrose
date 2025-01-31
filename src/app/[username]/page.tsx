@@ -1,8 +1,8 @@
 import db from "@/lib/db";
 import {BreadcrumbPortal} from "@/components/breadcrumbBar";
 import React from "react";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import {UserSecondaryNav} from "@/components/secondaryNavs";
 import TourCard from "@/components/tourCard";
 import Link from "next/link";
@@ -15,7 +15,7 @@ import PinnedToursFormPopup from "@/components/PinnedToursFormPopup";
 export default async function ProfilePage(props: { params: Promise<{ username: string }> }) {
     const params = await props.params;
     
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     const [user, tours] = await Promise.all([
         db.user.findUnique({
             where: {username: params.username},

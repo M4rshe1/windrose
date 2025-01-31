@@ -5,8 +5,8 @@ import H1 from "@/components/ui/h1";
 import H2 from "@/components/ui/h2";
 import db from "@/lib/db";
 import {TourSettingsSecondaryNav} from "@/components/secondaryNavs";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import {TourToUserRole, UserRole} from "@prisma/client";
 import TourStatusInput from "@/components/tourStatusInput";
 import HeroInput from "@/components/heroInput";
@@ -19,7 +19,7 @@ import {Tag} from "emblor";
 import TagInputComponent from "@/components/tagInput";
 
 const TourSettings = async (props: { params: Promise<{ username: string, tour: string }> }) => {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     const params = await props.params;
     const [tour, user] = await Promise.all([
         db.tour.findFirst({

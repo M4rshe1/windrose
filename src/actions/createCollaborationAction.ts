@@ -1,13 +1,13 @@
 "use server"
 
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 import {TourToUserRole, UserRole} from "@prisma/client";
 import {revalidatePath} from "next/cache";
 
 export async function createCollaborationAction(tourId: string, userId: string, role: TourToUserRole, reval: string) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     if (!session) return false;
     if (Object.keys(TourToUserRole).indexOf(role) === -1) return false;
 

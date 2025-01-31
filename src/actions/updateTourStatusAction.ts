@@ -1,12 +1,12 @@
 "use server";
 
 import db from "@/lib/db";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import {TourSectionStatus, TourStatus, TourToUserRole} from "@prisma/client";
 
 export async function updateTourStatusAction(tourId: string, status: string) {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     const allowed = db.tourToUser.findFirst({
         where: {
             userId: session?.user?.id,

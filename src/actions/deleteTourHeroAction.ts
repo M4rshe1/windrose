@@ -1,13 +1,13 @@
 "use server";
 
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 import {TourToUserRole} from "@prisma/client";
 import minioClient from "@/lib/minioClient";
 
 export async function deleteTourHeroAction(tourId: string) {
-    const session = await getServerSession(authOptions)
+    const session = await auth()
     const allowed = db.tourToUser.findFirst({
         where: {
             userId: session?.user?.id,

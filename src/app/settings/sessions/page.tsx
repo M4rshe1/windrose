@@ -5,7 +5,7 @@ import {cn} from "@/lib/utils";
 import {SettingsSecondaryNav} from "@/components/secondaryNavs";
 
 const NewTourPage = async () => {
-    // const session = await getServerSession(authOptions);
+    // const session = await auth()
     // // const [username, setUsername] = useState(session?.user?.name as string);
     // const [user] = await Promise.all([
     //     db.user.findUnique({

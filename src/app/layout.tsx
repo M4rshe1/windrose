@@ -6,8 +6,8 @@ import ThemeProvider from "@/lib/themeProvider";
 import {AppSidebar} from "@/components/app-sidebar";
 import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
 import {Separator} from "@/components/ui/separator";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import {IconBrandSafari} from "@tabler/icons-react";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
@@ -28,7 +28,7 @@ export default async function RootLayout({
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     const authenticated = !!session?.user;
     
     return (

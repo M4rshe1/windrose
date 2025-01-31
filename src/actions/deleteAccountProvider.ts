@@ -1,11 +1,11 @@
 'use server'
 
-import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 
 export async function deleteAccountProvider(provider: string) {
-    const session: Session | null = await getServerSession(authOptions)
+    const session = await auth()
     if (!session) return false
 
     const account = await db.account.findFirst({

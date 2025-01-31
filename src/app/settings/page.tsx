@@ -5,12 +5,12 @@ import {cn} from "@/lib/utils";
 import Link from "next/link";
 import {BellDot, CreditCard, Pen, ShieldPlus, User, UserPen} from "lucide-react";
 import GoToPersonalProfileButton from "@/components/goToPersonalProfileButton";
-import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import {SettingsSecondaryNav} from "@/components/secondaryNavs";
 
 const SettingsPage = async () => {
-    const session: Session|null = await getServerSession(authOptions);
+    const session = await auth()
     const settings = [
         {
             title: 'Appearance', url: '/settings/appearance',

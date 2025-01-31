@@ -1,13 +1,13 @@
 "use server"
 
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 import {TourToUserRole, UserRole} from "@prisma/client";
 import {revalidatePath} from "next/cache";
 
 export async function deleteCollaborationAction(tourId: string, userId: string, reval: string) {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     if (!session) return false;
 
     const isAllowed = await db.tourToUser.findFirst({

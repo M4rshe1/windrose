@@ -1,12 +1,12 @@
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import {TourToUserRole} from "@prisma/client";
 import db from "@/lib/db";
 import {redirect} from "next/navigation";
 
 const NewStep = async (props: { params: Promise<{ username: string, tour: string }> }) => {
     const params = await props.params;
-    const session = await getServerSession(authOptions);
+    const session = await auth()
 
     const tour = await db.tour.findFirst({
         where: {

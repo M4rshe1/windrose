@@ -4,8 +4,8 @@ import db from '@/lib/db';
 export async function GET(request: NextRequest) {
     // Extract the session token from cookies
     const sessionToken =
-        request.cookies.get('next-auth.session-token') ||
-        request.cookies.get('__Secure-next-auth.session-token');
+        request.cookies.get('authjs.session-token') ||
+        request.cookies.get('authjs.csrf-token');
 
     if (!sessionToken?.value) {
         return NextResponse.json({ authenticated: false }, { status: 401 });

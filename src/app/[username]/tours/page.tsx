@@ -1,8 +1,8 @@
 import db from "@/lib/db";
 import {BreadcrumbPortal} from "@/components/breadcrumbBar";
 import React from "react";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import {UserSecondaryNav} from "@/components/secondaryNavs";
 import TourCard from "@/components/tourCard";
 import ProfileHeader from "@/components/ProfileHeader";
@@ -10,7 +10,7 @@ import {redirect} from "next/navigation";
 
 export default async function ProfileToursPage(props: { params: Promise<{ username: string }> }) {
     const params = await props.params;
-    const session = await getServerSession(authOptions);
+    const session = await auth()
 
     const [user, tours] = await Promise.all([
         db.user.findUnique({

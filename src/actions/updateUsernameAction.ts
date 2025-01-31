@@ -1,13 +1,13 @@
 "use server"
 
 import {checkUsernameAction} from "@/actions/checkUsernameAction";
-import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 
 export async function updateUsernameAction(username: string) {
     const isValid = await checkUsernameAction(username);
-    const session: Session | null = await getServerSession(authOptions)
+    const session = await auth()
     if (!session) {
         return false;
     }

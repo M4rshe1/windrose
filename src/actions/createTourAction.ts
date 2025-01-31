@@ -1,6 +1,6 @@
 'use server'
-import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import {checkTourNameAction} from "@/actions/checkTourNameAction";
 import db from "@/lib/db";
 import {TourStatus, TourToUserRole, TourVisibility} from "@prisma/client";
@@ -9,7 +9,7 @@ import {redirect} from "next/navigation";
 export async function createTourAction(ownerId: string, name: string, description: string, displayName: string, visibility: TourVisibility
 , status: TourStatus): Promise<boolean> {
 
-    const session: Session | null = await getServerSession(authOptions)
+    const session = await auth()
     if (!session?.user?.id) {
         return false;
     }

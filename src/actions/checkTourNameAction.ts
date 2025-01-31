@@ -1,13 +1,13 @@
 'use server'
-import {getServerSession, Session} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 import {TourToUserRole} from "@prisma/client";
 
 const FORBIDDEN_TOUR_NAMES: string[] = ['tours', 'timeline', 'saved', 'following', 'followers'];
 
 export async function checkTourNameAction(name: string): Promise<boolean> {
-    const session: Session | null = await getServerSession(authOptions)
+    const session = await auth()
 
     if (!session?.user?.id) {
         return false;

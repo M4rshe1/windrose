@@ -54,8 +54,6 @@ export default function SearchSelect(
 
                           {value.length > 0
                               ? (
-                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                  // @ts-expect-error
                                   <>
                                       {
                                           options.find((option) => option.label === value)?.icon

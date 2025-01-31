@@ -8,12 +8,12 @@ import {TablerIcon} from "@tabler/icons-react";
 import TitleContainer from "@/components/titleContainer";
 import {SettingsSecondaryNav} from "@/components/secondaryNavs";
 import GoToPersonalProfileButton from "@/components/goToPersonalProfileButton";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 
 const AppearanceSettings = async () => {
     const sortedThemes = themes.sort((a, b) => a.dark === b.dark ? 0 : a.dark ? -1 : 1);
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     return (
         <>
             <BreadcrumbPortal items={

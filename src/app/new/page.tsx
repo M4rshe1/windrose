@@ -2,13 +2,13 @@ import {BreadcrumbPortal} from "@/components/breadcrumbBar";
 import React from "react";
 import H1 from "@/components/ui/h1";
 import {cn, getMinioLinkFromKey} from "@/lib/utils";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 import CreateTourForm from "@/components/createTourForm";
 
 const NewTourPage = async () => {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     const [user] = await Promise.all([
         db.user.findUnique({
             where: {id: session?.user?.id},

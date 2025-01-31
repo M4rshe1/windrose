@@ -1,16 +1,16 @@
 "use client";
 
 import {Label} from "@/components/ui/label";
-import {Tag, TagInput} from "emblor";
+import {Tag} from "emblor";
+import {TagInput} from "emblor";
 import {useState} from "react";
-
 
 export default function TagInputComponent({tags, onTagAddAction, onTagRemoveAction}: {
     tags: Tag[],
     onTagAddAction: (tag: Tag) => void,
     onTagRemoveAction: (tag: Tag) => void
 }) {
-    const [exampleTags, setExampleTags] = useState<Tag[]>(tags);
+    const [stateTags, setStateTags] = useState<Tag[]>(tags);
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
 
     return (
@@ -18,23 +18,20 @@ export default function TagInputComponent({tags, onTagAddAction, onTagRemoveActi
             <Label htmlFor="input-56">Tags</Label>
             <TagInput
                 id={"input-56"}
-                tags={exampleTags}
+                tags={stateTags}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
+                // @ts-expect-error
                 setTags={(newTags) => {
                     const length = newTags.length;
-                    if (length > exampleTags.length) {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
+                    if (length > stateTags.length) {
                         onTagAddAction(newTags[length - 1]);
                     } else {
-                        // find the removed tag
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        const removedTag = exampleTags.find((tag) => !newTags.includes(tag));
+                        const removedTag = stateTags.find((tag) => !newTags.includes(tag));
 
                         if (removedTag)
                             onTagRemoveAction(removedTag);
                     }
-                    setExampleTags(newTags);
+                    setStateTags(newTags);
                 }}
                 placeholder="Add a tag"
                 styleClasses={{
@@ -53,7 +50,6 @@ export default function TagInputComponent({tags, onTagAddAction, onTagRemoveActi
                 setActiveTagIndex={setActiveTagIndex}
                 inlineTags={false}
                 inputFieldPosition="top"
-
             />
         </div>
     );

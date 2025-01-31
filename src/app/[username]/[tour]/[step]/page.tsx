@@ -2,8 +2,8 @@ import {BreadcrumbPortal} from "@/components/breadcrumbBar";
 import {TourSettingsSecondaryNav} from "@/components/secondaryNavs";
 import {cn, distanceReadable, timeReadable} from "@/lib/utils";
 import React from "react";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 import {TourToUserRole, UserRole} from "@prisma/client";
 import H1 from "@/components/ui/h1";
@@ -22,7 +22,7 @@ import SelectWithIcons from "@/components/selectWithIcons";
 import {VEHICLES} from "@/lib/vehicles";
 
 const Page = async (props: { params: Promise<{ username: string, tour: string, step: string }> }) => {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     const params = await props.params;
     const [tour, user, section, settings] = await Promise.all([
         db.tour.findFirst({

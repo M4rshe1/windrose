@@ -60,6 +60,8 @@ function Calendar({
         ...classNames,
       }}
       components={{
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}

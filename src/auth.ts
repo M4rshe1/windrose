@@ -1,20 +1,11 @@
-import {NextAuthOptions} from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
-import Github from 'next-auth/providers/github';
-import {PrismaAdapter} from '@next-auth/prisma-adapter';
-import db from '@/lib/db';
+import {PrismaAdapter} from "@next-auth/prisma-adapter";
+import db from "@/lib/db";
+import GoogleProvider from "next-auth/providers/google";
+import Github from "next-auth/providers/github";
 import {stringToDashCase} from "@/lib/utils";
+import NextAuth from "next-auth";
 
-
-if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
-    throw new Error("Github client ID or secret is not set.");
-}
-
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    throw new Error("Google client ID or secret is not set.");
-}
-
-export const authOptions: NextAuthOptions = {
+export const { auth, handlers, signIn, signOut } = NextAuth({
     adapter: PrismaAdapter(db),
     session: {
         strategy: 'database',
@@ -142,7 +133,7 @@ export const authOptions: NextAuthOptions = {
             }
         },
     },
-};
+});
 
 
 declare module 'next-auth' {

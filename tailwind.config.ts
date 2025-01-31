@@ -4,7 +4,7 @@ import animate from "tailwindcss-animate"
 import catppuccin from '@catppuccin/daisyui'
 
 const config: Config = {
-    darkMode: ["class"],
+    darkMode: ["class", "class"],
     content: [
         "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/components/**/*.{js,ts,jsx,tsx,mdx}",

@@ -3,8 +3,8 @@ import H1 from "@/components/ui/h1";
 import {cn} from "@/lib/utils";
 import React from "react";
 import H2 from "@/components/ui/h2";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/lib/authOptions";
+import { auth } from "@/auth"
+
 import db from "@/lib/db";
 import UsernameForm from "@/components/usernameForm";
 import {redirect} from "next/navigation";
@@ -15,7 +15,7 @@ import {SettingsSecondaryNav} from "@/components/secondaryNavs";
 import GoToPersonalProfileButton from "@/components/goToPersonalProfileButton";
 
 const AccountSettings = async () => {
-    const session = await getServerSession(authOptions);
+    const session = await auth()
     if (!session) return redirect('/auth/login');
     const [user] = await Promise.all([
         db.user.findUnique({

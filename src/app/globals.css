@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @property --angle {
     syntax: "<angle>";
     initial-value: 0deg;
@@ -50,6 +51,7 @@
 .scroll-hidden::-webkit-scrollbar {
     display: none;
 }
+
 .scroll-hidden {
     -ms-overflow-style: none;
     scrollbar-width: none;
