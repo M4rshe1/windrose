@@ -15,6 +15,7 @@ interface DateTimeSelectProps {
     defaultValueDate?: Date,
     className?: string,
     defaultValueNights?: number
+
     [key: string]: unknown
 }
 
@@ -71,7 +72,7 @@ export function DateTimeSelect({
     }
 
     return (
-        <Popover open={isOpened}>
+        <Popover open={isOpened} onOpenChange={setIsOpened}>
             <PopoverTrigger asChild>
                 <Button variant="outline" size={'sm'} className={cn('flex items-center gap-2', className)} {...props}
                         onClick={() => setIsOpened(!isOpened)}
@@ -85,6 +86,7 @@ export function DateTimeSelect({
                     selected={date}
                     onSelect={handleDateSelect}
                     weekStartsOn={1}
+                    initialFocus
                 />
                 <div className="flex items-center justify-between p-2 border-t-2 border-neutral">
                     <Select value={selectedHour} onValueChange={(value) => handleTimeChange('hour', value)}>
