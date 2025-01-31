@@ -12,8 +12,8 @@ export const config = {
 
 export async function POST(req: NextRequest) {
     const sessionToken =
-        req.cookies.get('next-auth.session-token') ||
-        req.cookies.get('__Secure-next-auth.session-token');
+        req.cookies.get('authjs.session-token') ||
+        req.cookies.get('authjs.csrf-token');
 
     const formData = await req.formData();
     const tourId = formData.get('tourId');

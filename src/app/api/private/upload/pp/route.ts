@@ -11,8 +11,8 @@ export const config = {
 
 export async function POST(req: NextRequest) {
     const sessionToken =
-        req.cookies.get('next-auth.session-token') ||
-        req.cookies.get('__Secure-next-auth.session-token');
+        req.cookies.get('authjs.session-token') ||
+        req.cookies.get('authjs.csrf-token');
 
     if (!sessionToken?.value) {
         return NextResponse.json({ authenticated: false }, { status: 401 });

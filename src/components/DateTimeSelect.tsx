@@ -84,7 +84,6 @@ export function DateTimeSelect({
                     mode="single"
                     selected={date}
                     onSelect={handleDateSelect}
-                    initialFocus
                     weekStartsOn={1}
                 />
                 <div className="flex items-center justify-between p-2 border-t-2 border-neutral">

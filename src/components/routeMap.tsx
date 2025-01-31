@@ -90,7 +90,7 @@ const MapInput = ({geometries, lat, lon, zoom = 5, markers}: MapProps) => {
                     map.fitBounds(routeLayer?.getBounds());
             }
         });
-    }, [lat, lon, zoom, map, isFirstRender, markers, createMarker, geometries, createRoute]);
+    }, [lat, lon, zoom, map, isFirstRender, markers, createMarker, geometries, createRoute, routeLayer]);
 
     return (
         <div className="relative w-full h-full">
