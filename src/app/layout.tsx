@@ -14,7 +14,9 @@ import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {Newspaper, Plus} from "lucide-react";
 import {HeaderCommand} from "@/components/headerCommand";
-import {version} from "../../package.json";
+import pkg from "../../package.json";
+
+const version = pkg.version;
 
 const inter = Inter({subsets: ["latin"]});
 

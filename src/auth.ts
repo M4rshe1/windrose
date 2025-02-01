@@ -42,12 +42,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                         metric: true,
                     },
                 });
-
-                const s3Endpoint = `${process.env.NEXT_PUBLIC_MINIO_ENDPOINT}:${process.env.NEXT_PUBLIC_MINIO_PORT}/${process.env.NEXT_PUBLIC_MINIO_BUCKET}/`;
+                const protocol = process.env.NEXT_PUBLIC_MINIO_USE_SSL == 'true' ? "https://" : "http://"
+                const s3Endpoint = `${protocol}${process.env.NEXT_PUBLIC_MINIO_ENDPOINT}:${process.env.NEXT_PUBLIC_MINIO_PORT}/${process.env.NEXT_PUBLIC_MINIO_BUCKET}/`;
                 if (dbUser) {
                     session.user.role = dbUser.role;
                     session.user.username = dbUser.username;
-                    session.user.image = dbUser.image ? `http://${s3Endpoint}${dbUser.image.fileKey}` : null;
+                    session.user.image = dbUser.image ? `${s3Endpoint}${dbUser.image.fileKey}` : null;
                     session.user.metric = dbUser.metric;
                 }
             } catch (error) {

@@ -1,35 +1,36 @@
 "use client";
 
 import {Label} from "@/components/ui/label";
-import {Tag} from "emblor";
-import {TagInput} from "emblor";
-import {useState} from "react";
+import {Tag, TagInput} from "emblor";
+import React from "react";
 
-export default function TagInputComponent({tags, onTagAddAction, onTagRemoveAction}: {
+const TagInputFix = TagInput as unknown as React.FC<any>;
+
+
+
+export default function TagInputComponent({ tags, onTagAddAction, onTagRemoveAction }: {
     tags: Tag[],
     onTagAddAction: (tag: Tag) => void,
     onTagRemoveAction: (tag: Tag) => void
 }) {
-    const [stateTags, setStateTags] = useState<Tag[]>(tags);
-    const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+    const [stateTags, setStateTags] = React.useState<Tag[]>(tags);
+    const [activeTagIndex, setActiveTagIndex] = React.useState<number | null>(null);
 
     return (
         <div className="space-y-2">
             <Label htmlFor="input-56">Tags</Label>
-            <TagInput
-                id={"input-56"}
+            <TagInputFix
+                id="input-56"
                 tags={stateTags}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
-                // @ts-expect-error
                 setTags={(newTags) => {
                     const length = newTags.length;
                     if (length > stateTags.length) {
-                        onTagAddAction(newTags[length - 1]);
+                        onTagAddAction(newTags[length - 1] as Tag);
                     } else {
-                        const removedTag = stateTags.find((tag) => !newTags.includes(tag));
-
-                        if (removedTag)
-                            onTagRemoveAction(removedTag);
+                        const removedTag = stateTags.find(
+                            (tag) => !newTags?.includes(tag as Tag),
+                        );
+                        if (removedTag) onTagRemoveAction(removedTag);
                     }
                     setStateTags(newTags);
                 }}

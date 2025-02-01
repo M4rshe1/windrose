@@ -82,7 +82,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
     const sortedSections = tour?.sections.sort((a, b) => (a.datetime as Date).getTime() - (b.datetime as Date).getTime())
     const uniqueCountries: Country[] = []
     tour?.sections.map(section => {
-        const country = uniqueCountries.find(country => country.code === section.country?.code)
+        const country = uniqueCountries.find(country => country?.code === section.country?.code)
         if (!country) {
             uniqueCountries.push(section.country as Country)
         }
@@ -335,7 +335,7 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                                                     <div
                                                         className={cn("flex gap-1 items-center")}
                                                     >
-                                                        <ReactCountryFlag countryCode={country.code} svg/>
+                                                        <ReactCountryFlag countryCode={country?.code} svg/>
                                                         <span className={"text-sm"}>
                                                     {country?.name}
                                                 </span>

@@ -74,7 +74,7 @@ const ProfileHeader = ({user, tours, params, session}: {
                             if (!SocialIcon) SocialIcon = LinkIcon;
                             return (
                                 <a key={name} href={url} target="_blank" rel="noopener noreferrer"
-                                   className="text-blue-500 hover:underline flex items-center gap-2">
+                                   className="text-primary hover:underline flex items-center gap-2">
                                     {SocialIcon && <SocialIcon size={20}/>}
                                     {name}
                                 </a>

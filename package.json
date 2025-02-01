@@ -55,7 +55,6 @@
     "@catppuccin/daisyui": "^1.2.1",
     "@types/formidable": "^3.4.5",
     "@types/leaflet": "^1.9.16",
-    "@types/minio": "^7.1.1",
     "@types/node": "^22.12.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",

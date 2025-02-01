@@ -69,13 +69,18 @@ const SocialLinksSettings = ({socials, updateSocialsAction}: {
             {socialLinks.map((social, index) => (
                 <div key={index} className="flex space-x-4">
                     <IconInput
-                        Icon={SOCIALS.find(s => s.name === social.name)?.icon || IconLink}
-                        placeholder={SOCIALS.find(s => s.name === social.name)?.url || 'URL'}
+                        Icon={
+                            SOCIALS.find((s) => s.name === social.name)?.icon || IconLink
+                        }
+                        placeholder={
+                            SOCIALS.find((s) => s.name === social.name)?.url || "URL"
+                        }
                         defaultValue={social.url}
-                        //eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
-                        onBlur={(e) => updateSocial(social.name, e.target.value)}
+                        onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
+                            updateSocial(social.name, e.target.value)
+                        }
                     />
+
                     <Button className={cn('text-neutral-content bg-neutral hover:text-error-content hover:bg-error')}
                             onClick={() => removeSocial(social.name)}>
                         <IconTrash/>

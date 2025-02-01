@@ -140,7 +140,7 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                 }
             })
         }
-        let statusToSet = null
+        let statusToSet: null | TourStatus = null
         if (tour.status === TourStatus.PLANNING && (status === TourSectionStatus.VISITED || status === TourSectionStatus.SKIPPED)) {
             statusToSet = TourStatus.ON_TOUR
         } else if (tour.status === TourStatus.FINISHED && (status === TourSectionStatus.PLANNED || status === TourSectionStatus.VISITED || status === TourSectionStatus.SKIPPED)) {
