@@ -1,7 +1,7 @@
 import db from "@/lib/db";
 import {BreadcrumbPortal} from "@/components/breadcrumbBar";
 import React from "react";
-import { auth } from "@/auth"
+import {auth} from "@/auth"
 
 import {UserSecondaryNav} from "@/components/secondaryNavs";
 import TourCard from "@/components/tourCard";
@@ -14,7 +14,7 @@ import PinnedToursFormPopup from "@/components/PinnedToursFormPopup";
 
 export default async function ProfilePage(props: { params: Promise<{ username: string }> }) {
     const params = await props.params;
-    
+
     const session = await auth()
     const [user, tours] = await Promise.all([
         db.user.findUnique({
@@ -31,7 +31,17 @@ export default async function ProfilePage(props: { params: Promise<{ username: s
                     some: {
                         user: {
                             username: params.username
-                        }
+                        },
+                        OR: [
+                            {
+                                role: {
+                                    in: ["OWNER", "EDITOR"]
+                                }
+                            },
+                            {
+                                mentioned: true
+                            }
+                        ]
                     }
                 }
             },
@@ -107,7 +117,8 @@ export default async function ProfilePage(props: { params: Promise<{ username: s
                     <h2 className="text-xl font-bold mt-4">Pinned Tours</h2>
                     {
                         session?.user?.username === params.username &&
-                        <PinnedToursFormPopup tours={tours} pinToursAction={pinToursServerAction} username={session?.user?.username as string}/>
+                        <PinnedToursFormPopup tours={tours} pinToursAction={pinToursServerAction}
+                                              username={session?.user?.username as string}/>
                     }
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -119,9 +130,9 @@ export default async function ProfilePage(props: { params: Promise<{ username: s
                     {
                         pinnedTours?.length === 0 && (
                             <p className={"italic"}>This user hasn&#39;t pinned any tours yet.<br/>
-                                But there are <Link href={`/${params.username}/tours`}
-                                                    className={"text-primary hover:underline"}>{tours?.length - pinnedTours?.length} other
-                                    tours</Link> you could look at.</p>
+                                But there {tours?.length == 1 ? "is" : "are"} <Link href={`/${params.username}/tours`}
+                                                    className={"text-primary hover:underline"}>{tours?.length} other
+                                    {tours?.length == 1 ? " tour" : " tours"}</Link> you could look at.</p>
                         )
                     }
                 </div>

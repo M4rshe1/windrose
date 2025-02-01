@@ -27,7 +27,17 @@ export default async function ProfileToursPage(props: { params: Promise<{ userna
                     some: {
                         user: {
                             username: params.username
-                        }
+                        },
+                        OR: [
+                            {
+                                role: {
+                                    in: ["OWNER", "EDITOR"]
+                                }
+                            },
+                            {
+                                mentioned: true
+                            }
+                        ]
                     }
                 }
             },

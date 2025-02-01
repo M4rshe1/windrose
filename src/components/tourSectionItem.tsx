@@ -81,7 +81,6 @@ const TourSectionItemText = ({section}: { section: Section }) => {
                     </span>
                     }
                 </h2>
-                {section?.duration && section?.distance &&
                     <p className={'text-sm opacity-70 flex items-center gap-1 font-normal'}>
                         {
                             section.nights ? <>
@@ -138,7 +137,6 @@ const TourSectionItemText = ({section}: { section: Section }) => {
                             </>
                         }
                     </p>
-                }
             </div>
 
             <p>{section.description}</p>
