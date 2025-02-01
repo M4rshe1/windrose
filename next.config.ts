@@ -1,7 +1,7 @@
-import type { NextConfig } from "next";
+import type {NextConfig} from "next";
 
 const nextConfig: NextConfig = {
-    webpack: (config, { dev }) => {
+    webpack: (config, {dev}) => {
         if (dev) {
             config.devtool = false;
         }
@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
             {
                 protocol: 'http',
                 hostname: '192.168.1.3',
+                pathname: '/windrose-test/**',
+            }, 
+            {
+                protocol: 'https',
+                hostname: 's3.heggli.dev',
                 pathname: '/windrose/**',
             },
         ],
