@@ -23,7 +23,7 @@ export function hideFullToken(token: string): string {
 
 export function distanceReadable(meters: number, metric: boolean, round: number = 2): string {
     if (meters < 1000) {
-        return `${metric ? meters : meters * 3.28084} ${metric ? "m" : "ft"}`;
+        return `${metric ? meters : meters * 3.28084}${metric ? "m" : "ft"}`;
     }
     return `${(metric ? meters / 1000 : meters / 1609.34).toFixed(round)}${metric ? "km" : "mi"}`;
 }
