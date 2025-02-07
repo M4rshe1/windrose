@@ -28,9 +28,16 @@ const nextConfig: NextConfig = {
                 pathname: '/windrose-test/**',
             }, 
             {
-                protocol: 'https',
+                protocol: 'http',
+                hostname: 's3.heggli.dev',
+                pathname: '/windrose-test/**',
+                port: "443",
+            }, 
+            {
+                protocol: 'http',
                 hostname: 's3.heggli.dev',
                 pathname: '/windrose/**',
+                port: "443",
             },
         ],
     }

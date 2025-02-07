@@ -83,10 +83,12 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
     const uniqueCountries: Country[] = []
     tour?.sections.map(section => {
         const country = uniqueCountries.find(country => country?.code === section.country?.code)
-        if (!country) {
+        if (!country && section.country) {
             uniqueCountries.push(section.country as Country)
         }
     })
+    
+    
 
 
     const stats = [
@@ -327,10 +329,10 @@ const Page = async (props: { params: Promise<{ username: string, tour: string }>
                                 <div className={cn("flex flex-wrap gap-y-1 gap-x-2")}>
                                     {
                                         uniqueCountries?.length > 0 ?
-                                            uniqueCountries?.map((country) => (
+                                            uniqueCountries?.map((country, index) => (
                                                 <Link
                                                     href={`/explore?countries=${country?.code}`}
-                                                    key={country?.code}
+                                                    key={index}
                                                     className={cn("flex items-center hover:text-primary hover:link transition duration-200 ease-in-out")}>
                                                     <div
                                                         className={cn("flex gap-1 items-center")}

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Country, TourSection, TourSectionStatus, TourSectionToFile, TourStatus} from "@prisma/client";
 import {VEHICLES} from "@/lib/vehicles";
-import {GitCommitVertical, Play} from "lucide-react";
+import {GitCommitVertical, LucideIcon, Play} from "lucide-react";
 import {distanceReadable, timeReadable} from "@/lib/utils";
 import {revalidatePath} from "next/cache";
 import db from "@/lib/db";
@@ -10,6 +10,8 @@ import minioClient from "@/lib/minioClient";
 import {DateTimeSelect} from "@/components/DateTimeSelect";
 import {calculateDirections, getNextSection} from "@/lib/directions";
 import ReactCountryFlag from "react-country-flag";
+import {auth} from "@/auth";
+import {TablerIcon} from "@tabler/icons-react";
 
 interface images extends TourSectionToFile {
     file: File
@@ -26,7 +28,7 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
     sort: "ASC" | "DESC",
     length: number,
     disabled: boolean,
-    metric: boolean
+    metric: boolean,
     tour: {
         name: string,
         owner: string,
@@ -35,21 +37,35 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
     }
 }) {
     async function handleDelete() {
-        'use server'
-        if (disabled) return
+        "use server"
+        const session = await auth()
+        if (!session?.user?.id) return
         const images = await db.file.findMany({
             where: {
                 TourSectionToFile: {
                     some: {
-                        tourSectionId: item.id
-                    }
+                        tourSectionId: item.id,
+                        tourSection: {
+                            tour: {
+                                name: tour.name,
+                                TourToUser: {
+                                    some: {
+                                        userId: session?.user?.id as string,
+                                        role: {
+                                            in: ["OWNER", "EDITOR"]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                 }
             },
             select: {
                 fileKey: true
-
             }
         })
+
 
         for (const image of images) {
             await minioClient.removeObject(process.env.NEXT_PUBLIC_MINIO_BUCKET as string, image.fileKey);
@@ -57,13 +73,37 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
 
         await db.tourSection.delete({
             where: {
-                id: item.id
+                id: item.id,
+                tour: {
+                    name: tour.name,
+                    TourToUser: {
+                        some: {
+                            userId: session?.user?.id as string,
+                            role: {
+                                in: ["OWNER", "EDITOR"]
+                            }
+                        }
+                    }
+                }
             }
         })
         await db.tourSectionToFile.deleteMany({
             where: {
                 id: {
                     in: item.images.map(image => image.id)
+                },
+                tourSection: {
+                    tour: {
+                        name: tour.name,
+                        TourToUser: {
+                            some: {
+                                userId: session?.user?.id as string,
+                                role: {
+                                    in: ["OWNER", "EDITOR"]
+                                }
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -75,7 +115,7 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
         "use server"
         if (!date || disabled) return
         const nextSection = await getNextSection(tour.id, item.id)
-        
+
         await db.tourSection.update({
             where: {
                 id: item.id
@@ -85,14 +125,14 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                 nights: nights
             }
         })
-        
+
         const newNextSection = await getNextSection(tour.id, item.id)
         await Promise.all([
             calculateDirections(tour.id, item.id),
             calculateDirections(tour.id, nextSection?.id),
             calculateDirections(tour.id, newNextSection?.id)
         ])
-        
+
         revalidatePath(`/${tour.owner}/${tour.name}/steps`)
     }
 
@@ -170,7 +210,7 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
 
     }
 
-    let Icon
+    let Icon: LucideIcon | TablerIcon 
     if (index === 0 && sort == "ASC" || index === length - 1 && sort == "DESC") {
         Icon = Play
     } else {
@@ -188,8 +228,8 @@ export function StepsItem({item, index, disabled, metric, tour, sort, length}: {
                         <div className={'flex items-center gap-2'}>
                             <p className={'font-semibold flex items-center gap-1'}>
                                 {
-                                 item?.country?.code &&   
-                                <ReactCountryFlag countryCode={item?.country?.code} svg/>
+                                    item?.country?.code &&
+                                    <ReactCountryFlag countryCode={item?.country?.code} svg/>
                                 }
                                 {item.name || 'Unnamed'}
                             </p>
